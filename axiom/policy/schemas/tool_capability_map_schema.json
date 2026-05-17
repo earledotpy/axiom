@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "axiom.tool_capability_map.schema.v1",
+  "title": "AXIOM Tool Capability Map Schema v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_type",
+    "artifact_id",
+    "artifact_version",
+    "approved_by_panel_version",
+    "tools"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "axiom.tool_capability_map.v1"
+    },
+    "artifact_type": {
+      "type": "string",
+      "const": "tool_capability_map"
+    },
+    "artifact_id": {
+      "type": "string",
+      "const": "security.tool_capability_map.v1"
+    },
+    "artifact_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "approved_by_panel_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tools": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_gateway.call",
+        "memory_gateway.query",
+        "memory_gateway.write",
+        "network_gateway.fetch",
+        "sandbox_gateway.execute",
+        "filesystem.read",
+        "filesystem.write",
+        "session_controller.status",
+        "session_controller.cancel_current_chain",
+        "session_controller.pause_after_current",
+        "session_controller.resume",
+        "session_controller.shutdown_after_current",
+        "session_controller.run_classifier_validation",
+        "session_controller.enable_autonomous",
+        "session_controller.reconcile_provider_usage"
+      ],
+      "properties": {
+        "model_gateway.call": {
+          "$ref": "#/$defs/standard_tool_entry"
+        },
+        "memory_gateway.query": {
+          "$ref": "#/$defs/standard_tool_entry"
+        },
+        "memory_gateway.write": {
+          "$ref": "#/$defs/standard_tool_entry"
+        },
+        "network_gateway.fetch": {
+          "$ref": "#/$defs/standard_tool_entry"
+        },
+        "sandbox_gateway.execute": {
+          "$ref": "#/$defs/standard_tool_entry"
+        },
+        "filesystem.read": {
+          "$ref": "#/$defs/standard_tool_entry"
+        },
+        "filesystem.write": {
+          "$ref": "#/$defs/standard_tool_entry"
+        },
+        "session_controller.status": {
+          "$ref": "#/$defs/operator_control_tool_entry"
+        },
+        "session_controller.cancel_current_chain": {
+          "$ref": "#/$defs/operator_control_tool_entry"
+        },
+        "session_controller.pause_after_current": {
+          "$ref": "#/$defs/operator_control_tool_entry"
+        },
+        "session_controller.resume": {
+          "$ref": "#/$defs/operator_control_tool_entry"
+        },
+        "session_controller.shutdown_after_current": {
+          "$ref": "#/$defs/operator_control_tool_entry"
+        },
+        "session_controller.run_classifier_validation": {
+          "$ref": "#/$defs/operator_control_tool_entry"
+        },
+        "session_controller.enable_autonomous": {
+          "$ref": "#/$defs/operator_control_tool_entry"
+        },
+        "session_controller.reconcile_provider_usage": {
+          "$ref": "#/$defs/operator_control_tool_entry"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "source_path": {
+      "type": "string",
+      "enum": [
+        "allowed_capabilities.model.allow_model_calls",
+        "allowed_capabilities.filesystem.read",
+        "allowed_capabilities.filesystem.write",
+        "allowed_capabilities.operator_control.allowed_commands",
+        "memory_policy.read",
+        "memory_policy.write",
+        "network_policy",
+        "sandbox_policy.allowed"
+      ]
+    },
+    "additional_check": {
+      "type": "string",
+      "enum": [
+        "provider_group_allowed",
+        "budget_policy_not_exceeded",
+        "memory_policy.max_query_results",
+        "memory_policy.write_requires_dedupe",
+        "mode_allowlist_only",
+        "request_matches_allowlist",
+        "request_does_not_match_denylist",
+        "redirect_policy",
+        "timeout_seconds",
+        "max_response_bytes",
+        "sandbox_policy.max_ram_mb",
+        "sandbox_policy.max_wall_clock_seconds",
+        "sandbox_policy.network_access_denied",
+        "path_under_allowed_roots"
+      ]
+    },
+    "standard_tool_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "additional_checks"
+      ],
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/source_path"
+        },
+        "additional_checks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/additional_check"
+          },
+          "uniqueItems": true
+        }
+      },
+      "not": {
+        "anyOf": [
+          {
+            "required": [
+              "required_command"
+            ]
+          },
+          {
+            "required": [
+              "requires_manifest_type"
+            ]
+          }
+        ]
+      }
+    },
+    "operator_control_tool_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "required_command",
+        "requires_manifest_type"
+      ],
+      "properties": {
+        "source": {
+          "type": "string",
+          "const": "allowed_capabilities.operator_control.allowed_commands"
+        },
+        "required_command": {
+          "type": "string",
+          "enum": [
+            "status",
+            "cancel_current_chain",
+            "pause_after_current",
+            "resume",
+            "shutdown_after_current",
+            "run_classifier_validation",
+            "enable_autonomous",
+            "reconcile_provider_usage"
+          ]
+        },
+        "requires_manifest_type": {
+          "type": "string",
+          "const": "operator_control"
+        },
+        "additional_checks": {
+          "type": "array",
+          "maxItems": 0
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+database:
+  path: "C:\\axiom\\axiom.db"
+  cache_size_kb: 32768
+  
+ollama:
+  host: "http://localhost:11434"
+  model: "qwen3:4b"
+  fingerprint_timeout_seconds: 5
+  
+runtime:
+  max_threads: 4
+  sequential_execution: true
+  
+context:
+  max_bundle_kb: 500
+  
+sandbox:
+  max_ram_mb: 256
+  max_wall_clock_seconds: 60
+  network_access: "denied"
+  
+sqlite_vec:
+  max_vector_batch: 100
+  
+scheduler:
+  stale_threshold_seconds: 120

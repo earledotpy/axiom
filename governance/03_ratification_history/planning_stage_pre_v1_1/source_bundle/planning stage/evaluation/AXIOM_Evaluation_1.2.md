@@ -1,0 +1,34 @@
+AXIOM Evaluation v1.2 — Quality and Coherence Review
+Reviewer: Claude Opus 4.7 — Quality and Coherence Evaluator
+Subject: AXIOM Proposal v1.2 (GPT-5.5)
+Verdict: Cannot proceed as-is. Substantially closer to approval than v1.1, but eight specific resolutions are required before the proposal enters the implementation queue.
+What Holds
+The proposal has converged on an internally coherent shape and now demonstrates strong adherence to the Core Values it previously strained against. Specifically:
+Core Value 1 (security baked in): The plan-injection scan is placed before child-task commit (§10), the sandbox no-network test is a precondition rather than a check (§15.4–15.5), and the classifier test set (§21.3) gates autonomous operation. Section 15.5 is the single most important commitment in this revision: if sandbox isolation cannot be empirically verified on Jeremy's machine, autonomous code execution is removed from Phase 1. That is security as architecture, not security as a feature.
+Core Value 2 (local model in its lane): §21.1 enumerates classifier responsibilities and explicitly forbids plan approval, manifest override, and complex reasoning by the local model. §22.1 fixes the model profile (qwen3:4b Q4, mmap, thinking disabled).
+Core Value 4 (build simple): Sequential runtime; one Verifier module with modes rather than four; service mode, external watchdog, and AppContainer all deferred to Phase 2 with reasoning; cooperative cancellation limits stated honestly.
+Core Value 5 (queue-only coordination): Scheduler-owned state transitions, Context Builder supplying scoped bundles, no role module calling another. The acceptance criterion is named (§25.1).
+Core Value 6 (sandbox/network never connected): Defense moved from "restricted token + Job Object" to dedicated axiom_sandbox_user + firewall-scoped outbound deny + restricted token + Job Object, plus mandatory empirical tests before enable.
+The honest correction in §20 — that two calls to a shared permission function is enforcement-point redundancy, not deep defense-in-depth — is the kind of specificity the panel was asking for.
+What Fails / Must Be Resolved
+1. plan_injection_scan has no named owner
+§10 places the scan as a state between plan_artifact_created and plan_checkpoint_pending, but no module performs it. §21 describes local-classifier responsibilities and §24 lists security/sanitizer.py and security/classifier_validation.py, but the proposal never explicitly says which component runs the plan-injection scan, against which manifest, and where the verdict is recorded. This must be specified, because Core Value 1 requires the security boundary to exist before the component it protects is built — an unattributed scan is not a boundary.
+2. Manifest creation and binding flow is undefined
+§12.1 distinguishes static templates (policy/role_manifests/*.json) from task-specific manifests (task_permissions table). The transition is not specified: who reads the template, parameterizes it for a task, signs it (if anything), and writes the row? When does this happen relative to approved_for_execution? This matters because the manifest is the zero-trust enforcement boundary (Core Value 3). An unforgeable, auditable creation flow is a precondition for trusting any of §11–§13.
+3. §13 and §14.2 disagree on Verifier write scope
+§13 lists Result Verifier writes as "verdict only." §14.2 expands to verdict, verdict_reason, confidence, security_labels, recommended_next_state. These are not the same. Reconcile — either §13 is shorthand and the table needs to expand it, or §14.2 is over-claiming. The substantive question is whether recommended_next_state constitutes the Verifier influencing state transitions, which would soften the §14.2 claim that "the Scheduler applies the actual state transition."
+4. No mechanical verification of "no direct role-to-role calls"
+§25.1 makes this an acceptance criterion. §24's test list contains nothing that enforces it. Given how central this rule is to Core Value 5, it should be checkable — either as a static import-graph test (forbid agents/X.py from importing agents/Y.py) or as a runtime guard. Otherwise the rule is asserted but never tested.
+5. Manifest write-scope language (§12.3) opens a door without bounding it
+The rule "Tool Executor may write only its own result/error fields, plus shared-state writes explicitly granted by the task manifest" is reasonable, but Phase 1 needs to specify the maximum shared-state write scope any template may grant. Without that ceiling, a sufficiently permissive manifest could violate the spirit of Core Value 3 ("A Drone that can write to task structure fields it does not own"). State the rule that governs manifest authors, not just manifest enforcers.
+6. operator_control manifest is undefined
+§24 references policy/role_manifests/operator_control.json. §8.5 says operator-control tasks can preempt queue order. §23.1 places them at the top of the priority list. But §12 never shows what an operator-control task is permitted to do. This is the highest-privilege task class in the system; it must be defined, not implied.
+7. Plan Committer and Subtask Committer are referenced but not in the module map
+§8.2 attributes task_class setting to a "Plan Committer" and "Subtask Committer." §24 contains neither. Either these are conceptual functions inside Scheduler/Verifier (in which case say so) or they are missing modules. The current draft asserts behavior with no surface to attach it to.
+8. The "at most one task in running state" invariant is not testable
+The architecture's backbone is sequential execution. §7 implies it, §4.2 states it as a rule. There is no acceptance test for the invariant itself. A simple SELECT COUNT(*) FROM tasks WHERE status = 'running' ≤ 1 check, run continuously by the scheduler-loop watchdog and asserted in tests, would pin this. Right now the rule is policy without enforcement.
+Secondary Coherence Issues (Should Be Addressed, Not Necessarily Blocking)
+Memory Gateway cosine threshold is unspecified. §12.4 describes Memory Gateway responsibilities but doesn't adopt or reject the legacy ~0.92 dedup threshold. State a Phase 1 default.
+Boot sequence is undefined. §18 places the startup watchdog in session_controller.py and the scheduler-loop watchdog in scheduler.py, implying an init order. The actual sequence (Telegram credential check → DB schema check → stale-task scan → scheduler start → bot ready) is not described anywhere.
+Recovery semantics are partial. §18.3 says stale tasks "move to retry_pending, failed, or cancelled." The selection rule is missing.
+classifier_validation.py and sanitizer.py relationship is unspecified. §24 lists both. §21 describes classifier tests; §10 references a scan. The runtime path between sanitizer enforcement and validated classifier behavior should be drawn.

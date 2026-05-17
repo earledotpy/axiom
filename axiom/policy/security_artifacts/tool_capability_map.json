@@ -1,0 +1,99 @@
+{
+  "schema_version": "axiom.tool_capability_map.v1",
+  "artifact_type": "tool_capability_map",
+  "artifact_id": "security.tool_capability_map.v1",
+  "artifact_version": "1.0.0",
+  "approved_by_panel_version": "v1.11.4",
+  "tools": {
+    "model_gateway.call": {
+      "source": "allowed_capabilities.model.allow_model_calls",
+      "additional_checks": [
+        "provider_group_allowed",
+        "budget_policy_not_exceeded"
+      ]
+    },
+    "memory_gateway.query": {
+      "source": "memory_policy.read",
+      "additional_checks": [
+        "memory_policy.max_query_results"
+      ]
+    },
+    "memory_gateway.write": {
+      "source": "memory_policy.write",
+      "additional_checks": [
+        "memory_policy.write_requires_dedupe"
+      ]
+    },
+    "network_gateway.fetch": {
+      "source": "network_policy",
+      "additional_checks": [
+        "mode_allowlist_only",
+        "request_matches_allowlist",
+        "request_does_not_match_denylist",
+        "redirect_policy",
+        "timeout_seconds",
+        "max_response_bytes"
+      ]
+    },
+    "sandbox_gateway.execute": {
+      "source": "sandbox_policy.allowed",
+      "additional_checks": [
+        "sandbox_policy.max_ram_mb",
+        "sandbox_policy.max_wall_clock_seconds",
+        "sandbox_policy.network_access_denied"
+      ]
+    },
+    "filesystem.read": {
+      "source": "allowed_capabilities.filesystem.read",
+      "additional_checks": [
+        "path_under_allowed_roots"
+      ]
+    },
+    "filesystem.write": {
+      "source": "allowed_capabilities.filesystem.write",
+      "additional_checks": [
+        "path_under_allowed_roots"
+      ]
+    },
+    "session_controller.status": {
+      "source": "allowed_capabilities.operator_control.allowed_commands",
+      "required_command": "status",
+      "requires_manifest_type": "operator_control"
+    },
+    "session_controller.cancel_current_chain": {
+      "source": "allowed_capabilities.operator_control.allowed_commands",
+      "required_command": "cancel_current_chain",
+      "requires_manifest_type": "operator_control"
+    },
+    "session_controller.pause_after_current": {
+      "source": "allowed_capabilities.operator_control.allowed_commands",
+      "required_command": "pause_after_current",
+      "requires_manifest_type": "operator_control"
+    },
+    "session_controller.resume": {
+      "source": "allowed_capabilities.operator_control.allowed_commands",
+      "required_command": "resume",
+      "requires_manifest_type": "operator_control"
+    },
+    "session_controller.shutdown_after_current": {
+      "source": "allowed_capabilities.operator_control.allowed_commands",
+      "required_command": "shutdown_after_current",
+      "requires_manifest_type": "operator_control"
+    },
+    "session_controller.run_classifier_validation": {
+      "source": "allowed_capabilities.operator_control.allowed_commands",
+      "required_command": "run_classifier_validation",
+      "requires_manifest_type": "operator_control"
+    },
+    "session_controller.enable_autonomous": {
+      "source": "allowed_capabilities.operator_control.allowed_commands",
+      "required_command": "enable_autonomous",
+      "requires_manifest_type": "operator_control"
+    },
+    "session_controller.reconcile_provider_usage": {
+      "source": "allowed_capabilities.operator_control.allowed_commands",
+      "required_command": "reconcile_provider_usage",
+      "requires_manifest_type": "operator_control"
+    }
+  }
+}

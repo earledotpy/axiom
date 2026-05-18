@@ -169,3 +169,57 @@ def test_handoff_ignores_model_profiles_not_matching_snapshot_profile_label():
 
     assert "not_default_test_profile" not in markdown
     assert "No model profile rows found." in markdown
+    
+    
+def test_handoff_includes_task_execution_audit_section():
+    snapshot = {
+        "profile_label": "default",
+        "tool_version": "test",
+        "snapshot_created_at_utc": "2026-05-17T00-00-00Z",
+        "project_root": "C:\\axiom",
+        "pytest": {"last_known_target": "test"},
+        "bootstrap_validation": {
+            "passed": True,
+            "operational_mode": "fail_closed_non_autonomous",
+        },
+        "autonomous_readiness": {
+            "allowed": False,
+            "blocking_reasons": ["no_current_trusted_model_profile"],
+        },
+        "foundation_verification": {
+            "foundation_passed": True,
+            "operational_mode": "fail_closed_non_autonomous",
+            "fail_closed_coherent": True,
+        },
+        "supervisor_health": {
+            "checked": True,
+            "reason": "supervisor_health_ok",
+            "health": {
+                "healthy": True,
+                "scheduler_stale": False,
+                "running_count": 0,
+                "active_task_present": False,
+                "active_task_status": None,
+            },
+        },
+        "task_execution_audit": {
+            "checked": True,
+            "passed": True,
+            "scope": "latest_session",
+            "session_id": 123,
+            "checked_task_count": 0,
+            "violation_count": 0,
+        },
+        "database_state": {
+            "latest_model_profiles": [],
+            "latest_sessions": [],
+        },
+    }
+
+    markdown = build_handoff_markdown(snapshot)
+
+    assert "## Task Execution Audit" in markdown
+    assert "- Checked: `True`" in markdown
+    assert "- Passed: `True`" in markdown
+    assert "- Scope: `latest_session`" in markdown
+    assert "- Violation count: `0`" in markdown

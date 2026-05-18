@@ -9,6 +9,7 @@ import pytest
 
 from axiom.core.noop_task_executor import (
     NoopTaskExecutionError,
+    complete_running_noop_task,
     execute_noop_task,
 )
 from axiom.persistence.db import get_connection, init_db
@@ -123,6 +124,7 @@ def test_execute_noop_task_cli_completes_task():
             sys.executable,
             "tools/execute_noop_task.py",
             str(task_id),
+            "--manual-test-override",
             "--json",
         ],
         cwd=ROOT,
@@ -154,6 +156,7 @@ def test_execute_noop_task_cli_rejects_non_pending_task():
             sys.executable,
             "tools/execute_noop_task.py",
             str(task_id),
+            "--manual-test-override",
             "--json",
         ],
         cwd=ROOT,
@@ -166,3 +169,67 @@ def test_execute_noop_task_cli_rejects_non_pending_task():
     payload = json.loads(result.stdout)
     assert payload["executed"] is False
     assert "requires pending task" in payload["error"]
+    
+    
+def test_execute_noop_task_cli_blocks_without_manual_test_override_when_autonomous_blocked():
+    session_id = create_session()
+    task_id = create_task(session_id)
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "tools/execute_noop_task.py",
+            str(task_id),
+            "--json",
+        ],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 1
+
+    payload = json.loads(result.stdout)
+    assert payload["executed"] is False
+    assert payload["error"] == "autonomous_readiness_not_available"
+    assert payload["manual_test_override_required"] is True
+
+    with get_connection() as conn:
+        row = conn.execute(
+            "SELECT status FROM tasks WHERE task_id = ?",
+            (task_id,),
+        ).fetchone()
+
+    assert row["status"] == "pending"
+    
+    
+def test_complete_running_noop_task_completes_already_running_task():
+    session_id = create_session()
+    task_id = create_task(session_id, status="running")
+
+    result = complete_running_noop_task(task_id)
+
+    assert result.task_id == task_id
+    assert result.session_id == session_id
+    assert result.started is True
+    assert result.completed is True
+    assert result.start_heartbeat_id == 0
+    assert result.completion_heartbeat_id > 0
+
+    with get_connection() as conn:
+        row = conn.execute(
+            """
+            SELECT status, result_text, result_json
+            FROM tasks
+            WHERE task_id = ?
+            """,
+            (task_id,),
+        ).fetchone()
+
+    assert row["status"] == "completed"
+    assert row["result_text"] == "No-op task execution completed."
+
+    payload = json.loads(row["result_json"])
+    assert payload["executor"] == "noop_task_executor"
+    assert payload["side_effects"] == "none"

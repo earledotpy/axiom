@@ -66,3 +66,16 @@ def test_verify_foundation_cli_json_exits_zero_and_is_parseable():
     assert "status" in payload
     assert "autonomous_readiness" in payload
     assert "supervisor_health" in payload
+    
+    
+def test_verify_foundation_includes_task_execution_audit():
+    result = verify_foundation()
+
+    assert "task_execution_audit" in result
+    audit = result["task_execution_audit"]
+
+    assert audit["checked"] is True
+    assert "passed" in audit
+    assert audit["scope"] == "latest_session"
+    assert "checked_task_count" in audit
+    assert "violation_count" in audit

@@ -107,3 +107,54 @@ def execute_noop_task(task_id: int) -> NoopTaskExecutionResult:
         result_text=result_text,
         result_json=result_json,
     )
+    
+    
+def complete_running_noop_task(task_id: int) -> NoopTaskExecutionResult:
+    """
+    Complete a task that has already been moved to running by the scheduler.
+
+    This is for scheduler-dispatched manual/test cycles only. It does not
+    call tools, models, network, sandbox, agents, or planners.
+    """
+    task = _get_task(task_id)
+
+    if task["status"] != "running":
+        raise NoopTaskExecutionError(
+            f"Running no-op completion requires running task; got {task['status']}"
+        )
+
+    if not task["manifest_id"]:
+        raise NoopTaskExecutionError(
+            "Running no-op completion requires manifest-bound task"
+        )
+
+    result_json = {
+        "executor": "noop_task_executor",
+        "task_id": task_id,
+        "task_type": task["task_type"],
+        "task_class": task["task_class"],
+        "executed": True,
+        "side_effects": "none",
+        "tools_used": [],
+        "model_calls": [],
+        "network_calls": [],
+        "sandbox_calls": [],
+    }
+    result_text = "No-op task execution completed."
+
+    completed = complete_task(
+        task_id=task_id,
+        result_text=result_text,
+        result_json=json.dumps(result_json, sort_keys=True),
+    )
+
+    return NoopTaskExecutionResult(
+        task_id=task_id,
+        session_id=task["session_id"],
+        started=True,
+        completed=True,
+        start_heartbeat_id=0,
+        completion_heartbeat_id=completed.heartbeat_id,
+        result_text=result_text,
+        result_json=result_json,
+    )

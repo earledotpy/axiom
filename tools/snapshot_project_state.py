@@ -137,6 +137,7 @@ def build_project_state_snapshot(profile_label: str = "default") -> dict[str, An
         "status": status.to_dict(),
         "autonomous_readiness": readiness.to_dict(),
 	"supervisor_health": foundation.get("supervisor_health"),
+        "task_execution_audit": foundation.get("task_execution_audit"),
         "foundation_verification": foundation,
         "database_state": {
             "latest_model_profiles": _latest_model_profiles(profile_label=profile_label),

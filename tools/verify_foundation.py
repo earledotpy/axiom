@@ -13,6 +13,7 @@ from axiom.app.bootstrap_validation import BootstrapValidator
 from axiom.app.status_report import build_status_report
 from axiom.core.autonomous_gate import evaluate_autonomous_readiness
 from axiom.core.supervisor_monitor import SupervisorMonitor
+from axiom.core.task_execution_audit import audit_task_execution
 from axiom.persistence.db import get_connection
 from tools.repair_session_state import repair_session_state
 
@@ -51,6 +52,21 @@ def _supervisor_health_payload(session_id: int | None) -> dict[str, Any]:
     }
 
 
+def _task_execution_audit_payload() -> dict[str, Any]:
+    result = audit_task_execution(all_sessions=False)
+    payload = result.to_dict()
+
+    return {
+        "checked": True,
+        "passed": result.passed,
+        "scope": result.scope,
+        "session_id": result.session_id,
+        "checked_task_count": result.checked_task_count,
+        "violation_count": len(result.violations),
+        "audit": payload,
+    }
+    
+    
 def verify_foundation(profile_label: str = "default") -> dict[str, Any]:
     bootstrap_result = BootstrapValidator().run(raise_on_failure=False)
     repair_result = repair_session_state(profile_label=profile_label)
@@ -59,8 +75,9 @@ def verify_foundation(profile_label: str = "default") -> dict[str, Any]:
 
     latest_session_id = _latest_session_id()
     supervisor_health = _supervisor_health_payload(latest_session_id)
+    task_execution_audit = _task_execution_audit_payload()
 
-    foundation_passed = bootstrap_result.passed
+    foundation_passed = bootstrap_result.passed and task_execution_audit["passed"]
     fail_closed_coherent = (
         not readiness.allowed
         and "no_current_trusted_model_profile" in readiness.blocking_reasons
@@ -81,6 +98,7 @@ def verify_foundation(profile_label: str = "default") -> dict[str, Any]:
         "status": status_report.to_dict(),
         "autonomous_readiness": readiness.to_dict(),
         "supervisor_health": supervisor_health,
+        "task_execution_audit": task_execution_audit,
     }
 
 
@@ -119,6 +137,16 @@ def main() -> int:
             print(f"active_task_present: {health['active_task_present']}")
             print(f"active_task_status: {health['active_task_status']}")
 
+        task_execution = result["task_execution_audit"]
+        print("")
+        print("task_execution_audit:")
+        print(f"checked: {task_execution['checked']}")
+        print(f"passed: {task_execution['passed']}")
+        print(f"scope: {task_execution['scope']}")
+        print(f"session_id: {task_execution['session_id']}")
+        print(f"checked_task_count: {task_execution['checked_task_count']}")
+        print(f"violation_count: {task_execution['violation_count']}")
+        
         if result["blocking_reasons"]:
             print("")
             print("blocking_reasons:")

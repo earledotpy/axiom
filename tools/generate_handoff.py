@@ -63,6 +63,10 @@ def build_handoff_markdown(snapshot: dict[str, Any]) -> str:
     foundation = snapshot.get("foundation_verification", {})
     supervisor = snapshot.get("supervisor_health") or foundation.get("supervisor_health", {})
     supervisor_health = supervisor.get("health") if supervisor else None
+    task_execution_audit = (
+        snapshot.get("task_execution_audit")
+        or foundation.get("task_execution_audit", {})
+    )
 
     latest_profile = _latest_model_profile(snapshot)
     latest_session = _latest_session(snapshot)
@@ -142,6 +146,22 @@ def build_handoff_markdown(snapshot: dict[str, Any]) -> str:
             lines.append("- Health payload: `None`")
     else:
         lines.append("- Supervisor health not present in snapshot.")
+        
+    lines.extend(["", "## Task Execution Audit", ""])
+
+    if task_execution_audit:
+        lines.append(f"- Checked: `{task_execution_audit.get('checked')}`")
+        lines.append(f"- Passed: `{task_execution_audit.get('passed')}`")
+        lines.append(f"- Scope: `{task_execution_audit.get('scope')}`")
+        lines.append(f"- Session ID: `{task_execution_audit.get('session_id')}`")
+        lines.append(
+            f"- Checked task count: `{task_execution_audit.get('checked_task_count')}`"
+        )
+        lines.append(
+            f"- Violation count: `{task_execution_audit.get('violation_count')}`"
+        )
+    else:
+        lines.append("- Task execution audit not present in snapshot.")
 
     lines.extend(["", "## Latest Model Profile", ""])
 

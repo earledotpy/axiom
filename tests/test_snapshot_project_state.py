@@ -160,3 +160,14 @@ def test_project_state_snapshot_scopes_model_profiles_to_requested_profile_label
 
     assert profiles
     assert {profile["profile_label"] for profile in profiles} == {"default"}
+    
+    
+def test_project_state_snapshot_includes_task_execution_audit():
+    snapshot = build_project_state_snapshot(profile_label="default")
+
+    assert "task_execution_audit" in snapshot
+    audit = snapshot["task_execution_audit"]
+
+    assert audit["checked"] is True
+    assert "passed" in audit
+    assert audit["scope"] == "latest_session"

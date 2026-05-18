@@ -35,11 +35,17 @@ def load_snapshot(path: Path) -> dict[str, Any]:
 
 
 def _latest_model_profile(snapshot: dict[str, Any]) -> dict[str, Any] | None:
+    profile_label = snapshot.get("profile_label", "default")
     profiles = (
         snapshot.get("database_state", {})
         .get("latest_model_profiles", [])
     )
-    return profiles[0] if profiles else None
+
+    for profile in profiles:
+        if profile.get("profile_label") == profile_label:
+            return profile
+
+    return None
 
 
 def _latest_session(snapshot: dict[str, Any]) -> dict[str, Any] | None:

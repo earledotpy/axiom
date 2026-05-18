@@ -52,7 +52,10 @@ def _run_command(command: list[str]) -> dict[str, Any]:
         }
 
 
-def _latest_model_profiles(limit: int = 5) -> list[dict[str, Any]]:
+def _latest_model_profiles(
+    profile_label: str = "default",
+    limit: int = 5,
+) -> list[dict[str, Any]]:
     with get_connection() as conn:
         rows = conn.execute(
             """
@@ -62,10 +65,11 @@ def _latest_model_profiles(limit: int = 5) -> list[dict[str, Any]]:
                    thinking_mode_rule_version, calibration_run_id,
                    is_current, registration_status, registered_at
             FROM model_profile_fingerprints
+            WHERE profile_label = ?
             ORDER BY profile_id DESC
             LIMIT ?
             """,
-            (limit,),
+            (profile_label, limit),
         ).fetchall()
 
     return [dict(row) for row in rows]
@@ -135,7 +139,7 @@ def build_project_state_snapshot(profile_label: str = "default") -> dict[str, An
 	"supervisor_health": foundation.get("supervisor_health"),
         "foundation_verification": foundation,
         "database_state": {
-            "latest_model_profiles": _latest_model_profiles(),
+            "latest_model_profiles": _latest_model_profiles(profile_label=profile_label),
             "latest_sessions": _latest_sessions(),
             "recent_security_events": _recent_security_events(),
         },

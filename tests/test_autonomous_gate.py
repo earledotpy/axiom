@@ -8,6 +8,28 @@ from axiom.core.autonomous_gate import (
 from axiom.persistence.db import get_connection, init_db
 
 
+def insert_active_tool_capability_map(conn):
+    conn.execute(
+        """
+        INSERT OR REPLACE INTO manifest_fingerprints
+        (manifest_id, manifest_type, relative_path, sha256, schema_version,
+         manifest_version, role_name, command_name, approved_by_panel_version,
+         active, registered_by_tool_version)
+        VALUES (?, ?, ?, ?, ?, ?, NULL, NULL, ?, 1, ?)
+        """,
+        (
+            "security.tool_capability_map.v1",
+            "tool_capability_map",
+            "policy/security_artifacts/tool_capability_map.json",
+            "0" * 64,
+            "axiom.tool_capability_map.v1",
+            "1.0.0",
+            "test",
+            "test",
+        ),
+    )
+    
+    
 def test_autonomous_gate_blocks_without_current_trusted_profile():
     init_db()
 
@@ -60,6 +82,7 @@ def test_autonomous_gate_allows_when_all_status_conditions_are_true():
     calibration_run_id = "autonomous.gate.allowed.calibration"
 
     with get_connection() as conn:
+        insert_active_tool_capability_map(conn)
         conn.execute(
             """
             INSERT INTO classifier_calibration_runs
@@ -134,6 +157,7 @@ def test_require_autonomous_ready_does_not_raise_when_allowed():
     calibration_run_id = "autonomous.gate.require.allowed.calibration"
 
     with get_connection() as conn:
+        insert_active_tool_capability_map(conn)
         conn.execute(
             """
             INSERT INTO classifier_calibration_runs

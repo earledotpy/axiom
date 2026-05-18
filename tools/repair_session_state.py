@@ -6,10 +6,12 @@ import sys
 from pathlib import Path
 from typing import Any
 
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from axiom.persistence.db import get_connection, init_db
+from axiom.core.scheduler import write_scheduler_heartbeat
 
 
 TOOL_VERSION = "repair_session_state.v1"
@@ -98,10 +100,49 @@ def write_security_event(
     )
 
 
+def refresh_ready_heartbeat_if_idle(session_id: int | None) -> int | None:
+    """
+    Write a fresh ready heartbeat for an idle repaired session.
+
+    This is intentionally conservative:
+    - Does nothing if there is no session_id.
+    - Does nothing if the session still has a running task.
+    - Writes a ready heartbeat only when the session is idle.
+    """
+    if session_id is None:
+        return None
+
+    with get_connection() as conn:
+        running = conn.execute(
+            """
+            SELECT task_id
+            FROM tasks
+            WHERE session_id = ? AND status = 'running'
+            LIMIT 1
+            """,
+            (session_id,),
+        ).fetchone()
+
+    if running is not None:
+        return None
+
+    return write_scheduler_heartbeat(
+        session_id=session_id,
+        scheduler_state="ready",
+        last_action="session_repaired",
+        active_task_id=None,
+        active_chain_id=None,
+        blocking_operation_type="session_repair",
+        tick_completed=True,
+        blocking_operation_completed=True,
+    )
+
+
 def repair_session_state(profile_label: str = "default") -> dict[str, Any]:
     init_db()
 
     changes: list[str] = []
+    session_id: int | None = None
 
     with get_connection() as conn:
         latest_session = get_latest_session(conn)
@@ -166,6 +207,18 @@ def repair_session_state(profile_label: str = "default") -> dict[str, Any]:
                 )
 
         repaired_session = get_latest_session(conn)
+
+    heartbeat_id = refresh_ready_heartbeat_if_idle(session_id)
+
+    return {
+        "tool_version": TOOL_VERSION,
+        "profile_label": profile_label,
+        "current_trusted_profile_present": has_current_profile,
+        "latest_profile": latest_profile,
+        "changes": changes,
+        "session": repaired_session,
+        "heartbeat_id": heartbeat_id,
+    }
 
     return {
         "tool_version": TOOL_VERSION,

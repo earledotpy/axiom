@@ -1,7 +1,12 @@
+import subprocess
+import sys
+from pathlib import Path
+
 from axiom.core.scheduler_dispatcher import dispatch_next_task
 from axiom.core.task_lifecycle_audit import audit_task_lifecycle
 from axiom.persistence.db import get_connection, init_db
 
+ROOT = Path(__file__).resolve().parents[1]
 
 MANIFEST_ID = "security.tool_capability_map.v1"
 
@@ -177,3 +182,101 @@ def test_dispatch_next_task_keeps_lifecycle_audit_clean():
 
     assert audit.passed is True
     assert audit.violations == []
+
+
+def test_dispatch_next_task_cli_blocks_without_manual_test_override_when_autonomous_blocked():
+    init_db()
+
+    with get_connection() as conn:
+        session_id = conn.execute(
+            """
+            INSERT INTO sessions
+            (safe_pass_enabled, autonomous_operation_enabled, safe_pass_disabled_reason)
+            VALUES (0, 0, 'no_stored_profile')
+            """
+        ).lastrowid
+
+        task_id = conn.execute(
+            """
+            INSERT INTO tasks
+            (session_id, chain_id, task_class, task_type, status, manifest_id)
+            VALUES (?, ?, ?, ?, 'pending', ?)
+            """,
+            (
+                session_id,
+                "chain-cli-dispatch-blocked",
+                "system_maintenance",
+                "cli_dispatch_blocked_test",
+                "security.tool_capability_map.v1",
+            ),
+        ).lastrowid
+
+    result = subprocess.run(
+        [sys.executable, "tools/dispatch_next_task.py", str(session_id)],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 1
+    assert "autonomous readiness is not available" in result.stderr
+
+    with get_connection() as conn:
+        status = conn.execute(
+            "SELECT status FROM tasks WHERE task_id = ?",
+            (task_id,),
+        ).fetchone()["status"]
+
+    assert status == "pending"
+
+
+def test_dispatch_next_task_cli_allows_manual_test_override_when_autonomous_blocked():
+    init_db()
+
+    with get_connection() as conn:
+        session_id = conn.execute(
+            """
+            INSERT INTO sessions
+            (safe_pass_enabled, autonomous_operation_enabled, safe_pass_disabled_reason)
+            VALUES (0, 0, 'no_stored_profile')
+            """
+        ).lastrowid
+
+        task_id = conn.execute(
+            """
+            INSERT INTO tasks
+            (session_id, chain_id, task_class, task_type, status, manifest_id)
+            VALUES (?, ?, ?, ?, 'pending', ?)
+            """,
+            (
+                session_id,
+                "chain-cli-dispatch-override",
+                "system_maintenance",
+                "cli_dispatch_override_test",
+                "security.tool_capability_map.v1",
+            ),
+        ).lastrowid
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "tools/dispatch_next_task.py",
+            str(session_id),
+            "--manual-test-override",
+        ],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 0
+
+    with get_connection() as conn:
+        status = conn.execute(
+            "SELECT status FROM tasks WHERE task_id = ?",
+            (task_id,),
+        ).fetchone()["status"]
+
+    assert status == "running"

@@ -114,3 +114,58 @@ def test_generate_handoff_cli_writes_file():
 
     assert result.returncode == 0
     assert "wrote AXIOM handoff:" in result.stdout
+
+
+def test_handoff_ignores_model_profiles_not_matching_snapshot_profile_label():
+    snapshot = {
+        "profile_label": "default",
+        "tool_version": "test",
+        "snapshot_created_at_utc": "2026-05-17T00-00-00Z",
+        "project_root": "C:\\axiom",
+        "bootstrap_validation": {
+            "passed": True,
+            "operational_mode": "fail_closed_non_autonomous",
+        },
+        "autonomous_readiness": {
+            "allowed": False,
+            "blocking_reasons": ["no_current_trusted_model_profile"],
+        },
+        "foundation_verification": {
+            "foundation_passed": True,
+            "operational_mode": "fail_closed_non_autonomous",
+            "supervisor_health": {
+                "checked": True,
+                "reason": "supervisor_health_ok",
+                "healthy": True,
+                "scheduler_stale": False,
+                "running_count": 0,
+                "active_task_present": False,
+                "active_task_status": None,
+            },
+        },
+        "supervisor_health": {
+            "checked": True,
+            "reason": "supervisor_health_ok",
+            "healthy": True,
+            "scheduler_stale": False,
+            "running_count": 0,
+            "active_task_present": False,
+            "active_task_status": None,
+        },
+        "database_state": {
+            "latest_model_profiles": [
+                {
+                    "profile_label": "not_default_test_profile",
+                    "model_name": "qwen3:4b",
+                    "registration_status": "current",
+                    "is_current": 1,
+                }
+            ],
+            "latest_sessions": [],
+        },
+    }
+
+    markdown = build_handoff_markdown(snapshot)
+
+    assert "not_default_test_profile" not in markdown
+    assert "No model profile rows found." in markdown

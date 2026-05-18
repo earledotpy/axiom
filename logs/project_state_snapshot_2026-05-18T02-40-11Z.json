@@ -1,0 +1,481 @@
+{
+  "autonomous_readiness": {
+    "allowed": false,
+    "blocking_reasons": [
+      "no_current_trusted_model_profile",
+      "safe_pass_disabled",
+      "autonomous_operation_disabled"
+    ],
+    "status": {
+      "autonomous_available": false,
+      "autonomous_operation_enabled": false,
+      "blocking_reasons": [
+        "no_current_trusted_model_profile",
+        "safe_pass_disabled",
+        "autonomous_operation_disabled"
+      ],
+      "current_trusted_model_profile_present": false,
+      "database_initialized": true,
+      "details": {
+        "active_manifest_count": 1,
+        "current_model_profile": null,
+        "latest_model_profile": null,
+        "profile_label": "default",
+        "safe_pass_disabled_reason": "no_session",
+        "session_id": null,
+        "tool_capability_map_registered": true
+      },
+      "manifest_fingerprints_valid": true,
+      "model_candidate_profile_present": false,
+      "safe_pass_enabled": false
+    }
+  },
+  "bootstrap": {
+    "autonomous_readiness": {
+      "allowed": false,
+      "blocking_reasons": [
+        "no_current_trusted_model_profile",
+        "safe_pass_disabled",
+        "autonomous_operation_disabled"
+      ],
+      "status": {
+        "autonomous_available": false,
+        "autonomous_operation_enabled": false,
+        "blocking_reasons": [
+          "no_current_trusted_model_profile",
+          "safe_pass_disabled",
+          "autonomous_operation_disabled"
+        ],
+        "current_trusted_model_profile_present": false,
+        "database_initialized": true,
+        "details": {
+          "active_manifest_count": 1,
+          "current_model_profile": null,
+          "latest_model_profile": null,
+          "profile_label": "default",
+          "safe_pass_disabled_reason": "no_session",
+          "session_id": null,
+          "tool_capability_map_registered": true
+        },
+        "manifest_fingerprints_valid": true,
+        "model_candidate_profile_present": false,
+        "safe_pass_enabled": false
+      }
+    },
+    "checks": [
+      {
+        "details": {
+          "busy_timeout": 5000,
+          "cache_size": -32768,
+          "foreign_keys": 1,
+          "journal_mode": "wal",
+          "synchronous": 2
+        },
+        "name": "sqlite_pragmas",
+        "passed": true,
+        "reason": "sqlite_pragmas_valid"
+      },
+      {
+        "details": {
+          "schema_versions": [
+            "v1.11.4"
+          ]
+        },
+        "name": "schema_version",
+        "passed": true,
+        "reason": "schema_version_valid"
+      },
+      {
+        "details": {
+          "table": "memory_item_embeddings"
+        },
+        "name": "sqlite_vec_table",
+        "passed": true,
+        "reason": "memory_vec_table_present"
+      },
+      {
+        "details": {
+          "tool_count": 15,
+          "tool_ids": [
+            "filesystem.read",
+            "filesystem.write",
+            "memory_gateway.query",
+            "memory_gateway.write",
+            "model_gateway.call",
+            "network_gateway.fetch",
+            "sandbox_gateway.execute",
+            "session_controller.cancel_current_chain",
+            "session_controller.enable_autonomous",
+            "session_controller.pause_after_current",
+            "session_controller.reconcile_provider_usage",
+            "session_controller.resume",
+            "session_controller.run_classifier_validation",
+            "session_controller.shutdown_after_current",
+            "session_controller.status"
+          ]
+        },
+        "name": "tool_capability_map",
+        "passed": true,
+        "reason": "tool_capability_map_loaded"
+      },
+      {
+        "details": {
+          "manifest_ids": [
+            "security.tool_capability_map.v1"
+          ],
+          "verified_count": 1
+        },
+        "name": "manifest_fingerprints",
+        "passed": true,
+        "reason": "manifest_fingerprints_valid"
+      }
+    ],
+    "operational_mode": "fail_closed_non_autonomous",
+    "passed": true
+  },
+  "database_state": {
+    "latest_model_profiles": [],
+    "latest_sessions": [
+      {
+        "autonomous_operation_enabled": 0,
+        "created_at": "2026-05-18T02:40:11.263Z",
+        "ended_at": null,
+        "safe_pass_disabled_at": null,
+        "safe_pass_disabled_reason": "no_stored_profile",
+        "safe_pass_enabled": 0,
+        "scheduler_status": "initializing",
+        "session_id": 1,
+        "shutdown_requested": 0
+      }
+    ],
+    "recent_security_events": [
+      {
+        "created_at": "2026-05-18T02:40:11.241Z",
+        "event_id": 2,
+        "event_type": "manifest_boot_verification_passed",
+        "reason": "all_active_manifest_fingerprints_valid",
+        "session_id": null,
+        "severity": "info",
+        "task_id": null
+      },
+      {
+        "created_at": "2026-05-18T02:40:11.208Z",
+        "event_id": 1,
+        "event_type": "manifest_boot_verification_passed",
+        "reason": "all_active_manifest_fingerprints_valid",
+        "session_id": null,
+        "severity": "info",
+        "task_id": null
+      }
+    ]
+  },
+  "foundation_verification": {
+    "autonomous_allowed": false,
+    "autonomous_readiness": {
+      "allowed": false,
+      "blocking_reasons": [
+        "no_current_trusted_model_profile",
+        "safe_pass_disabled",
+        "autonomous_operation_disabled"
+      ],
+      "status": {
+        "autonomous_available": false,
+        "autonomous_operation_enabled": false,
+        "blocking_reasons": [
+          "no_current_trusted_model_profile",
+          "safe_pass_disabled",
+          "autonomous_operation_disabled"
+        ],
+        "current_trusted_model_profile_present": false,
+        "database_initialized": true,
+        "details": {
+          "active_manifest_count": 1,
+          "current_model_profile": null,
+          "latest_model_profile": null,
+          "profile_label": "default",
+          "safe_pass_disabled_reason": "no_stored_profile",
+          "session_id": 1,
+          "tool_capability_map_registered": true
+        },
+        "manifest_fingerprints_valid": true,
+        "model_candidate_profile_present": false,
+        "safe_pass_enabled": false
+      }
+    },
+    "blocking_reasons": [
+      "no_current_trusted_model_profile",
+      "safe_pass_disabled",
+      "autonomous_operation_disabled"
+    ],
+    "bootstrap": {
+      "autonomous_readiness": {
+        "allowed": false,
+        "blocking_reasons": [
+          "no_current_trusted_model_profile",
+          "safe_pass_disabled",
+          "autonomous_operation_disabled"
+        ],
+        "status": {
+          "autonomous_available": false,
+          "autonomous_operation_enabled": false,
+          "blocking_reasons": [
+            "no_current_trusted_model_profile",
+            "safe_pass_disabled",
+            "autonomous_operation_disabled"
+          ],
+          "current_trusted_model_profile_present": false,
+          "database_initialized": true,
+          "details": {
+            "active_manifest_count": 1,
+            "current_model_profile": null,
+            "latest_model_profile": null,
+            "profile_label": "default",
+            "safe_pass_disabled_reason": "no_session",
+            "session_id": null,
+            "tool_capability_map_registered": true
+          },
+          "manifest_fingerprints_valid": true,
+          "model_candidate_profile_present": false,
+          "safe_pass_enabled": false
+        }
+      },
+      "checks": [
+        {
+          "details": {
+            "busy_timeout": 5000,
+            "cache_size": -32768,
+            "foreign_keys": 1,
+            "journal_mode": "wal",
+            "synchronous": 2
+          },
+          "name": "sqlite_pragmas",
+          "passed": true,
+          "reason": "sqlite_pragmas_valid"
+        },
+        {
+          "details": {
+            "schema_versions": [
+              "v1.11.4"
+            ]
+          },
+          "name": "schema_version",
+          "passed": true,
+          "reason": "schema_version_valid"
+        },
+        {
+          "details": {
+            "table": "memory_item_embeddings"
+          },
+          "name": "sqlite_vec_table",
+          "passed": true,
+          "reason": "memory_vec_table_present"
+        },
+        {
+          "details": {
+            "tool_count": 15,
+            "tool_ids": [
+              "filesystem.read",
+              "filesystem.write",
+              "memory_gateway.query",
+              "memory_gateway.write",
+              "model_gateway.call",
+              "network_gateway.fetch",
+              "sandbox_gateway.execute",
+              "session_controller.cancel_current_chain",
+              "session_controller.enable_autonomous",
+              "session_controller.pause_after_current",
+              "session_controller.reconcile_provider_usage",
+              "session_controller.resume",
+              "session_controller.run_classifier_validation",
+              "session_controller.shutdown_after_current",
+              "session_controller.status"
+            ]
+          },
+          "name": "tool_capability_map",
+          "passed": true,
+          "reason": "tool_capability_map_loaded"
+        },
+        {
+          "details": {
+            "manifest_ids": [
+              "security.tool_capability_map.v1"
+            ],
+            "verified_count": 1
+          },
+          "name": "manifest_fingerprints",
+          "passed": true,
+          "reason": "manifest_fingerprints_valid"
+        }
+      ],
+      "operational_mode": "fail_closed_non_autonomous",
+      "passed": true
+    },
+    "fail_closed_coherent": true,
+    "foundation_passed": true,
+    "operational_mode": "fail_closed_non_autonomous",
+    "profile_label": "default",
+    "session_repair": {
+      "changes": [
+        "created_session"
+      ],
+      "current_trusted_profile_present": false,
+      "heartbeat_id": 1,
+      "latest_profile": null,
+      "profile_label": "default",
+      "session": {
+        "autonomous_operation_enabled": 0,
+        "safe_pass_disabled_reason": "no_stored_profile",
+        "safe_pass_enabled": 0,
+        "session_id": 1
+      },
+      "tool_version": "repair_session_state.v1"
+    },
+    "session_repair_completed": true,
+    "status": {
+      "autonomous_available": false,
+      "autonomous_operation_enabled": false,
+      "blocking_reasons": [
+        "no_current_trusted_model_profile",
+        "safe_pass_disabled",
+        "autonomous_operation_disabled"
+      ],
+      "current_trusted_model_profile_present": false,
+      "database_initialized": true,
+      "details": {
+        "active_manifest_count": 1,
+        "current_model_profile": null,
+        "latest_model_profile": null,
+        "profile_label": "default",
+        "safe_pass_disabled_reason": "no_stored_profile",
+        "session_id": 1,
+        "tool_capability_map_registered": true
+      },
+      "manifest_fingerprints_valid": true,
+      "model_candidate_profile_present": false,
+      "safe_pass_enabled": false
+    },
+    "supervisor_health": {
+      "checked": true,
+      "health": {
+        "active_task_present": false,
+        "active_task_status": null,
+        "details": {},
+        "healthy": true,
+        "latest_heartbeat": {
+          "active_chain_id": null,
+          "active_task_id": null,
+          "created_at": "2026-05-18T02:40:11.276Z",
+          "heartbeat_id": 1,
+          "last_action": "session_repaired",
+          "last_blocking_operation_completed_at": "2026-05-18T02:40:11.276Z",
+          "last_blocking_operation_started_at": "2026-05-18T02:40:11.276Z",
+          "last_blocking_operation_type": "session_repair",
+          "last_freshness_at": "2026-05-18T02:40:11.276Z",
+          "last_tick_completed_at": "2026-05-18T02:40:11.276Z",
+          "last_tick_started_at": "2026-05-18T02:40:11.276Z",
+          "scheduler_state": "ready",
+          "session_id": 1,
+          "tick_count": 1,
+          "updated_at": "2026-05-18T02:40:11.276Z"
+        },
+        "reason": "supervisor_health_ok",
+        "running_count": 0,
+        "running_task_invariant_valid": true,
+        "scheduler_stale": false,
+        "session_id": 1
+      },
+      "reason": "supervisor_health_ok"
+    },
+    "tool_version": "verify_foundation.v2"
+  },
+  "git": {
+    "rev_parse_head": {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "9bf7d3398aab9621c0f76809a116f2e02c40a496"
+    },
+    "status_short": {
+      "command": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "M AGENTS.md\n M axiom.db\n M axiom/core/__pycache__/scheduler.cpython-311.pyc\n M axiom/core/scheduler.py\n D logs/axiom_handoff_2026-05-16T21-38-21Z.md\n D logs/axiom_handoff_2026-05-16T21-38-22Z.md\n D logs/axiom_handoff_2026-05-16T21-43-21Z.md\n D logs/axiom_handoff_2026-05-16T21-43-22Z.md\n D logs/axiom_handoff_2026-05-16T21-43-23Z.md\n D logs/axiom_handoff_2026-05-16T21-48-02Z.md\n D logs/axiom_handoff_2026-05-16T21-48-03Z.md\n D logs/axiom_handoff_2026-05-16T21-48-04Z.md\n D logs/axiom_handoff_2026-05-17T03-45-20Z.md\n D logs/axiom_handoff_2026-05-17T03-45-21Z.md\n D logs/axiom_handoff_2026-05-17T03-58-09Z.md\n D logs/axiom_handoff_2026-05-17T03-58-10Z.md\n D logs/axiom_handoff_2026-05-17T03-58-11Z.md\n D logs/axiom_handoff_2026-05-17T04-15-34Z.md\n D logs/axiom_handoff_2026-05-17T04-15-35Z.md\n D logs/axiom_handoff_2026-05-17T04-29-23Z.md\n D logs/axiom_handoff_2026-05-17T04-29-24Z.md\n D logs/axiom_handoff_2026-05-17T04-40-37Z.md\n D logs/axiom_handoff_2026-05-17T04-40-38Z.md\n D logs/axiom_handoff_2026-05-17T04-40-39Z.md\n D logs/axiom_handoff_2026-05-17T04-46-22Z.md\n D logs/axiom_handoff_2026-05-17T04-46-23Z.md\n D logs/axiom_handoff_2026-05-17T04-54-43Z.md\n D logs/axiom_handoff_2026-05-17T04-54-44Z.md\n D logs/axiom_handoff_2026-05-17T05-10-40Z.md\n D logs/axiom_handoff_2026-05-17T05-10-41Z.md\n D logs/axiom_handoff_2026-05-17T05-29-23Z.md\n D logs/axiom_handoff_2026-05-17T05-29-24Z.md\n D logs/axiom_handoff_2026-05-17T05-59-19Z.md\n D logs/axiom_handoff_2026-05-17T05-59-20Z.md\n D logs/axiom_handoff_2026-05-17T06-04-22Z.md\n D logs/axiom_handoff_2026-05-17T06-04-23Z.md\n D logs/axiom_handoff_2026-05-17T06-09-28Z.md\n D logs/axiom_handoff_2026-05-17T06-09-29Z.md\n D logs/axiom_handoff_2026-05-17T06-09-42Z.md\n D logs/axiom_handoff_2026-05-17T06-09-43Z.md\n D logs/axiom_handoff_2026-05-17T06-09-44Z.md\n D logs/axiom_handoff_2026-05-17T06-53-25Z.md\n D logs/axiom_handoff_2026-05-17T06-53-26Z.md\n D logs/axiom_handoff_2026-05-17T06-53-27Z.md\n D logs/axiom_handoff_2026-05-17T06-53-44Z.md\n D logs/axiom_handoff_2026-05-17T06-53-45Z.md\n D logs/checkpoint_2026-05-16_model_fingerprint.txt\n D logs/checkpoint_foundation_candidate_profile.txt\n D logs/checkpoint_foundation_verification.txt\n D logs/checkpoint_model_fingerprint_registration.txt\n D logs/checkpoint_status_reporter.txt\n D logs/handoff_bundle_manifest_2026-05-16T20-56-31Z.json\n D logs/handoff_bundle_manifest_2026-05-16T21-38-21Z.json\n D logs/handoff_bundle_manifest_2026-05-16T21-38-22Z.json\n D logs/handoff_bundle_manifest_2026-05-16T21-43-22Z.json\n D logs/handoff_bundle_manifest_2026-05-16T21-43-23Z.json\n D logs/handoff_bundle_manifest_2026-05-16T21-48-03Z.json\n D logs/handoff_bundle_manifest_2026-05-16T21-48-04Z.json\n D logs/handoff_bundle_manifest_2026-05-17T03-45-20Z.json\n D logs/handoff_bundle_manifest_2026-05-17T03-45-21Z.json\n D logs/handoff_bundle_manifest_2026-05-17T03-58-10Z.json\n D logs/handoff_bundle_manifest_2026-05-17T03-58-11Z.json\n D logs/handoff_bundle_manifest_2026-05-17T04-15-34Z.json\n D logs/handoff_bundle_manifest_2026-05-17T04-15-35Z.json\n D logs/handoff_bundle_manifest_2026-05-17T04-29-23Z.json\n D logs/handoff_bundle_manifest_2026-05-17T04-29-24Z.json\n D logs/handoff_bundle_manifest_2026-05-17T04-40-38Z.json\n D logs/handoff_bundle_manifest_2026-05-17T04-40-39Z.json\n D logs/handoff_bundle_manifest_2026-05-17T04-46-22Z.json\n D logs/handoff_bundle_manifest_2026-05-17T04-46-23Z.json\n D logs/handoff_bundle_manifest_2026-05-17T04-54-43Z.json\n D logs/handoff_bundle_manifest_2026-05-17T04-54-44Z.json\n D logs/handoff_bundle_manifest_2026-05-17T05-10-40Z.json\n D logs/handoff_bundle_manifest_2026-05-17T05-10-41Z.json\n D logs/handoff_bundle_manifest_2026-05-17T05-29-23Z.json\n D logs/handoff_bundle_manifest_2026-05-17T05-29-24Z.json\n D logs/handoff_bundle_manifest_2026-05-17T05-59-19Z.json\n D logs/handoff_bundle_manifest_2026-05-17T05-59-20Z.json\n D logs/handoff_bundle_manifest_2026-05-17T06-04-22Z.json\n D logs/handoff_bundle_manifest_2026-05-17T06-04-23Z.json\n D logs/handoff_bundle_manifest_2026-05-17T06-09-28Z.json\n D logs/handoff_bundle_manifest_2026-05-17T06-09-29Z.json\n D logs/handoff_bundle_manifest_2026-05-17T06-09-43Z.json\n D logs/handoff_bundle_manifest_2026-05-17T06-09-44Z.json\n D logs/handoff_bundle_manifest_2026-05-17T06-53-26Z.json\n D logs/handoff_bundle_manifest_2026-05-17T06-53-27Z.json\n D logs/handoff_bundle_manifest_2026-05-17T06-53-44Z.json\n D logs/handoff_bundle_manifest_2026-05-17T06-53-45Z.json\n D logs/operator_command_index_2026-05-16T20-49-36Z.md\n D logs/operator_command_index_2026-05-16T20-50-00Z.json\n D logs/operator_command_index_2026-05-16T21-38-21Z.json\n D logs/operator_command_index_2026-05-16T21-38-21Z.md\n D logs/operator_command_index_2026-05-16T21-38-22Z.json\n D logs/operator_command_index_2026-05-16T21-38-22Z.md\n D logs/operator_command_index_2026-05-16T21-38-23Z.json\n D logs/operator_command_index_2026-05-16T21-38-23Z.md\n D logs/operator_command_index_2026-05-16T21-43-22Z.json\n D logs/operator_command_index_2026-05-16T21-43-22Z.md\n D logs/operator_command_index_2026-05-16T21-43-23Z.json\n D logs/operator_command_index_2026-05-16T21-43-23Z.md\n D logs/operator_command_index_2026-05-16T21-48-03Z.json\n D logs/operator_command_index_2026-05-16T21-48-03Z.md\n D logs/operator_command_index_2026-05-16T21-48-04Z.json\n D logs/operator_command_index_2026-05-16T21-48-04Z.md\n D logs/operator_command_index_2026-05-16T21-48-05Z.json\n D logs/operator_command_index_2026-05-16T21-48-05Z.md\n D logs/operator_command_index_2026-05-17T03-45-20Z.json\n D logs/operator_command_index_2026-05-17T03-45-20Z.md\n D logs/operator_command_index_2026-05-17T03-45-21Z.json\n D logs/operator_command_index_2026-05-17T03-45-21Z.md\n D logs/operator_command_index_2026-05-17T03-45-22Z.json\n D logs/operator_command_index_2026-05-17T03-45-22Z.md\n D logs/operator_command_index_2026-05-17T03-58-09Z.json\n D logs/operator_command_index_2026-05-17T03-58-09Z.md\n D logs/operator_command_index_2026-05-17T03-58-10Z.json\n D logs/operator_command_index_2026-05-17T03-58-10Z.md\n D logs/operator_command_index_2026-05-17T03-58-11Z.json\n D logs/operator_command_index_2026-05-17T03-58-11Z.md\n D logs/operator_command_index_2026-05-17T04-15-34Z.json\n D logs/operator_command_index_2026-05-17T04-15-34Z.md\n D logs/operator_command_index_2026-05-17T04-15-35Z.json\n D logs/operator_command_index_2026-05-17T04-15-35Z.md\n D logs/operator_command_index_2026-05-17T04-15-36Z.json\n D logs/operator_command_index_2026-05-17T04-15-36Z.md\n D logs/operator_command_index_2026-05-17T04-29-23Z.json\n D logs/operator_command_index_2026-05-17T04-29-23Z.md\n D logs/operator_command_index_2026-05-17T04-29-24Z.json\n D logs/operator_command_index_2026-05-17T04-29-24Z.md\n D logs/operator_command_index_2026-05-17T04-29-25Z.json\n D logs/operator_command_index_2026-05-17T04-29-25Z.md\n D logs/operator_command_index_2026-05-17T04-40-38Z.json\n D logs/operator_command_index_2026-05-17T04-40-38Z.md\n D logs/operator_command_index_2026-05-17T04-40-39Z.json\n D logs/operator_command_index_2026-05-17T04-40-39Z.md\n D logs/operator_command_index_2026-05-17T04-40-40Z.json\n D logs/operator_command_index_2026-05-17T04-40-40Z.md\n D logs/operator_command_index_2026-05-17T04-46-22Z.json\n D logs/operator_command_index_2026-05-17T04-46-22Z.md\n D logs/operator_command_index_2026-05-17T04-46-23Z.json\n D logs/operator_command_index_2026-05-17T04-46-23Z.md\n D logs/operator_command_index_2026-05-17T04-46-24Z.json\n D logs/operator_command_index_2026-05-17T04-46-24Z.md\n D logs/operator_command_index_2026-05-17T04-54-43Z.json\n D logs/operator_command_index_2026-05-17T04-54-43Z.md\n D logs/operator_command_index_2026-05-17T04-54-44Z.json\n D logs/operator_command_index_2026-05-17T04-54-44Z.md\n D logs/operator_command_index_2026-05-17T04-54-45Z.json\n D logs/operator_command_index_2026-05-17T04-54-45Z.md\n D logs/operator_command_index_2026-05-17T05-10-40Z.json\n D logs/operator_command_index_2026-05-17T05-10-40Z.md\n D logs/operator_command_index_2026-05-17T05-10-41Z.json\n D logs/operator_command_index_2026-05-17T05-10-41Z.md\n D logs/operator_command_index_2026-05-17T05-29-23Z.json\n D logs/operator_command_index_2026-05-17T05-29-23Z.md\n D logs/operator_command_index_2026-05-17T05-29-24Z.json\n D logs/operator_command_index_2026-05-17T05-29-24Z.md\n D logs/operator_command_index_2026-05-17T05-29-25Z.json\n D logs/operator_command_index_2026-05-17T05-29-25Z.md\n D logs/operator_command_index_2026-05-17T05-59-19Z.json\n D logs/operator_command_index_2026-05-17T05-59-19Z.md\n D logs/operator_command_index_2026-05-17T05-59-20Z.json\n D logs/operator_command_index_2026-05-17T05-59-20Z.md\n D logs/operator_command_index_2026-05-17T05-59-21Z.json\n D logs/operator_command_index_2026-05-17T05-59-21Z.md\n D logs/operator_command_index_2026-05-17T06-04-22Z.json\n D logs/operator_command_index_2026-05-17T06-04-22Z.md\n D logs/operator_command_index_2026-05-17T06-04-23Z.json\n D logs/operator_command_index_2026-05-17T06-04-23Z.md\n D logs/operator_command_index_2026-05-17T06-04-24Z.json\n D logs/operator_command_index_2026-05-17T06-04-24Z.md\n D logs/operator_command_index_2026-05-17T06-09-28Z.json\n D logs/operator_command_index_2026-05-17T06-09-28Z.md\n D logs/operator_command_index_2026-05-17T06-09-29Z.json\n D logs/operator_command_index_2026-05-17T06-09-29Z.md\n D logs/operator_command_index_2026-05-17T06-09-43Z.json\n D logs/operator_command_index_2026-05-17T06-09-43Z.md\n D logs/operator_command_index_2026-05-17T06-09-44Z.json\n D logs/operator_command_index_2026-05-17T06-09-44Z.md\n D logs/operator_command_index_2026-05-17T06-53-26Z.json\n D logs/operator_command_index_2026-05-17T06-53-26Z.md\n D logs/operator_command_index_2026-05-17T06-53-27Z.json\n D logs/operator_command_index_2026-05-17T06-53-27Z.md\n D logs/operator_command_index_2026-05-17T06-53-44Z.json\n D logs/operator_command_index_2026-05-17T06-53-44Z.md\n D logs/operator_command_index_2026-05-17T06-53-45Z.json\n D logs/operator_command_index_2026-05-17T06-53-45Z.md\n D logs/operator_command_index_2026-05-17T06-53-46Z.json\n D logs/operator_command_index_2026-05-17T06-53-46Z.md\n D logs/project_state_snapshot_2026-05-16T19-52-48Z.json\n D logs/project_state_snapshot_2026-05-16T21-38-21Z.json\n D logs/project_state_snapshot_2026-05-16T21-38-22Z.json\n D logs/project_state_snapshot_2026-05-16T21-38-29Z.json\n D logs/project_state_snapshot_2026-05-16T21-43-22Z.json\n D logs/project_state_snapshot_2026-05-16T21-43-23Z.json\n D logs/project_state_snapshot_2026-05-16T21-43-28Z.json\n D logs/project_state_snapshot_2026-05-16T21-48-03Z.json\n D logs/project_state_snapshot_2026-05-16T21-48-04Z.json\n D logs/project_state_snapshot_2026-05-16T21-48-12Z.json\n D logs/project_state_snapshot_2026-05-17T03-45-20Z.json\n D logs/project_state_snapshot_2026-05-17T03-45-21Z.json\n D logs/project_state_snapshot_2026-05-17T03-45-27Z.json\n D logs/project_state_snapshot_2026-05-17T03-58-09Z.json\n D logs/project_state_snapshot_2026-05-17T03-58-10Z.json\n D logs/project_state_snapshot_2026-05-17T03-58-11Z.json\n D logs/project_state_snapshot_2026-05-17T03-58-16Z.json\n D logs/project_state_snapshot_2026-05-17T03-58-17Z.json\n D logs/project_state_snapshot_2026-05-17T04-15-34Z.json\n D logs/project_state_snapshot_2026-05-17T04-15-35Z.json\n D logs/project_state_snapshot_2026-05-17T04-15-41Z.json\n D logs/project_state_snapshot_2026-05-17T04-29-23Z.json\n D logs/project_state_snapshot_2026-05-17T04-29-24Z.json\n D logs/project_state_snapshot_2026-05-17T04-29-29Z.json\n D logs/project_state_snapshot_2026-05-17T04-29-30Z.json\n D logs/project_state_snapshot_2026-05-17T04-40-38Z.json\n D logs/project_state_snapshot_2026-05-17T04-40-39Z.json\n D logs/project_state_snapshot_2026-05-17T04-40-46Z.json\n D logs/project_state_snapshot_2026-05-17T04-40-47Z.json\n D logs/project_state_snapshot_2026-05-17T04-46-22Z.json\n D logs/project_state_snapshot_2026-05-17T04-46-23Z.json\n D logs/project_state_snapshot_2026-05-17T04-46-29Z.json\n D logs/project_state_snapshot_2026-05-17T04-46-30Z.json\n D logs/project_state_snapshot_2026-05-17T04-54-43Z.json\n D logs/project_state_snapshot_2026-05-17T04-54-44Z.json\n D logs/project_state_snapshot_2026-05-17T04-54-51Z.json\n D logs/project_state_snapshot_2026-05-17T05-10-40Z.json\n D logs/project_state_snapshot_2026-05-17T05-10-41Z.json\n D logs/project_state_snapshot_2026-05-17T05-10-48Z.json\n D logs/project_state_snapshot_2026-05-17T05-10-49Z.json\n D logs/project_state_snapshot_2026-05-17T05-29-23Z.json\n D logs/project_state_snapshot_2026-05-17T05-29-24Z.json\n D logs/project_state_snapshot_2026-05-17T05-29-33Z.json\n D logs/project_state_snapshot_2026-05-17T05-59-19Z.json\n D logs/project_state_snapshot_2026-05-17T05-59-20Z.json\n D logs/project_state_snapshot_2026-05-17T05-59-27Z.json\n D logs/project_state_snapshot_2026-05-17T05-59-28Z.json\n D logs/project_state_snapshot_2026-05-17T06-04-22Z.json\n D logs/project_state_snapshot_2026-05-17T06-04-23Z.json\n D logs/project_state_snapshot_2026-05-17T06-04-31Z.json\n D logs/project_state_snapshot_2026-05-17T06-09-27Z.json\n D logs/project_state_snapshot_2026-05-17T06-09-28Z.json\n D logs/project_state_snapshot_2026-05-17T06-09-29Z.json\n D logs/project_state_snapshot_2026-05-17T06-09-43Z.json\n D logs/project_state_snapshot_2026-05-17T06-09-44Z.json\n D logs/project_state_snapshot_2026-05-17T06-09-49Z.json\n D logs/project_state_snapshot_2026-05-17T06-09-50Z.json\n D logs/project_state_snapshot_2026-05-17T06-53-25Z.json\n D logs/project_state_snapshot_2026-05-17T06-53-26Z.json\n D logs/project_state_snapshot_2026-05-17T06-53-27Z.json\n D logs/project_state_snapshot_2026-05-17T06-53-44Z.json\n D logs/project_state_snapshot_2026-05-17T06-53-45Z.json\n D logs/project_state_snapshot_2026-05-17T06-53-51Z.json\n D logs/project_state_snapshot_2026-05-17T06-53-52Z.json\n M tests/__pycache__/test_autonomous_gate.cpython-311-pytest-8.4.2.pyc\n M tests/__pycache__/test_generate_handoff.cpython-311-pytest-8.4.2.pyc\n M tests/__pycache__/test_register_model_fingerprint.cpython-311-pytest-8.4.2.pyc\n M tests/__pycache__/test_scheduler_dispatcher.cpython-311-pytest-8.4.2.pyc\n M tests/__pycache__/test_snapshot_project_state.cpython-311-pytest-8.4.2.pyc\n M tests/__pycache__/test_task_starter.cpython-311-pytest-8.4.2.pyc\n M tests/test_autonomous_gate.py\n M tests/test_generate_handoff.py\n M tests/test_register_model_fingerprint.py\n M tests/test_scheduler_dispatcher.py\n M tests/test_snapshot_project_state.py\n M tests/test_task_starter.py\n M tools/__pycache__/generate_handoff.cpython-311.pyc\n M tools/__pycache__/register_model_fingerprint.cpython-311.pyc\n M tools/__pycache__/repair_session_state.cpython-311.pyc\n M tools/__pycache__/snapshot_project_state.cpython-311.pyc\n M tools/dispatch_next_task.py\n M tools/generate_handoff.py\n M tools/register_model_fingerprint.py\n M tools/repair_session_state.py\n M tools/snapshot_project_state.py\n M tools/start_task.py\n?? axiom/core/__pycache__/scheduler_loop.cpython-311.pyc\n?? axiom/core/scheduler_loop.py\n?? inspect_axiom_state.py\n?? inspect_heartbeat_schema.py\n?? inspect_latest_axiom_session.py\n?? inspect_latest_heartbeats.py\n?? inspect_session_4573.py\n?? logs/archive/\n?? logs/axiom_handoff_2026-05-17T18-17-57Z.md\n?? logs/axiom_handoff_2026-05-18T00-48-39Z.md\n?? logs/axiom_handoff_2026-05-18T00-48-40Z.md\n?? logs/axiom_handoff_2026-05-18T00-51-32Z.md\n?? logs/axiom_handoff_2026-05-18T00-51-48Z.md\n?? logs/axiom_handoff_2026-05-18T02-39-40Z.md\n?? logs/axiom_handoff_2026-05-18T02-39-41Z.md\n?? logs/axiom_handoff_2026-05-18T02-39-42Z.md\n?? logs/handoff_bundle_manifest_2026-05-17T18-17-57Z.json\n?? logs/handoff_bundle_manifest_2026-05-18T00-48-39Z.json\n?? logs/handoff_bundle_manifest_2026-05-18T00-48-40Z.json\n?? logs/handoff_bundle_manifest_2026-05-18T00-48-41Z.json\n?? logs/handoff_bundle_manifest_2026-05-18T00-51-48Z.json\n?? logs/handoff_bundle_manifest_2026-05-18T02-39-41Z.json\n?? logs/handoff_bundle_manifest_2026-05-18T02-39-42Z.json\n?? logs/operator_command_index_2026-05-17T18-17-57Z.json\n?? logs/operator_command_index_2026-05-18T00-48-39Z.json\n?? logs/operator_command_index_2026-05-18T00-48-39Z.md\n?? logs/operator_command_index_2026-05-18T00-48-40Z.json\n?? logs/operator_command_index_2026-05-18T00-48-40Z.md\n?? logs/operator_command_index_2026-05-18T00-48-46Z.json\n?? logs/operator_command_index_2026-05-18T00-48-46Z.md\n?? logs/operator_command_index_2026-05-18T00-51-48Z.json\n?? logs/operator_command_index_2026-05-18T00-51-48Z.md\n?? logs/operator_command_index_2026-05-18T02-39-41Z.json\n?? logs/operator_command_index_2026-05-18T02-39-41Z.md\n?? logs/operator_command_index_2026-05-18T02-39-42Z.json\n?? logs/operator_command_index_2026-05-18T02-39-42Z.md\n?? logs/operator_command_index_2026-05-18T02-39-49Z.json\n?? logs/operator_command_index_2026-05-18T02-39-49Z.md\n?? logs/project_state_snapshot_2026-05-18T00-48-39Z.json\n?? logs/project_state_snapshot_2026-05-18T00-48-40Z.json\n?? logs/project_state_snapshot_2026-05-18T00-49-06Z.json\n?? logs/project_state_snapshot_2026-05-18T00-49-07Z.json\n?? logs/project_state_snapshot_2026-05-18T00-51-32Z.json\n?? logs/project_state_snapshot_2026-05-18T00-51-48Z.json\n?? logs/project_state_snapshot_2026-05-18T02-39-41Z.json\n?? logs/project_state_snapshot_2026-05-18T02-39-42Z.json\n?? tests/__pycache__/conftest.cpython-311-pytest-8.4.2.pyc\n?? tests/__pycache__/test_scheduler_loop.cpython-311-pytest-8.4.2.pyc\n?? tests/__pycache__/test_test_db_isolation.cpython-311-pytest-8.4.2.pyc\n?? tests/conftest.py\n?? tests/test_scheduler_loop.py\n?? tests/test_test_db_isolation.py\n?? tools/archive_logs.py\n?? tools/run_scheduer_loop.py\n?? tools/run_scheduler_loop.py"
+    }
+  },
+  "profile_label": "default",
+  "project_root": "C:\\axiom",
+  "pytest": {
+    "last_known_target": "198 passed",
+    "note": "Snapshot does not run pytest; use pytest tests -v for live validation."
+  },
+  "python": {
+    "executable": "C:\\axiom\\venv\\Scripts\\python.exe",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]"
+  },
+  "snapshot_created_at_utc": "2026-05-18T02-40-11Z",
+  "status": {
+    "autonomous_available": false,
+    "autonomous_operation_enabled": false,
+    "blocking_reasons": [
+      "no_current_trusted_model_profile",
+      "safe_pass_disabled",
+      "autonomous_operation_disabled"
+    ],
+    "current_trusted_model_profile_present": false,
+    "database_initialized": true,
+    "details": {
+      "active_manifest_count": 1,
+      "current_model_profile": null,
+      "latest_model_profile": null,
+      "profile_label": "default",
+      "safe_pass_disabled_reason": "no_session",
+      "session_id": null,
+      "tool_capability_map_registered": true
+    },
+    "manifest_fingerprints_valid": true,
+    "model_candidate_profile_present": false,
+    "safe_pass_enabled": false
+  },
+  "supervisor_health": {
+    "checked": true,
+    "health": {
+      "active_task_present": false,
+      "active_task_status": null,
+      "details": {},
+      "healthy": true,
+      "latest_heartbeat": {
+        "active_chain_id": null,
+        "active_task_id": null,
+        "created_at": "2026-05-18T02:40:11.276Z",
+        "heartbeat_id": 1,
+        "last_action": "session_repaired",
+        "last_blocking_operation_completed_at": "2026-05-18T02:40:11.276Z",
+        "last_blocking_operation_started_at": "2026-05-18T02:40:11.276Z",
+        "last_blocking_operation_type": "session_repair",
+        "last_freshness_at": "2026-05-18T02:40:11.276Z",
+        "last_tick_completed_at": "2026-05-18T02:40:11.276Z",
+        "last_tick_started_at": "2026-05-18T02:40:11.276Z",
+        "scheduler_state": "ready",
+        "session_id": 1,
+        "tick_count": 1,
+        "updated_at": "2026-05-18T02:40:11.276Z"
+      },
+      "reason": "supervisor_health_ok",
+      "running_count": 0,
+      "running_task_invariant_valid": true,
+      "scheduler_stale": false,
+      "session_id": 1
+    },
+    "reason": "supervisor_health_ok"
+  },
+  "tool_version": "snapshot_project_state.v1"
+}

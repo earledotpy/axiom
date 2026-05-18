@@ -7,6 +7,34 @@ import pytest
 
 from axiom.persistence.db import get_connection
 
+
+def insert_passing_calibration_run(
+    calibration_run_id: str,
+    model_name: str = "qwen3:4b",
+    ollama_host: str = "http://localhost:11434",
+) -> None:
+    with get_connection() as conn:
+        conn.execute(
+            """
+            INSERT INTO classifier_calibration_runs
+            (calibration_run_id, calibration_set_id, calibration_set_sha256,
+             model_name, ollama_host, threshold, passed,
+             approved_by_panel_version)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(calibration_run_id) DO NOTHING
+            """,
+            (
+                calibration_run_id,
+                "test_calibration_set",
+                "1" * 64,
+                model_name,
+                ollama_host,
+                0.5,
+                1,
+                "test",
+            ),
+        )
+
 ROOT = Path(r"C:\axiom")
 sys.path.insert(0, str(ROOT / "tools"))
 
@@ -68,6 +96,8 @@ class FakeInspectorDisabled:
 def test_register_model_fingerprint_records_unknown_as_non_current_candidate(monkeypatch):
     monkeypatch.setattr(rmf, "OllamaPrereqInspector", FakeInspectorUnknown)
 
+    insert_passing_calibration_run("calibration.test.unknown")
+
     profile_id = rmf.register_model_fingerprint(
         model="qwen3:4b",
         profile_label="test_profile_unknown",
@@ -111,8 +141,8 @@ def test_register_model_fingerprint_records_unknown_as_non_current_candidate(mon
     assert row["registered_by_tool_version"] == "register_model_fingerprint.v1"
 
     assert calibration is not None
-    assert calibration["passed"] == 0
-    assert calibration["approved_by_panel_version"] == "pending_panel_approval"
+    assert calibration["passed"] == 1
+    assert calibration["approved_by_panel_version"] == "test"
 
     notes = json.loads(row["notes"])
     assert notes["runtime_thinking_enforcement"] == "gateway_required"
@@ -121,10 +151,13 @@ def test_register_model_fingerprint_records_unknown_as_non_current_candidate(mon
 def test_register_model_fingerprint_records_disabled_as_current(monkeypatch):
     monkeypatch.setattr(rmf, "OllamaPrereqInspector", FakeInspectorDisabled)
 
+    insert_passing_calibration_run("calibration.test.disabled")
+
     profile_id = rmf.register_model_fingerprint(
         model="qwen3:4b",
         profile_label="test_profile_disabled",
         calibration_run_id="calibration.test.disabled",
+        registration_status="current",
     )
 
     with get_connection() as conn:
@@ -146,15 +179,20 @@ def test_register_model_fingerprint_records_disabled_as_current(monkeypatch):
 def test_register_model_fingerprint_demotes_previous_current_row_only_when_new_current(monkeypatch):
     monkeypatch.setattr(rmf, "OllamaPrereqInspector", FakeInspectorDisabled)
 
+    insert_passing_calibration_run("calibration.test.demotion.1")
     first_id = rmf.register_model_fingerprint(
         model="qwen3:4b",
         profile_label="demotion_test",
         calibration_run_id="calibration.test.demotion.1",
+        registration_status="current",
     )
+
+    insert_passing_calibration_run("calibration.test.demotion.2")
     second_id = rmf.register_model_fingerprint(
         model="qwen3:4b",
         profile_label="demotion_test",
         calibration_run_id="calibration.test.demotion.2",
+        registration_status="current",
     )
 
     with get_connection() as conn:
@@ -175,14 +213,17 @@ def test_register_model_fingerprint_demotes_previous_current_row_only_when_new_c
 def test_register_model_fingerprint_unknown_candidate_does_not_demote_current(monkeypatch):
     monkeypatch.setattr(rmf, "OllamaPrereqInspector", FakeInspectorDisabled)
 
+    insert_passing_calibration_run("calibration.test.non_demotion.current")
     current_id = rmf.register_model_fingerprint(
         model="qwen3:4b",
         profile_label="non_demotion_test",
         calibration_run_id="calibration.test.non_demotion.current",
+        registration_status="current",
     )
 
     monkeypatch.setattr(rmf, "OllamaPrereqInspector", FakeInspectorUnknown)
 
+    insert_passing_calibration_run("calibration.test.non_demotion.candidate")
     candidate_id = rmf.register_model_fingerprint(
         model="qwen3:4b",
         profile_label="non_demotion_test",
@@ -246,3 +287,58 @@ def test_register_model_fingerprint_rejects_invalid_registration_status(monkeypa
             profile_label="invalid_status_test",
             registration_status="bad_status",
         )
+
+
+def test_register_model_fingerprint_rejects_missing_calibration(monkeypatch):
+    monkeypatch.setattr(rmf, "OllamaPrereqInspector", FakeInspectorDisabled)
+
+    try:
+        rmf.register_model_fingerprint(
+            model="qwen3:4b",
+            profile_label="missing_calibration_test",
+            calibration_run_id="calibration.test.missing",
+            registration_status="current",
+        )
+    except rmf.ModelFingerprintRegistrationError as exc:
+        assert "Calibration run not found" in str(exc)
+    else:
+        raise AssertionError("missing calibration run was accepted")
+
+
+def test_register_model_fingerprint_rejects_failed_calibration(monkeypatch):
+    monkeypatch.setattr(rmf, "OllamaPrereqInspector", FakeInspectorDisabled)
+
+    calibration_run_id = "calibration.test.failed"
+
+    with get_connection() as conn:
+        conn.execute(
+            """
+            INSERT INTO classifier_calibration_runs
+            (calibration_run_id, calibration_set_id, calibration_set_sha256,
+             model_name, ollama_host, threshold, passed,
+             approved_by_panel_version)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                calibration_run_id,
+                "test_calibration_set",
+                "2" * 64,
+                "qwen3:4b",
+                "http://localhost:11434",
+                0.5,
+                0,
+                "test",
+            ),
+        )
+
+    try:
+        rmf.register_model_fingerprint(
+            model="qwen3:4b",
+            profile_label="failed_calibration_test",
+            calibration_run_id=calibration_run_id,
+            registration_status="current",
+        )
+    except rmf.ModelFingerprintRegistrationError as exc:
+        assert "has not passed" in str(exc)
+    else:
+        raise AssertionError("failed calibration run was accepted")

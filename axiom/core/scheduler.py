@@ -43,17 +43,61 @@ def check_one_running_task_invariant(session_id: int) -> RunningTaskInvariant:
     )
 
 
-def write_scheduler_heartbeat(session_id: int, scheduler_state: str = "running") -> int:
+def write_scheduler_heartbeat(
+    session_id: int,
+    scheduler_state: str = "running",
+    last_action: str = "heartbeat",
+    active_task_id: int | None = None,
+    active_chain_id: str | None = None,
+    blocking_operation_type: str | None = None,
+    tick_completed: bool = True,
+    blocking_operation_completed: bool = True,
+) -> int:
     with get_connection() as conn:
-        cur = conn.execute(
+        row = conn.execute(
+            """
+            SELECT strftime('%Y-%m-%dT%H:%M:%fZ', 'now') AS now
+            """
+        ).fetchone()
+        now = row["now"]
+
+        cursor = conn.execute(
             """
             INSERT INTO scheduler_heartbeat
-            (session_id, scheduler_state, last_freshness_at, last_action)
-            VALUES (?, ?, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'), ?)
+            (session_id,
+             last_freshness_at,
+             last_tick_started_at,
+             last_tick_completed_at,
+             last_blocking_operation_started_at,
+             last_blocking_operation_completed_at,
+             last_blocking_operation_type,
+             active_task_id,
+             active_chain_id,
+             scheduler_state,
+             last_action,
+             tick_count,
+             created_at,
+             updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)
             """,
-            (session_id, scheduler_state, "heartbeat"),
+            (
+                session_id,
+                now,
+                now,
+                now if tick_completed else None,
+                now,
+                now if blocking_operation_completed else None,
+                blocking_operation_type,
+                active_task_id,
+                active_chain_id,
+                scheduler_state,
+                last_action,
+                now,
+                now,
+            ),
         )
-        return int(cur.lastrowid)
+
+        return int(cursor.lastrowid)
 
 
 def get_latest_scheduler_heartbeat(session_id: int) -> dict | None:

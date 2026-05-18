@@ -83,58 +83,47 @@ def ensure_classifier_calibration_run(
     model: str,
     host: str,
 ) -> None:
+    """
+    Require a real, pre-existing, passed calibration run before a model
+    profile can be registered.
+
+    This function must not create synthetic calibration rows.
+    """
+    if calibration_run_id == "pending_calibration":
+        raise ModelFingerprintRegistrationError(
+            "Calibration run is pending; refusing trusted model registration."
+        )
+
     with get_connection() as conn:
-        existing = conn.execute(
+        row = conn.execute(
             """
-            SELECT calibration_run_id
+            SELECT calibration_run_id, model_name, ollama_host, passed
             FROM classifier_calibration_runs
             WHERE calibration_run_id = ?
             """,
             (calibration_run_id,),
         ).fetchone()
 
-        if existing is not None:
-            return
+    if row is None:
+        raise ModelFingerprintRegistrationError(
+            f"Calibration run not found: {calibration_run_id}"
+        )
 
-        conn.execute(
-            """
-            INSERT INTO classifier_calibration_runs
-            (calibration_run_id, calibration_set_id, calibration_set_sha256,
-             model_name, ollama_host, threshold, passed,
-             true_positive_count, true_negative_count,
-             false_positive_count, false_negative_count,
-             false_positive_rate, false_negative_rate,
-             approved_by_panel_version, details_json)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
-                calibration_run_id,
-                "pending_calibration_set",
-                "0" * 64,
-                model,
-                host,
-                0.0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                None,
-                None,
-                "pending_panel_approval",
-                json.dumps(
-                    {
-                        "status": "pending_calibration",
-                        "created_by": TOOL_VERSION,
-                        "note": (
-                            "Placeholder FK target only; not an approved "
-                            "classifier calibration."
-                        ),
-                    },
-                    sort_keys=True,
-                    ensure_ascii=False,
-                ),
-            ),
+    if row["model_name"] != model:
+        raise ModelFingerprintRegistrationError(
+            "Calibration run model mismatch: "
+            f"expected {model}, got {row['model_name']}"
+        )
+
+    if row["ollama_host"] != host:
+        raise ModelFingerprintRegistrationError(
+            "Calibration run host mismatch: "
+            f"expected {host}, got {row['ollama_host']}"
+        )
+
+    if int(row["passed"]) != 1:
+        raise ModelFingerprintRegistrationError(
+            f"Calibration run has not passed: {calibration_run_id}"
         )
 
 
@@ -142,16 +131,28 @@ def resolve_registration_state(
     profile_thinking_mode: str,
     requested_registration_status: str,
 ) -> tuple[int, str]:
-    if profile_thinking_mode == "unknown":
+    """
+    Resolve model-profile registration state without silently promoting
+    candidate profiles.
+
+    Rules:
+    - thinking_mode='unknown' can only be candidate/non-current.
+    - requested candidate remains candidate/non-current.
+    - requested current requires thinking_mode='disabled'.
+    - superseded/rejected are always non-current.
+    """
+    if requested_registration_status == "candidate":
         return 0, "candidate"
 
-    if requested_registration_status == "candidate":
-        return 1, "current"
+    if requested_registration_status in {"superseded", "rejected"}:
+        return 0, requested_registration_status
 
     if requested_registration_status == "current":
+        if profile_thinking_mode != "disabled":
+            return 0, "candidate"
         return 1, "current"
 
-    return 0, requested_registration_status
+    return 0, "candidate"
 
 
 def register_model_fingerprint(

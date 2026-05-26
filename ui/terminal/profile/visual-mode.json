@@ -1,0 +1,7 @@
+{
+  "schema_version": "axiom.terminal.visual_mode.v1",
+  "prompt_mode": "dashboard",
+  "startup_banner": true,
+  "theme": "axiom-dashboard",
+  "notes": "AXIOM Terminal visual settings only. Does not affect AXIOM runtime state."
+}

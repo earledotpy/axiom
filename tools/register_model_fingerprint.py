@@ -129,30 +129,33 @@ def ensure_classifier_calibration_run(
 
 def resolve_registration_state(
     profile_thinking_mode: str,
+    runtime_thinking_enforcement: str,
     requested_registration_status: str,
-) -> tuple[int, str]:
+) -> tuple[int, str, str]:
     """
     Resolve model-profile registration state without silently promoting
     candidate profiles.
 
     Rules:
-    - thinking_mode='unknown' can only be candidate/non-current.
+    - thinking_mode='unknown' can only be current when gateway enforcement is recorded.
     - requested candidate remains candidate/non-current.
-    - requested current requires thinking_mode='disabled'.
+    - requested current requires thinking_mode='disabled' or gateway_required enforcement.
     - superseded/rejected are always non-current.
     """
     if requested_registration_status == "candidate":
-        return 0, "candidate"
+        return 0, "candidate", profile_thinking_mode
 
     if requested_registration_status in {"superseded", "rejected"}:
-        return 0, requested_registration_status
+        return 0, requested_registration_status, profile_thinking_mode
 
     if requested_registration_status == "current":
-        if profile_thinking_mode != "disabled":
-            return 0, "candidate"
-        return 1, "current"
+        if profile_thinking_mode == "disabled":
+            return 1, "current", "disabled"
+        if runtime_thinking_enforcement == "gateway_required":
+            return 1, "current", "disabled"
+        return 0, "candidate", profile_thinking_mode
 
-    return 0, "candidate"
+    return 0, "candidate", profile_thinking_mode
 
 
 def register_model_fingerprint(
@@ -219,8 +222,9 @@ def register_model_fingerprint(
         or f"unavailable:{model}"
     )
 
-    requested_current, effective_registration_status = resolve_registration_state(
+    requested_current, effective_registration_status, stored_thinking_mode = resolve_registration_state(
         profile_thinking_mode=result.profile_thinking_mode,
+        runtime_thinking_enforcement=result.runtime_thinking_enforcement,
         requested_registration_status=registration_status,
     )
 
@@ -234,11 +238,12 @@ def register_model_fingerprint(
         {
             "runtime_thinking_enforcement": result.runtime_thinking_enforcement,
             "profile_thinking_mode": result.profile_thinking_mode,
+            "stored_thinking_mode": stored_thinking_mode,
             "fingerprint_registration_ready": result.fingerprint_registration_ready,
             "raw_show_digest_available": raw_show.get("digest") is not None,
             "registration_note": (
-                "Profiles with thinking_mode='unknown' are recorded as "
-                "candidate/non-current due to canonical schema constraints."
+                "Profiles with thinking_mode='unknown' can be current only when "
+                "AXIOM records gateway_required thinking enforcement."
             ),
         },
         sort_keys=True,
@@ -297,7 +302,7 @@ def register_model_fingerprint(
                 details.get("parameter_size"),
                 details.get("family"),
                 details.get("format"),
-                result.profile_thinking_mode,
+                stored_thinking_mode,
                 thinking_mode_rule_version,
                 template_sha256,
                 system_sha256,

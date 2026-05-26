@@ -24,6 +24,29 @@ def test_project_state_snapshot_shape():
     assert "foundation_verification" in snapshot
     assert "database_state" in snapshot
     assert "supervisor_health" in snapshot
+    assert "source_documents" in snapshot
+
+    assert "execution_readiness" in snapshot
+
+    execution_readiness = snapshot["execution_readiness"]
+    assert execution_readiness["checked"] is True
+    assert "ready" in execution_readiness
+    assert "session_id" in execution_readiness
+    assert "lifecycle_audit_passed" in execution_readiness
+    assert "execution_audit_passed" in execution_readiness
+    assert "supervisor_health_passed" in execution_readiness
+    assert "pending_manifest_bound_task_count" in execution_readiness
+    assert "running_task_count" in execution_readiness
+    assert "reasons" in execution_readiness
+    assert isinstance(execution_readiness["reasons"], list)
+
+    assert snapshot["pytest"]["last_known_target"] == "not run by snapshot"
+    assert "current pytest tests -v output" in snapshot["pytest"]["note"]
+
+    phase3_doc = snapshot["source_documents"]["phase3_policy_security_audit"]
+    assert phase3_doc["path"] == "docs\\phase3_policy_security_audit.md"
+    assert phase3_doc["exists"] is True
+    assert "Read-only Phase 3 policy/security audit" in phase3_doc["purpose"]
 
 
 def test_project_state_snapshot_write_creates_json_file():
@@ -36,6 +59,7 @@ def test_project_state_snapshot_write_creates_json_file():
     assert payload["tool_version"] == "snapshot_project_state.v1"
     assert "database_state" in payload
     assert "supervisor_health" in payload
+    assert "source_documents" in payload
 
 
 def test_project_state_snapshot_cli_writes_file():
@@ -171,3 +195,11 @@ def test_project_state_snapshot_includes_task_execution_audit():
     assert audit["checked"] is True
     assert "passed" in audit
     assert audit["scope"] == "latest_session"
+
+
+def test_project_state_snapshot_includes_policy_security_audit():
+    snapshot = build_project_state_snapshot(profile_label="default")
+
+    assert "policy_security_audit" in snapshot
+    assert snapshot["policy_security_audit"]["checked"] is True
+    assert snapshot["policy_security_audit"]["checked_count"] >= 14

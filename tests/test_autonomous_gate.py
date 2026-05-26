@@ -9,27 +9,54 @@ from axiom.persistence.db import get_connection, init_db
 
 
 def insert_active_tool_capability_map(conn):
+    row = {
+        "manifest_id": "security.tool_capability_map.v1",
+        "manifest_type": "tool_capability_map",
+        "relative_path": "policy/security_artifacts/tool_capability_map.json",
+        "sha256": "0" * 64,
+        "schema_version": "axiom.tool_capability_map.v1",
+        "manifest_version": "1.0.0",
+        "role_name": None,
+        "command_name": None,
+        "approved_by_panel_version": "test",
+        "registered_by_tool_version": "test",
+    }
+    cursor = conn.execute(
+        """
+        UPDATE manifest_fingerprints
+        SET manifest_type = :manifest_type,
+            relative_path = :relative_path,
+            sha256 = :sha256,
+            schema_version = :schema_version,
+            manifest_version = :manifest_version,
+            role_name = :role_name,
+            command_name = :command_name,
+            approved_by_panel_version = :approved_by_panel_version,
+            active = 1,
+            registered_by_tool_version = :registered_by_tool_version
+        WHERE manifest_id = :manifest_id
+        """,
+        row,
+    )
+
+    if cursor.rowcount:
+        return
+
     conn.execute(
         """
-        INSERT OR REPLACE INTO manifest_fingerprints
+        INSERT INTO manifest_fingerprints
         (manifest_id, manifest_type, relative_path, sha256, schema_version,
          manifest_version, role_name, command_name, approved_by_panel_version,
          active, registered_by_tool_version)
-        VALUES (?, ?, ?, ?, ?, ?, NULL, NULL, ?, 1, ?)
+        VALUES
+        (:manifest_id, :manifest_type, :relative_path, :sha256, :schema_version,
+         :manifest_version, :role_name, :command_name, :approved_by_panel_version,
+         1, :registered_by_tool_version)
         """,
-        (
-            "security.tool_capability_map.v1",
-            "tool_capability_map",
-            "policy/security_artifacts/tool_capability_map.json",
-            "0" * 64,
-            "axiom.tool_capability_map.v1",
-            "1.0.0",
-            "test",
-            "test",
-        ),
+        row,
     )
-    
-    
+
+
 def test_autonomous_gate_blocks_without_current_trusted_profile():
     init_db()
 

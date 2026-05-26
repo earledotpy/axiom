@@ -1,0 +1,100 @@
+{
+  "schema_version": "axiom.manifest.v1",
+  "manifest_type": "role",
+  "manifest_id": "role.result_verifier.v1",
+  "manifest_version": "1.0.0",
+  "approved_by_panel_version": "phase5-agent-foundation",
+  "description": "Phase 5 bounded foundation role for ResultVerifier. This role may only produce a deterministic result verification summary through the manual agent executor path. It grants no external tools, no model access, no network access, no sandbox access, no memory access, no task creation authority, and no operator-control commands.",
+  "role": {
+    "role_name": "result_verifier",
+    "role_tier": "result_verifier",
+    "allowed_task_classes": [
+      "result_verification"
+    ],
+    "may_create_child_tasks": false,
+    "may_commit_task_tree": false
+  },
+  "budget_policy": {
+    "max_estimated_input_tokens": 0,
+    "max_estimated_output_tokens": 0,
+    "max_provider_calls": 0,
+    "max_wall_clock_seconds": 60
+  },
+  "allowed_capabilities": {
+    "model": {
+      "allow_model_calls": false,
+      "allowed_provider_groups": [],
+      "allow_local_classifier": false
+    },
+    "task_queue": {
+      "read_scope": "assigned_task",
+      "write_scope": "own_result",
+      "may_create_tasks": false,
+      "may_update_own_result": true,
+      "may_update_other_tasks": false
+    },
+    "filesystem": {
+      "read": false,
+      "write": false,
+      "allowed_roots": []
+    },
+    "operator_control": {
+      "allowed_commands": []
+    }
+  },
+  "allowed_tools": [],
+  "forbidden_tools": [
+    "model_gateway.call",
+    "memory_gateway.query",
+    "memory_gateway.write",
+    "network_gateway.fetch",
+    "sandbox_gateway.execute",
+    "filesystem.read",
+    "filesystem.write",
+    "session_controller.status",
+    "session_controller.cancel_current_chain",
+    "session_controller.pause_after_current",
+    "session_controller.resume",
+    "session_controller.shutdown_after_current",
+    "session_controller.run_classifier_validation",
+    "session_controller.enable_autonomous",
+    "session_controller.reconcile_provider_usage"
+  ],
+  "network_policy": {
+    "mode": "deny_all",
+    "allowlist": [],
+    "denylist": [
+      {
+        "scheme": "*",
+        "host": "*",
+        "port": "*",
+        "path_prefix": "*",
+        "methods": [
+          "*"
+        ],
+        "reason": "No network access is allowed for Phase 5 agent foundation."
+      }
+    ],
+    "redirect_policy": "deny",
+    "timeout_seconds": 0,
+    "max_response_bytes": 0
+  },
+  "sandbox_policy": {
+    "allowed": false,
+    "max_ram_mb": 0,
+    "max_wall_clock_seconds": 0,
+    "network_access": "denied"
+  },
+  "memory_policy": {
+    "read": false,
+    "write": false,
+    "max_query_results": 0,
+    "write_requires_dedupe": true
+  },
+  "audit_policy": {
+    "log_task_id": true,
+    "log_manifest_id": true,
+    "log_tool_calls": true,
+    "log_policy_denials": true
+  }
+}

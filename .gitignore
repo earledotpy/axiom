@@ -1,0 +1,26 @@
+# Python/runtime cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Local virtual environments
+venv/
+.venv/
+
+# AXIOM local runtime state
+axiom.db
+axiom.db-shm
+axiom.db-wal
+axiom/logs/
+
+# Generated logs and handoff artifacts
+logs/
+
+# Local tool/editor artifacts
+.antigravity.md
+.antigravitycli/
+.claude/
+
+# Accidental terminal/color spill artifacts
+orColor*

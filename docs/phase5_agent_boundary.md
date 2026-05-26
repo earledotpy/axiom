@@ -1,0 +1,98 @@
+# AXIOM Phase 5 Agent Boundary
+
+## Current status
+
+Phase 5 agent foundations are manual-only and manifest-bound.
+
+The implemented agent surfaces are:
+
+```text
+GoalPlanner -> goal_planning -> draft goal_plan artifact
+TaskPlanner -> task_planning -> draft task_plan artifact
+ToolExecutor -> tool_execution -> draft tool_plan artifact
+ResultVerifier -> result_verification -> deterministic verification summary
+```
+
+Each executor requires:
+
+```text
+pending task
+active role manifest fingerprint
+matching task_class
+matching role_name
+guarded start_task()
+guarded complete_task()
+```
+
+## Manual-only tools
+
+The Phase 5 manual/test entrypoints are:
+
+```text
+tools/execute_goal_planning_task.py
+tools/execute_task_planning_task.py
+tools/execute_tool_execution_task.py
+tools/execute_result_verification_task.py
+tools/run_manual_agent_foundation_smoke.py
+tools/audit_agent_boundary.py
+```
+
+These tools remain manual/test entrypoints. They must stay blocked unless the
+operator passes the explicit manual/test override. Phase 7 safe-pass readiness,
+when enabled for bounded E2E acceptance, does not authorize scheduler-to-agent
+automation or agent execution.
+
+`tools/audit_agent_boundary.py` is read-only. It does not execute agents. It
+checks that required Phase 5 role manifests are active and that completed
+agent-class tasks did not record provider usage or runtime/tool/model/cloud/
+network/sandbox calls.
+
+## Preserved prohibitions
+
+Phase 5 agent foundations do not authorize the following runtime powers:
+
+```text
+autonomous operation
+safe-pass enablement by Phase 5
+scheduler-to-agent automation
+persistent scheduler service
+Telegram/operator control plane authority by Phase 5
+task creation by agents
+child task commits
+real model calls
+cloud cascade calls
+network fetches
+sandbox execution
+memory reads or writes
+filesystem reads or writes
+new artifact schema creation
+```
+
+## Manifest boundary
+
+The Phase 5 role manifests grant no tools:
+
+```text
+allowed_tools: []
+model.allow_model_calls: false
+network_policy.mode: deny_all
+sandbox_policy.allowed: false
+memory_policy.read: false
+memory_policy.write: false
+operator_control.allowed_commands: []
+```
+
+## Future integration preconditions
+
+Any scheduler-to-agent integration requires a later explicit operator decision
+that names:
+
+```text
+exact scheduler entrypoint
+exact agent entrypoint
+exact task class allowed
+exact manifest required
+exact audit commands
+rollback plan
+proof that no gateway calls occur unless separately approved
+```

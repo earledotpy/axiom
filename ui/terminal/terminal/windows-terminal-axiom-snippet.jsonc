@@ -1,0 +1,56 @@
+// Copy the profile object into profiles.list and the scheme object into schemes.
+{
+  "profiles": {
+    "list": [
+      {
+        "guid": "{a110ba55-f411-4d61-bb8e-a510f0f0a110}",
+        "name": "AXIOM Terminal",
+        "commandline": "pwsh.exe -NoLogo",
+        "startingDirectory": "C:\\axiom",
+        "icon": "C:\\axiom\\ui\\terminal\\assets\\axiom-terminal-icon.png",
+        "colorScheme": "AXIOM SYSTEM PALETTE",
+        "font": {
+          "face": "0xProto Nerd Font Mono",
+          "size": 11,
+          "weight": "semi-light"
+        },
+        "cursorShape": "filledBox",
+        "cursorHeight": 25,
+        "cursorColor": "#A8FF60",
+        "backgroundImage": "C:\\axiom\\ui\\terminal\\assets\\axiom-crt-background.png",
+        "backgroundImageOpacity": 0.18,
+        "backgroundImageStretchMode": "uniformToFill",
+        "opacity": 92,
+        "useAcrylic": true,
+        "padding": "12, 10, 12, 10",
+        "tabTitle": "AXIOM",
+        "suppressApplicationTitle": true
+      }
+    ]
+  },
+  "schemes": [
+    {
+      "name": "AXIOM SYSTEM PALETTE",
+      "background": "#050A08",
+      "foreground": "#C7F7C7",
+      "cursorColor": "#A8FF60",
+      "selectionBackground": "#1F3A2D",
+      "black": "#020504",
+      "red": "#FF4B4B",
+      "green": "#78D86F",
+      "yellow": "#D9B35F",
+      "blue": "#5AA7D8",
+      "purple": "#9E7BD6",
+      "cyan": "#69D6C5",
+      "white": "#D8E8D8",
+      "brightBlack": "#284036",
+      "brightRed": "#FF6B6B",
+      "brightGreen": "#A8FF60",
+      "brightYellow": "#FFD166",
+      "brightBlue": "#7CC7FF",
+      "brightPurple": "#C6A7FF",
+      "brightCyan": "#9EF7E6",
+      "brightWhite": "#F2FFF2"
+    }
+  ]
+}

@@ -822,6 +822,97 @@ CREATE TABLE IF NOT EXISTS provider_budget_windows (
 CREATE INDEX IF NOT EXISTS idx_provider_budget_windows_provider_status
     ON provider_budget_windows(provider, status);
 
+-- ------------------------------------------------------------
+-- 18. External adapter messages
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS external_adapter_messages (
+    message_id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    adapter TEXT NOT NULL
+        CHECK (adapter IN ('telegram')),
+
+    platform_message_id TEXT NOT NULL,
+    platform_sender_id TEXT NOT NULL,
+    platform_chat_id TEXT NOT NULL,
+
+    raw_text_sha256 TEXT NOT NULL,
+    raw_text_length INTEGER NOT NULL
+        CHECK (raw_text_length >= 0),
+    command_text TEXT,
+
+    received_at TEXT NOT NULL,
+
+    decision_status TEXT NOT NULL
+        CHECK (decision_status IN (
+            'accepted',
+            'rejected',
+            'confirmation_required'
+        )),
+
+    denial_reason TEXT,
+
+    created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+
+    UNIQUE (adapter, platform_message_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_external_adapter_messages_sender_created
+    ON external_adapter_messages(adapter, platform_sender_id, created_at);
+
+CREATE INDEX IF NOT EXISTS idx_external_adapter_messages_chat_created
+    ON external_adapter_messages(adapter, platform_chat_id, created_at);
+
+CREATE INDEX IF NOT EXISTS idx_external_adapter_messages_status
+    ON external_adapter_messages(adapter, decision_status);
+
+-- ------------------------------------------------------------
+-- 19. External confirmation requests
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS external_confirmation_requests (
+    confirmation_id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    message_id INTEGER NOT NULL,
+    command_name TEXT NOT NULL,
+    manifest_id TEXT NOT NULL,
+
+    confirmation_status TEXT NOT NULL DEFAULT 'pending'
+        CHECK (confirmation_status IN (
+            'pending',
+            'accepted',
+            'rejected',
+            'expired'
+        )),
+
+    confirmation_token_sha256 TEXT NOT NULL UNIQUE,
+
+    expires_at TEXT NOT NULL,
+    command_id INTEGER,
+
+    created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+    completed_at TEXT,
+
+    FOREIGN KEY (message_id)
+        REFERENCES external_adapter_messages(message_id)
+        ON DELETE RESTRICT
+        ON UPDATE RESTRICT,
+
+    FOREIGN KEY (manifest_id)
+        REFERENCES manifest_fingerprints(manifest_id)
+        ON DELETE RESTRICT
+        ON UPDATE RESTRICT,
+
+    FOREIGN KEY (command_id)
+        REFERENCES operator_commands(command_id)
+        ON DELETE RESTRICT
+        ON UPDATE RESTRICT
+);
+
+CREATE INDEX IF NOT EXISTS idx_external_confirmation_requests_status_expires
+    ON external_confirmation_requests(confirmation_status, expires_at);
+
+CREATE INDEX IF NOT EXISTS idx_external_confirmation_requests_message
+    ON external_confirmation_requests(message_id);
+
 INSERT OR IGNORE INTO schema_migrations (schema_version, notes)
 VALUES (
     'v1.11.4',

@@ -67,6 +67,7 @@ def build_handoff_markdown(snapshot: dict[str, Any]) -> str:
         snapshot.get("task_execution_audit")
         or foundation.get("task_execution_audit", {})
     )
+    source_documents = snapshot.get("source_documents", {})
 
     latest_profile = _latest_model_profile(snapshot)
     latest_session = _latest_session(snapshot)
@@ -117,19 +118,6 @@ def build_handoff_markdown(snapshot: dict[str, Any]) -> str:
             ]
         )
 
-    lines.extend(
-        [
-            "## Blocking Reasons",
-            "",
-        ]
-    )
-
-    if blocking_reasons:
-        for reason in blocking_reasons:
-            lines.append(f"- `{reason}`")
-    else:
-        lines.append("- None")
-
     lines.extend(["", "## Supervisor Health", ""])
 
     if supervisor:
@@ -162,6 +150,73 @@ def build_handoff_markdown(snapshot: dict[str, Any]) -> str:
         )
     else:
         lines.append("- Task execution audit not present in snapshot.")
+
+    policy_security_audit = snapshot.get("policy_security_audit") or (
+        snapshot.get("foundation_verification", {}).get("policy_security_audit")
+    )
+
+    lines.extend(["", "## Policy Security Audit", ""])
+
+    if policy_security_audit:
+        lines.extend(
+            [
+                f"- Checked: `{policy_security_audit.get('checked')}`",
+                f"- Passed: `{policy_security_audit.get('passed')}`",
+                f"- Checked count: `{policy_security_audit.get('checked_count')}`",
+                f"- Violation count: `{policy_security_audit.get('violation_count')}`",
+            ]
+        )
+
+        audit_payload = policy_security_audit.get("audit") or {}
+        checked_items = audit_payload.get("checked") or []
+        if checked_items:
+            lines.extend(["", "Checks:"])
+            for check in checked_items:
+                lines.append(f"- `{check}`")
+    else:
+        lines.append("- Checked: `False`")
+        lines.append("- Passed: `False`")
+
+    execution_readiness = snapshot.get("execution_readiness", {})
+
+    lines.extend(
+        [
+            "",
+            "## Execution Readiness",
+            "",
+            f"- Checked: `{execution_readiness.get('checked', False)}`",
+            f"- Ready: `{execution_readiness.get('ready', False)}`",
+            f"- Session ID: `{execution_readiness.get('session_id')}`",
+            f"- Lifecycle audit passed: `{execution_readiness.get('lifecycle_audit_passed', False)}`",
+            f"- Execution audit passed: `{execution_readiness.get('execution_audit_passed', False)}`",
+            f"- Supervisor health passed: `{execution_readiness.get('supervisor_health_passed', False)}`",
+            f"- Pending manifest-bound task count: `{execution_readiness.get('pending_manifest_bound_task_count', 0)}`",
+            f"- Running task count: `{execution_readiness.get('running_task_count', 0)}`",
+            "",
+            "Reasons:",
+        ]
+    )
+
+    execution_readiness_reasons = execution_readiness.get("reasons") or []
+    if execution_readiness_reasons:
+        for reason in execution_readiness_reasons:
+            lines.append(f"- `{reason}`")
+    else:
+        lines.append("- None")
+
+    lines.extend(
+        [
+            "",
+            "## Blocking Reasons",
+            "",
+        ]
+    )
+
+    if blocking_reasons:
+        for reason in blocking_reasons:
+            lines.append(f"- `{reason}`")
+    else:
+        lines.append("- None")
 
     lines.extend(["", "## Latest Model Profile", ""])
 
@@ -205,21 +260,39 @@ def build_handoff_markdown(snapshot: dict[str, Any]) -> str:
     else:
         lines.append("- No session rows found.")
 
+    lines.extend(["", "## Source Documents", ""])
+
+    phase3_doc = source_documents.get("phase3_policy_security_audit")
+    if phase3_doc:
+        lines.append(
+            f"- Phase 3 policy/security audit: `{phase3_doc.get('path')}`"
+        )
+        lines.append(f"- Exists: `{phase3_doc.get('exists')}`")
+        lines.append(f"- Purpose: `{phase3_doc.get('purpose')}`")
+    else:
+        lines.append("- Phase 3 policy/security audit source handoff not present in snapshot.")
+
     lines.extend(
         [
             "",
             "## Verification Commands",
             "",
-            "Run these from `C:\\axiom`:",
+            r"Run these from `C:\axiom`:",
             "",
             "```powershell",
-            ".\\venv\\Scripts\\Activate.ps1",
-            "python tools\\verify_foundation.py",
-            "python tools\\bootstrap_check.py",
-            "python tools\\status_check.py",
-            "python tools\\autonomous_readiness_check.py",
+            r".\venv\Scripts\Activate.ps1",
+            r"python tools\verify_foundation.py",
+            r"python tools\audit_task_lifecycle.py",
+            r"python tools\audit_task_execution.py",
+            r"python tools\audit_policy_security.py",
+            r"python tools\bootstrap_check.py",
+            r"python tools\status_check.py",
+            r"python tools\autonomous_readiness_check.py",
+            r"python tools\supervisor_health_check.py <SESSION_ID>",
             "pytest tests -v",
             "```",
+            "",
+            "Replace `<SESSION_ID>` with the latest live session ID. Do not type angle brackets literally.",
             "",
             "## Next Recommended Action",
             "",

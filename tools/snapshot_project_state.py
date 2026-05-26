@@ -15,12 +15,14 @@ sys.path.insert(0, str(ROOT))
 from axiom.app.bootstrap_validation import BootstrapValidator
 from axiom.app.status_report import build_status_report
 from axiom.core.autonomous_gate import evaluate_autonomous_readiness
+from axiom.core.execution_readiness import evaluate_execution_readiness
 from axiom.persistence.db import get_connection
 from tools.verify_foundation import verify_foundation
 
 
 TOOL_VERSION = "snapshot_project_state.v1"
 LOG_DIR = ROOT / "logs"
+PHASE3_POLICY_SECURITY_AUDIT_DOC = ROOT / "docs" / "phase3_policy_security_audit.md"
 
 
 def _utc_timestamp() -> str:
@@ -130,14 +132,23 @@ def build_project_state_snapshot(profile_label: str = "default") -> dict[str, An
             "status_short": _run_command(["git", "status", "--short"]),
         },
         "pytest": {
-            "last_known_target": "198 passed",
-            "note": "Snapshot does not run pytest; use pytest tests -v for live validation.",
+            "last_known_target": "not run by snapshot",
+            "note": "Snapshot does not run pytest; use current pytest tests -v output for live validation.",
+        },
+        "source_documents": {
+            "phase3_policy_security_audit": {
+                "path": str(PHASE3_POLICY_SECURITY_AUDIT_DOC.relative_to(ROOT)),
+                "exists": PHASE3_POLICY_SECURITY_AUDIT_DOC.exists(),
+                "purpose": "Read-only Phase 3 policy/security audit source handoff.",
+            },
         },
         "bootstrap": bootstrap.to_dict(),
         "status": status.to_dict(),
         "autonomous_readiness": readiness.to_dict(),
-	"supervisor_health": foundation.get("supervisor_health"),
+        "supervisor_health": foundation.get("supervisor_health"),
         "task_execution_audit": foundation.get("task_execution_audit"),
+        "policy_security_audit": foundation.get("policy_security_audit"),
+        "execution_readiness": execution_readiness_summary(),
         "foundation_verification": foundation,
         "database_state": {
             "latest_model_profiles": _latest_model_profiles(profile_label=profile_label),
@@ -147,6 +158,22 @@ def build_project_state_snapshot(profile_label: str = "default") -> dict[str, An
     }
 
 
+def execution_readiness_summary() -> dict:
+    result = evaluate_execution_readiness()
+
+    return {
+        "checked": True,
+        "ready": result.ready,
+        "session_id": result.session_id,
+        "lifecycle_audit_passed": result.lifecycle_audit.passed,
+        "execution_audit_passed": result.execution_audit.passed,
+        "supervisor_health_passed": result.supervisor_health.passed,
+        "pending_manifest_bound_task_count": result.pending_manifest_bound_task_count,
+        "running_task_count": result.running_task_count,
+        "reasons": list(result.reasons),
+    }
+
+    
 def write_snapshot(profile_label: str = "default") -> Path:
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     snapshot = build_project_state_snapshot(profile_label=profile_label)

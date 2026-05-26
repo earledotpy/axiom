@@ -11,19 +11,60 @@ def base_role_manifest() -> dict:
         "role": {"role_name": "test"},
         "allowed_tools": ["model_gateway.call"],
         "forbidden_tools": [],
-        "budget_policy": {},
+        "budget_policy": {
+            "max_estimated_input_tokens": 10,
+            "max_estimated_output_tokens": 10,
+            "max_provider_calls": 1,
+            "max_wall_clock_seconds": 30,
+        },
         "allowed_capabilities": {
             "model": {
                 "allow_model_calls": True,
+                "allowed_provider_groups": ["local_classifier"],
+                "allow_local_classifier": True,
+            },
+            "task_queue": {
+                "read_scope": "assigned_task",
+                "write_scope": "own_result",
+                "may_create_tasks": False,
+                "may_update_own_result": True,
+                "may_update_other_tasks": False,
+            },
+            "filesystem": {
+                "read": False,
+                "write": False,
+                "allowed_roots": [],
             },
             "operator_control": {
                 "allowed_commands": [],
             },
         },
-        "network_policy": {},
-        "sandbox_policy": {},
-        "memory_policy": {},
-        "audit_policy": {},
+        "network_policy": {
+            "mode": "deny_all",
+            "allowlist": [],
+            "denylist": [],
+            "redirect_policy": "deny",
+            "timeout_seconds": 0,
+            "max_response_bytes": 0,
+        },
+        "sandbox_policy": {
+            "allowed": False,
+            "max_ram_mb": 0,
+            "max_wall_clock_seconds": 0,
+            "network_access": "denied",
+        },
+        "memory_policy": {
+            "read": False,
+            "write": False,
+            "max_query_results": 0,
+            "write_requires_dedupe": True,
+        },
+        "audit_policy": {
+            "log_task_id": True,
+            "log_manifest_id": True,
+            "log_tool_calls": True,
+            "log_policy_denials": True,
+        },
     }
 
 
@@ -48,6 +89,16 @@ def base_operator_manifest() -> dict:
         "sandbox_policy": {},
         "memory_policy": {},
         "audit_policy": {},
+    }
+
+
+def model_call_context() -> dict:
+    return {
+        "provider_group": "local_classifier",
+        "estimated_input_tokens": 1,
+        "estimated_output_tokens": 1,
+        "estimated_provider_calls": 1,
+        "estimated_wall_clock_seconds": 1,
     }
 
 
@@ -98,10 +149,36 @@ def test_policy_engine_allows_when_all_steps_pass_for_role_tool():
     engine = PolicyEngine()
     manifest = base_role_manifest()
 
-    decision = engine.authorize_tool_use("model_gateway.call", manifest, {})
+    decision = engine.authorize_tool_use(
+        "model_gateway.call",
+        manifest,
+        model_call_context(),
+    )
 
     assert decision.allowed is True
     assert decision.reason == "all_authorization_steps_passed"
+
+
+def test_policy_engine_denies_missing_additional_check_context():
+    engine = PolicyEngine()
+    manifest = base_role_manifest()
+
+    decision = engine.authorize_tool_use("model_gateway.call", manifest, {})
+
+    assert decision.allowed is False
+    assert decision.reason == "additional_check_failed:provider_group_allowed"
+
+
+def test_policy_engine_denies_when_budget_estimate_exceeds_limit():
+    engine = PolicyEngine()
+    manifest = base_role_manifest()
+    context = model_call_context()
+    context["estimated_provider_calls"] = 2
+
+    decision = engine.authorize_tool_use("model_gateway.call", manifest, context)
+
+    assert decision.allowed is False
+    assert decision.reason == "additional_check_failed:budget_policy_not_exceeded"
 
 
 def test_policy_engine_denies_session_controller_with_role_manifest():

@@ -44,6 +44,18 @@ class ParentTaskStatus(str, Enum):
     CANCELLED = "cancelled"
 
 
+SCAN_RESULT_CONTRACT_KEYS = frozenset(
+    {
+        "scanner_result",
+        "risk_class",
+        "artifact_status",
+        "parent_task_status",
+        "reason",
+        "details",
+    }
+)
+
+
 class PlanInjectionScanner:
     def __init__(self, safe_pass_enabled: bool = False):
         self.safe_pass_enabled = safe_pass_enabled

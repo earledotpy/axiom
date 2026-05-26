@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 from axiom.core.tool_capability_map import get_all_tool_ids, get_tool_entry
@@ -220,11 +221,299 @@ class PolicyEngine:
         manifest: dict[str, Any],
         task_context: dict[str, Any],
     ) -> dict[str, Any]:
-        """
-        Placeholder for gateway-specific policy checks.
+        handlers = {
+            "provider_group_allowed": self._check_provider_group_allowed,
+            "budget_policy_not_exceeded": self._check_budget_policy_not_exceeded,
+            "memory_policy.max_query_results": self._check_memory_max_query_results,
+            "memory_policy.write_requires_dedupe": self._check_memory_write_requires_dedupe,
+            "mode_allowlist_only": self._check_network_mode_allowlist_only,
+            "request_matches_allowlist": self._check_network_request_matches_allowlist,
+            "request_does_not_match_denylist": self._check_network_request_does_not_match_denylist,
+            "redirect_policy": self._check_network_redirect_policy,
+            "timeout_seconds": self._check_network_timeout_seconds,
+            "max_response_bytes": self._check_network_max_response_bytes,
+            "sandbox_policy.max_ram_mb": self._check_sandbox_max_ram_mb,
+            "sandbox_policy.max_wall_clock_seconds": self._check_sandbox_max_wall_clock_seconds,
+            "sandbox_policy.network_access_denied": self._check_sandbox_network_access_denied,
+            "path_under_allowed_roots": self._check_path_under_allowed_roots,
+        }
+        handler = handlers.get(check_name)
+        if handler is None:
+            return {"passed": False, "info": "unknown_additional_check"}
 
-        Later phases should replace these permissive placeholders with concrete
-        checks for filesystem roots, network allowlists, sandbox limits, and
-        memory constraints.
-        """
-        return {"passed": True, "info": "check_not_yet_implemented"}
+        return handler(manifest, task_context)
+
+    @staticmethod
+    def _passed(info: Any = None) -> dict[str, Any]:
+        return {"passed": True, "info": info}
+
+    @staticmethod
+    def _failed(info: Any) -> dict[str, Any]:
+        return {"passed": False, "info": info}
+
+    def _check_provider_group_allowed(
+        self,
+        manifest: dict[str, Any],
+        task_context: dict[str, Any],
+    ) -> dict[str, Any]:
+        model_policy = manifest.get("allowed_capabilities", {}).get("model", {})
+        allowed_groups = model_policy.get("allowed_provider_groups", [])
+        requested_group = task_context.get("provider_group")
+
+        if requested_group in allowed_groups:
+            return self._passed({"provider_group": requested_group})
+
+        return self._failed(
+            {
+                "provider_group": requested_group,
+                "allowed_provider_groups": allowed_groups,
+            }
+        )
+
+    def _check_budget_policy_not_exceeded(
+        self,
+        manifest: dict[str, Any],
+        task_context: dict[str, Any],
+    ) -> dict[str, Any]:
+        budget = manifest.get("budget_policy", {})
+        comparisons = {
+            "estimated_input_tokens": "max_estimated_input_tokens",
+            "estimated_output_tokens": "max_estimated_output_tokens",
+            "estimated_provider_calls": "max_provider_calls",
+            "estimated_wall_clock_seconds": "max_wall_clock_seconds",
+        }
+
+        missing = [
+            value_name
+            for value_name in comparisons
+            if value_name not in task_context
+        ]
+        if missing:
+            return self._failed({"missing_estimates": missing})
+
+        exceeded = {}
+        for value_name, limit_name in comparisons.items():
+            value = task_context[value_name]
+            limit = budget.get(limit_name)
+            if not isinstance(value, int) or not isinstance(limit, int):
+                return self._failed(
+                    {
+                        "invalid_budget_value": value_name,
+                        "value": value,
+                        "limit_name": limit_name,
+                        "limit": limit,
+                    }
+                )
+            if value > limit:
+                exceeded[value_name] = {"value": value, "limit": limit}
+
+        if exceeded:
+            return self._failed({"exceeded": exceeded})
+
+        return self._passed({"checked": sorted(comparisons)})
+
+    def _check_memory_max_query_results(
+        self,
+        manifest: dict[str, Any],
+        task_context: dict[str, Any],
+    ) -> dict[str, Any]:
+        requested = task_context.get("requested_query_results")
+        limit = manifest.get("memory_policy", {}).get("max_query_results")
+        if isinstance(requested, int) and isinstance(limit, int) and requested <= limit:
+            return self._passed({"requested_query_results": requested, "limit": limit})
+        return self._failed({"requested_query_results": requested, "limit": limit})
+
+    def _check_memory_write_requires_dedupe(
+        self,
+        manifest: dict[str, Any],
+        task_context: dict[str, Any],
+    ) -> dict[str, Any]:
+        requires_dedupe = manifest.get("memory_policy", {}).get(
+            "write_requires_dedupe"
+        )
+        dedupe_performed = task_context.get("dedupe_performed")
+        if requires_dedupe is True and dedupe_performed is True:
+            return self._passed({"dedupe_performed": True})
+        return self._failed(
+            {
+                "write_requires_dedupe": requires_dedupe,
+                "dedupe_performed": dedupe_performed,
+            }
+        )
+
+    def _check_network_mode_allowlist_only(
+        self,
+        manifest: dict[str, Any],
+        task_context: dict[str, Any],
+    ) -> dict[str, Any]:
+        mode = manifest.get("network_policy", {}).get("mode")
+        if mode == "allowlist_only":
+            return self._passed({"mode": mode})
+        return self._failed({"mode": mode})
+
+    def _check_network_request_matches_allowlist(
+        self,
+        manifest: dict[str, Any],
+        task_context: dict[str, Any],
+    ) -> dict[str, Any]:
+        request = task_context.get("network_request")
+        if not isinstance(request, dict):
+            return self._failed({"network_request": request})
+
+        for entry in manifest.get("network_policy", {}).get("allowlist", []):
+            if self._network_rule_matches(entry, request):
+                return self._passed({"matched_allowlist_entry": entry})
+
+        return self._failed({"network_request": request})
+
+    def _check_network_request_does_not_match_denylist(
+        self,
+        manifest: dict[str, Any],
+        task_context: dict[str, Any],
+    ) -> dict[str, Any]:
+        request = task_context.get("network_request")
+        if not isinstance(request, dict):
+            return self._failed({"network_request": request})
+
+        for entry in manifest.get("network_policy", {}).get("denylist", []):
+            if self._network_rule_matches(entry, request):
+                return self._failed({"matched_denylist_entry": entry})
+
+        return self._passed({"network_request": request})
+
+    def _check_network_redirect_policy(
+        self,
+        manifest: dict[str, Any],
+        task_context: dict[str, Any],
+    ) -> dict[str, Any]:
+        redirected = task_context.get("redirected", False)
+        if redirected is False:
+            return self._passed({"redirected": False})
+
+        policy = manifest.get("network_policy", {}).get("redirect_policy")
+        request = task_context.get("network_request", {})
+        redirect_host = task_context.get("redirect_host")
+        if (
+            policy == "same_host_only"
+            and isinstance(request, dict)
+            and redirect_host == request.get("host")
+        ):
+            return self._passed({"redirect_policy": policy, "redirect_host": redirect_host})
+
+        return self._failed(
+            {"redirect_policy": policy, "redirect_host": redirect_host}
+        )
+
+    def _check_network_timeout_seconds(
+        self,
+        manifest: dict[str, Any],
+        task_context: dict[str, Any],
+    ) -> dict[str, Any]:
+        requested = task_context.get("timeout_seconds")
+        limit = manifest.get("network_policy", {}).get("timeout_seconds")
+        if isinstance(requested, int) and isinstance(limit, int) and requested <= limit:
+            return self._passed({"timeout_seconds": requested, "limit": limit})
+        return self._failed({"timeout_seconds": requested, "limit": limit})
+
+    def _check_network_max_response_bytes(
+        self,
+        manifest: dict[str, Any],
+        task_context: dict[str, Any],
+    ) -> dict[str, Any]:
+        requested = task_context.get("max_response_bytes")
+        limit = manifest.get("network_policy", {}).get("max_response_bytes")
+        if isinstance(requested, int) and isinstance(limit, int) and requested <= limit:
+            return self._passed({"max_response_bytes": requested, "limit": limit})
+        return self._failed({"max_response_bytes": requested, "limit": limit})
+
+    def _check_sandbox_max_ram_mb(
+        self,
+        manifest: dict[str, Any],
+        task_context: dict[str, Any],
+    ) -> dict[str, Any]:
+        requested = task_context.get("sandbox_ram_mb")
+        limit = manifest.get("sandbox_policy", {}).get("max_ram_mb")
+        if isinstance(requested, int) and isinstance(limit, int) and requested <= limit:
+            return self._passed({"sandbox_ram_mb": requested, "limit": limit})
+        return self._failed({"sandbox_ram_mb": requested, "limit": limit})
+
+    def _check_sandbox_max_wall_clock_seconds(
+        self,
+        manifest: dict[str, Any],
+        task_context: dict[str, Any],
+    ) -> dict[str, Any]:
+        requested = task_context.get("sandbox_wall_clock_seconds")
+        limit = manifest.get("sandbox_policy", {}).get("max_wall_clock_seconds")
+        if isinstance(requested, int) and isinstance(limit, int) and requested <= limit:
+            return self._passed(
+                {"sandbox_wall_clock_seconds": requested, "limit": limit}
+            )
+        return self._failed(
+            {"sandbox_wall_clock_seconds": requested, "limit": limit}
+        )
+
+    def _check_sandbox_network_access_denied(
+        self,
+        manifest: dict[str, Any],
+        task_context: dict[str, Any],
+    ) -> dict[str, Any]:
+        network_access = manifest.get("sandbox_policy", {}).get("network_access")
+        if network_access == "denied":
+            return self._passed({"network_access": network_access})
+        return self._failed({"network_access": network_access})
+
+    def _check_path_under_allowed_roots(
+        self,
+        manifest: dict[str, Any],
+        task_context: dict[str, Any],
+    ) -> dict[str, Any]:
+        requested_path = task_context.get("filesystem_path")
+        allowed_roots = manifest.get("allowed_capabilities", {}).get(
+            "filesystem", {}
+        ).get("allowed_roots", [])
+
+        if not isinstance(requested_path, str):
+            return self._failed({"filesystem_path": requested_path})
+
+        try:
+            requested = Path(requested_path).resolve(strict=False)
+            roots = [
+                Path(root).resolve(strict=False)
+                for root in allowed_roots
+                if isinstance(root, str)
+            ]
+        except OSError as exc:
+            return self._failed({"error": str(exc)})
+
+        for root in roots:
+            if requested == root or root in requested.parents:
+                return self._passed(
+                    {"filesystem_path": str(requested), "matched_root": str(root)}
+                )
+
+        return self._failed(
+            {
+                "filesystem_path": str(requested),
+                "allowed_roots": [str(root) for root in roots],
+            }
+        )
+
+    @staticmethod
+    def _network_rule_matches(rule: dict[str, Any], request: dict[str, Any]) -> bool:
+        method = request.get("method")
+        request_path = request.get("path", "")
+        methods = rule.get("methods", [])
+
+        return (
+            (rule.get("scheme") == "*" or rule.get("scheme") == request.get("scheme"))
+            and (rule.get("host") == "*" or rule.get("host") == request.get("host"))
+            and (rule.get("port") == "*" or rule.get("port") == request.get("port"))
+            and (
+                rule.get("path_prefix") == "*"
+                or (
+                    isinstance(request_path, str)
+                    and request_path.startswith(rule.get("path_prefix", ""))
+                )
+            )
+            and ("*" in methods or method in methods)
+        )

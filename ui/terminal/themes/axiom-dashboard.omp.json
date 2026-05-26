@@ -1,0 +1,115 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 3,
+  "final_space": true,
+  "console_title_template": "AXIOM :: {{ .Folder }}",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "text",
+          "style": "diamond",
+          "leading_diamond": "",
+          "trailing_diamond": "",
+          "foreground": "#020806",
+          "background": "#5CFFA4",
+          "template": " AXIOM "
+        },
+        {
+          "type": "text",
+          "style": "powerline",
+          "powerline_symbol": "",
+          "foreground": "#C8FFD8",
+          "background": "#214D36",
+          "template": " fail-closed "
+        },
+        {
+          "type": "path",
+          "style": "powerline",
+          "powerline_symbol": "",
+          "foreground": "#C8FFD8",
+          "background": "#123323",
+          "properties": {
+            "style": "folder"
+          },
+          "template": " {{ .Path }} "
+        },
+        {
+          "type": "git",
+          "style": "powerline",
+          "powerline_symbol": "",
+          "foreground": "#020806",
+          "background": "#FFD36E",
+          "background_templates": [
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#FFB86B{{ end }}",
+            "{{ if and (not .Working.Changed) (not .Staging.Changed) }}#69D6C5{{ end }}"
+          ],
+          "properties": {
+            "branch_icon": " ",
+            "fetch_status": true,
+            "fetch_upstream_icon": true
+          },
+          "template": " {{ .HEAD }}{{ if .Working.Changed }} ±{{ .Working.String }}{{ end }}{{ if .Staging.Changed }} +{{ .Staging.String }}{{ end }} "
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "python",
+          "style": "plain",
+          "foreground": "#9CFFC6",
+          "template": "py {{ .Full }} "
+        },
+        {
+          "type": "executiontime",
+          "style": "plain",
+          "foreground": "#FFE7A8",
+          "properties": {
+            "threshold": 500
+          },
+          "template": " {{ .FormattedMs }} "
+        },
+        {
+          "type": "time",
+          "style": "plain",
+          "foreground": "#7DFFD6",
+          "properties": {
+            "time_format": "15:04"
+          },
+          "template": " {{ .CurrentDate | date .Format }} "
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}#FF5F5F{{ end }}",
+            "{{ if eq .Code 0 }}#5CFFA4{{ end }}"
+          ],
+          "template": "❯ "
+        }
+      ]
+    }
+  ],
+  "transient_prompt": {
+    "foreground": "#5CFFA4",
+    "background": "transparent",
+    "template": "axiom> "
+  },
+  "secondary_prompt": {
+    "foreground": "#7DFFD6",
+    "background": "transparent",
+    "template": "  > "
+  }
+}

@@ -75,6 +75,24 @@ def fake_snapshot() -> dict:
                 }
             ],
         },
+        "source_documents": {
+            "phase3_policy_security_audit": {
+                "path": "docs\\phase3_policy_security_audit.md",
+                "exists": True,
+                "purpose": "Read-only Phase 3 policy/security audit source handoff.",
+            },
+        },
+        "execution_readiness": {
+            "checked": True,
+            "ready": False,
+            "session_id": 1,
+            "lifecycle_audit_passed": True,
+            "execution_audit_passed": True,
+            "supervisor_health_passed": True,
+            "pending_manifest_bound_task_count": 0,
+            "running_task_count": 0,
+            "reasons": ["no_pending_tasks"],
+        },
     }
 
 
@@ -87,10 +105,24 @@ def test_build_handoff_markdown_contains_core_state():
     assert "qwen3:4b" in markdown
     assert "candidate" in markdown
     assert "pytest tests -v" in markdown
+    assert "## Source Documents" in markdown
+    assert "docs\\phase3_policy_security_audit.md" in markdown
+    
     assert "## Supervisor Health" in markdown
     assert "supervisor_health_ok" in markdown
     assert "Running count" in markdown
     assert "Active task present" in markdown
+
+    assert "## Execution Readiness" in markdown
+    assert "- Checked: `" in markdown
+    assert "- Ready: `" in markdown
+    assert "- Lifecycle audit passed: `" in markdown
+    assert "- Execution audit passed: `" in markdown
+    assert "- Supervisor health passed: `" in markdown
+    assert "- Pending manifest-bound task count: `" in markdown
+    assert "- Running task count: `" in markdown
+    assert "Reasons:" in markdown
+
 
 def test_write_handoff_creates_markdown_from_snapshot(tmp_path):
     snapshot_path = tmp_path / "project_state_snapshot_test.json"
@@ -223,3 +255,91 @@ def test_handoff_includes_task_execution_audit_section():
     assert "- Passed: `True`" in markdown
     assert "- Scope: `latest_session`" in markdown
     assert "- Violation count: `0`" in markdown
+
+
+def test_handoff_includes_policy_security_audit_section():
+    snapshot = {
+        "profile_label": "default",
+        "tool_version": "test",
+        "snapshot_created_at_utc": "2026-05-17T00-00-00Z",
+        "project_root": "C:\\axiom",
+        "pytest": {"last_known_target": "test"},
+        "bootstrap_validation": {
+            "passed": True,
+            "operational_mode": "fail_closed_non_autonomous",
+        },
+        "autonomous_readiness": {
+            "allowed": False,
+            "blocking_reasons": ["no_current_trusted_model_profile"],
+        },
+        "foundation_verification": {
+            "foundation_passed": True,
+            "operational_mode": "fail_closed_non_autonomous",
+            "fail_closed_coherent": True,
+        },
+        "supervisor_health": {
+            "checked": True,
+            "reason": "supervisor_health_ok",
+            "health": {
+                "healthy": True,
+                "scheduler_stale": False,
+                "running_count": 0,
+                "active_task_present": False,
+                "active_task_status": None,
+            },
+        },
+        "policy_security_audit": {
+            "checked": True,
+            "passed": True,
+            "checked_count": 14,
+            "violation_count": 0,
+            "audit": {
+                "checked": [
+                    "tool_capability_map_semantic_contracts",
+                    "active_policy_manifests_validate_schema_and_policy",
+                    "role_manifests_do_not_declare_operator_control_commands",
+                    "operator_control_manifests_bind_single_command",
+                    "plan_injection_scanner_return_contract_is_stable",
+                    "security_events_table_supports_audit_coverage",
+                ],
+            },
+        },
+        "source_documents": {
+            "phase3_policy_security_audit": {
+                "path": "docs\\phase3_policy_security_audit.md",
+                "exists": True,
+                "purpose": "Read-only Phase 3 policy/security audit source handoff.",
+            },
+        },
+        "database_state": {
+            "latest_model_profiles": [],
+            "latest_sessions": [],
+        },
+    }
+
+    markdown = build_handoff_markdown(snapshot)
+
+    assert "## Policy Security Audit" in markdown
+    assert "- Checked: `True`" in markdown
+    assert "- Passed: `True`" in markdown
+    assert "- Checked count: `14`" in markdown
+    assert "Violation count" in markdown
+    assert "tool_capability_map_semantic_contracts" in markdown
+    assert "active_policy_manifests_validate_schema_and_policy" in markdown
+    assert "role_manifests_do_not_declare_operator_control_commands" in markdown
+    assert "operator_control_manifests_bind_single_command" in markdown
+    assert "plan_injection_scanner_return_contract_is_stable" in markdown
+    assert "security_events_table_supports_audit_coverage" in markdown
+    assert "## Source Documents" in markdown
+    assert "docs\\phase3_policy_security_audit.md" in markdown
+
+
+def test_handoff_verification_commands_include_phase3_audits_and_session_note():
+    markdown = build_handoff_markdown(fake_snapshot())
+
+    assert "python tools\\verify_foundation.py" in markdown
+    assert "python tools\\audit_task_lifecycle.py" in markdown
+    assert "python tools\\audit_task_execution.py" in markdown
+    assert "python tools\\audit_policy_security.py" in markdown
+    assert "python tools\\supervisor_health_check.py <SESSION_ID>" in markdown
+    assert "Do not type angle brackets literally" in markdown

@@ -176,6 +176,39 @@ def test_register_model_fingerprint_records_disabled_as_current(monkeypatch):
     assert row["registration_status"] == "current"
 
 
+def test_register_model_fingerprint_records_gateway_required_as_current(monkeypatch):
+    monkeypatch.setattr(rmf, "OllamaPrereqInspector", FakeInspectorUnknown)
+
+    insert_passing_calibration_run("calibration.test.gateway_required")
+
+    profile_id = rmf.register_model_fingerprint(
+        model="qwen3:4b",
+        profile_label="test_profile_gateway_required",
+        calibration_run_id="calibration.test.gateway_required",
+        registration_status="current",
+    )
+
+    with get_connection() as conn:
+        row = conn.execute(
+            """
+            SELECT *
+            FROM model_profile_fingerprints
+            WHERE profile_id = ?
+            """,
+            (profile_id,),
+        ).fetchone()
+
+    assert row["thinking_mode"] == "disabled"
+    assert row["thinking_mode_rule_version"] == "gateway_required_v1"
+    assert row["is_current"] == 1
+    assert row["registration_status"] == "current"
+
+    notes = json.loads(row["notes"])
+    assert notes["profile_thinking_mode"] == "unknown"
+    assert notes["stored_thinking_mode"] == "disabled"
+    assert notes["runtime_thinking_enforcement"] == "gateway_required"
+
+
 def test_register_model_fingerprint_demotes_previous_current_row_only_when_new_current(monkeypatch):
     monkeypatch.setattr(rmf, "OllamaPrereqInspector", FakeInspectorDisabled)
 

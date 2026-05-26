@@ -1,0 +1,110 @@
+{
+  "schema_version": "axiom.manifest.v1",
+  "manifest_type": "operator_control",
+  "manifest_id": "operator.status.v1",
+  "manifest_version": "1.0.0",
+  "approved_by_panel_version": "phase6b-operator-command-manifest-set",
+  "description": "Read-only operator status command manifest. This manifest grants only session_controller.status and does not authorize Telegram runtime, external command ingestion, autonomous operation, safe-pass enablement, scheduler control, agent execution, model calls, network access, sandbox execution, memory access, or filesystem access.",
+  "operator_command": {
+    "command_name": "status",
+    "telegram_aliases": [
+      "/status"
+    ],
+    "creates_task": false,
+    "created_task_class": "operator_control",
+    "allowed_when_autonomous_disabled": true,
+    "allowed_when_safe_pass_disabled": true,
+    "effect_class": "read_only"
+  },
+  "authorization_policy": {
+    "telegram_operator_whitelist_required": true,
+    "capability_token_required": true,
+    "requires_active_session": true
+  },
+  "budget_policy": {
+    "max_estimated_input_tokens": 0,
+    "max_estimated_output_tokens": 0,
+    "max_provider_calls": 0,
+    "max_wall_clock_seconds": 30
+  },
+  "allowed_capabilities": {
+    "model": {
+      "allow_model_calls": false,
+      "allowed_provider_groups": [],
+      "allow_local_classifier": false
+    },
+    "task_queue": {
+      "read_scope": "none",
+      "write_scope": "none",
+      "may_create_tasks": false,
+      "may_update_own_result": false,
+      "may_update_other_tasks": false
+    },
+    "filesystem": {
+      "read": false,
+      "write": false,
+      "allowed_roots": []
+    },
+    "operator_control": {
+      "allowed_commands": [
+        "status"
+      ]
+    }
+  },
+  "allowed_tools": [
+    "session_controller.status"
+  ],
+  "forbidden_tools": [
+    "model_gateway.call",
+    "memory_gateway.query",
+    "memory_gateway.write",
+    "network_gateway.fetch",
+    "sandbox_gateway.execute",
+    "filesystem.read",
+    "filesystem.write",
+    "session_controller.cancel_current_chain",
+    "session_controller.pause_after_current",
+    "session_controller.resume",
+    "session_controller.shutdown_after_current",
+    "session_controller.run_classifier_validation",
+    "session_controller.enable_autonomous",
+    "session_controller.reconcile_provider_usage"
+  ],
+  "network_policy": {
+    "mode": "deny_all",
+    "allowlist": [],
+    "denylist": [
+      {
+        "scheme": "*",
+        "host": "*",
+        "port": "*",
+        "path_prefix": "*",
+        "methods": [
+          "*"
+        ],
+        "reason": "No network access is allowed for the read-only operator status manifest."
+      }
+    ],
+    "redirect_policy": "deny",
+    "timeout_seconds": 0,
+    "max_response_bytes": 0
+  },
+  "sandbox_policy": {
+    "allowed": false,
+    "max_ram_mb": 0,
+    "max_wall_clock_seconds": 0,
+    "network_access": "denied"
+  },
+  "memory_policy": {
+    "read": false,
+    "write": false,
+    "max_query_results": 0,
+    "write_requires_dedupe": true
+  },
+  "audit_policy": {
+    "log_task_id": true,
+    "log_manifest_id": true,
+    "log_tool_calls": true,
+    "log_policy_denials": true
+  }
+}

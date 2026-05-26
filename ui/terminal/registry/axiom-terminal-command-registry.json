@@ -1,0 +1,823 @@
+{
+  "schema_version": "axiom.terminal.command_registry.v1",
+  "purpose": "AXIOM Terminal operator command registry. This registry classifies terminal commands by risk, category, mutability, and runtime boundary.",
+  "rules": {
+    "read_only_visibility_allowed_in_terminal_modules": true,
+    "state_changing_runtime_behavior_requires_approved_axiom_tool": true,
+    "terminal_modules_must_not_bypass_policy_or_audit": true,
+    "dashboard_features_must_be_fast_local_and_non_mutating": true
+  },
+  "commands": [
+    {
+      "name": "axiom",
+      "category": "core",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "description": "Enter C:\\axiom and activate the AXIOM virtual environment."
+    },
+    {
+      "name": "axiom-help",
+      "category": "core",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "description": "Display the compact AXIOM Terminal command surface."
+    },
+    {
+      "name": "axiom-help-all",
+      "category": "core",
+      "primary": false,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Display the full AXIOM Terminal command catalog."
+    },
+    {
+      "name": "axiom-doctor",
+      "category": "core",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "description": "Consolidated AXIOM Terminal diagnostics for profile loader, modules, visual config, registry, editor, tools, and safety boundaries.",
+      "status": "implemented"
+    },
+    {
+      "name": "axiom-guard",
+      "category": "core",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "description": "Display terminal safety boundaries."
+    },
+    {
+      "name": "axiom-now",
+      "category": "state_visibility",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Compact read-only operator-critical status panel."
+    },
+    {
+      "name": "axiom-edit",
+      "category": "editing",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "medium",
+      "description": "Open a file in the terminal editor. File editing can change source files, but does not directly mutate AXIOM runtime state."
+    },
+    {
+      "name": "ae",
+      "category": "editing",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "medium",
+      "description": "Short alias for axiom-edit."
+    },
+    {
+      "name": "axiom-find",
+      "category": "editing",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "description": "Search project text."
+    },
+    {
+      "name": "axiom-preflight",
+      "category": "verification",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "backing_tools": [
+        "tools/verify_foundation.py",
+        "tools/audit_task_lifecycle.py",
+        "tools/audit_task_execution.py",
+        "tools/audit_policy_security.py",
+        "tools/supervisor_health_check.py",
+        "tools/audit_agent_boundary.py",
+        "tools/audit_operator_command_ledger.py",
+        "tools/audit_telegram_gateway.py",
+        "tools/audit_phase6_closeout.py",
+        "tools/audit_phase7_acceptance_inventory.py",
+        "tools/audit_phase7_e2e_gate.py",
+        "tools/audit_phase7_closeout.py"
+      ],
+      "description": "Run the standard safe verification chain."
+    },
+    {
+      "name": "axiom-status",
+      "category": "verification",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "backing_tools": [
+        "tools/verify_foundation.py"
+      ],
+      "description": "Run foundation verification."
+    },
+    {
+      "name": "axiom-audit",
+      "category": "verification",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "backing_tools": [
+        "tools/audit_task_lifecycle.py",
+        "tools/audit_task_execution.py"
+      ],
+      "description": "Run lifecycle and execution audits."
+    },
+    {
+      "name": "axiom-agent-audit",
+      "category": "verification",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "backing_tools": [
+        "tools/audit_agent_boundary.py"
+      ],
+      "description": "Run the read-only Phase 5 agent boundary audit."
+    },
+    {
+      "name": "axiom-policy-audit",
+      "category": "verification",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "backing_tools": [
+        "tools/audit_policy_security.py"
+      ],
+      "description": "Run the read-only policy/security audit."
+    },
+    {
+      "name": "axiom-operator-command-audit",
+      "category": "verification",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "backing_tools": [
+        "tools/audit_operator_command_ledger.py"
+      ],
+      "description": "Run the read-only Phase 6 operator command ledger audit."
+    },
+    {
+      "name": "axiom-telegram-gateway-audit",
+      "category": "verification",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "backing_tools": [
+        "tools/audit_telegram_gateway.py"
+      ],
+      "description": "Run the read-only Phase 6G Telegram gateway configuration and storage audit."
+    },
+    {
+      "name": "axiom-phase6-audit",
+      "category": "verification",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "backing_tools": [
+        "tools/audit_phase6_closeout.py"
+      ],
+      "description": "Run the read-only Phase 6I closeout and hardening audit."
+    },
+    {
+      "name": "axiom-phase7-inventory",
+      "category": "verification",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "backing_tools": [
+        "tools/audit_phase7_acceptance_inventory.py"
+      ],
+      "description": "Run the read-only Phase 7A v1.13 acceptance inventory audit."
+    },
+    {
+      "name": "axiom-phase7-acceptance",
+      "category": "verification",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "backing_tools": [
+        "tools/run_phase7_acceptance.py"
+      ],
+      "description": "Run the Phase 7B acceptance runner and prerequisite gate in read-only report mode."
+    },
+    {
+      "name": "axiom-phase7-e2e-gate",
+      "category": "verification",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "backing_tools": [
+        "tools/audit_phase7_e2e_gate.py"
+      ],
+      "description": "Run the read-only Phase 7C full-goal E2E gate audit."
+    },
+    {
+      "name": "axiom-phase7-closeout",
+      "category": "verification",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "backing_tools": [
+        "tools/audit_phase7_closeout.py"
+      ],
+      "description": "Run the read-only Phase 7E closeout and hardening audit."
+    },
+    {
+      "name": "axiom-health",
+      "category": "verification",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "backing_tools": [
+        "tools/supervisor_health_check.py"
+      ],
+      "description": "Run supervisor health for latest session."
+    },
+    {
+      "name": "axiom-regression",
+      "category": "verification",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "medium",
+      "description": "Run full pytest regression."
+    },
+    {
+      "name": "axiom-test",
+      "category": "verification",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "medium",
+      "description": "Run targeted pytest command."
+    },
+    {
+      "name": "axiom-dashboard",
+      "category": "state_visibility",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Read-only AXIOM status panel backed by local SQLite mode=ro queries."
+    },
+    {
+      "name": "axiom-readiness",
+      "category": "state_visibility",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Read-only execution readiness report backed by local SQLite mode=ro queries and local file checks."
+    },
+    {
+      "name": "axiom-queue",
+      "category": "state_visibility",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Read-only task queue panel backed by local SQLite mode=ro queries."
+    },
+    {
+      "name": "axiom-model",
+      "category": "state_visibility",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Read-only model profile and trust-boundary panel backed by local SQLite mode=ro queries."
+    },
+    {
+      "name": "axiom-manifests",
+      "category": "state_visibility",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Read-only manifest and tool-capability integrity panel backed by SQLite mode=ro queries and local SHA256 checks."
+    },
+    {
+      "name": "axiom-budget",
+      "category": "state_visibility",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Read-only provider and resource usage panel backed by local SQLite mode=ro queries."
+    },
+    {
+      "name": "axiom-events",
+      "category": "state_visibility",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Read-only recent session/security event panel backed by local SQLite mode=ro queries."
+    },
+    {
+      "name": "axiom-operator-commands",
+      "category": "state_visibility",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Read-only Phase 6 operator command intent ledger panel backed by local SQLite mode=ro queries."
+    },
+    {
+      "name": "axiom-telegram-gateway",
+      "category": "state_visibility",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Read-only Phase 6H Telegram gateway boundary panel backed by local config and SQLite mode=ro queries."
+    },
+    {
+      "name": "axiom-phase7",
+      "category": "state_visibility",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Read-only Phase 7 acceptance and full-goal E2E gate visibility panel."
+    },
+    {
+      "name": "axiom-handoff",
+      "category": "reports",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "backing_tools": [
+        "tools/snapshot_project_state.py",
+        "tools/generate_handoff.py",
+        "tools/generate_handoff_bundle.py"
+      ],
+      "description": "Generate snapshot, handoff, and bundle."
+    },
+    {
+      "name": "axiom-logs",
+      "category": "reports",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "description": "Show recent AXIOM log files."
+    },
+    {
+      "name": "axiom-visual",
+      "category": "terminal_ui",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "description": "Reprint startup visual panel."
+    },
+    {
+      "name": "axiom-theme",
+      "category": "terminal_ui",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "description": "Show terminal theme resources and prompt-mode guidance."
+    },
+    {
+      "name": "axiom-posh-on",
+      "category": "terminal_ui",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "description": "Enable Oh My Posh dashboard prompt."
+    },
+    {
+      "name": "axiom-posh-off",
+      "category": "terminal_ui",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "description": "Disable Oh My Posh dashboard prompt for session."
+    },
+    {
+      "name": "axiom-posh-test",
+      "category": "terminal_ui",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "description": "Diagnose Oh My Posh loading."
+    },
+    {
+      "name": "axiom-registry",
+      "category": "core",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Audit AXIOM Terminal command registry coherence against loaded shell commands."
+    },
+    {
+      "name": "axiom-registry-check",
+      "category": "core",
+      "primary": false,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Compatibility alias for axiom-registry."
+    },
+    {
+      "name": "axiom-visual-mode",
+      "category": "terminal_ui",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Show AXIOM Terminal visual configuration."
+    },
+    {
+      "name": "axiom-visual-native",
+      "category": "terminal_ui",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Switch AXIOM Terminal to compact native prompt mode."
+    },
+    {
+      "name": "axiom-visual-dashboard",
+      "category": "terminal_ui",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Switch AXIOM Terminal to Oh My Posh dashboard prompt mode."
+    },
+    {
+      "name": "axiom-banner-on",
+      "category": "terminal_ui",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Enable AXIOM Terminal startup status panel."
+    },
+    {
+      "name": "axiom-banner-off",
+      "category": "terminal_ui",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Disable AXIOM Terminal startup status panel."
+    },
+    {
+      "name": "axiom-visual-reset",
+      "category": "terminal_ui",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Reset AXIOM Terminal visual configuration to defaults."
+    },
+    {
+      "name": "axiom-terminal-report",
+      "category": "reports",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Read-only AXIOM Terminal suite report with optional file output."
+    },
+    {
+      "name": "axiom-terminal-changelog",
+      "category": "reports",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Read AXIOM Terminal changelog."
+    },
+    {
+      "name": "axiom-terminal-note",
+      "category": "reports",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Append timestamped note to AXIOM Terminal changelog only."
+    },
+    {
+      "name": "axiom-terminal-changelog-path",
+      "category": "reports",
+      "primary": false,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Print AXIOM Terminal changelog path."
+    },
+    {
+      "name": "axiom-docs",
+      "category": "core",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Show indexed AXIOM documentation and key project files."
+    },
+    {
+      "name": "axiom-doc",
+      "category": "core",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "medium",
+      "status": "implemented",
+      "description": "Open indexed AXIOM documentation or key project file in terminal editor."
+    },
+    {
+      "name": "axiom-doc-path",
+      "category": "core",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Print indexed AXIOM documentation or key file path."
+    },
+    {
+      "name": "axiom-docs-terminal",
+      "category": "core",
+      "primary": false,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Show terminal documentation entries only."
+    },
+    {
+      "name": "axiom-docs-runtime",
+      "category": "core",
+      "primary": false,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Show runtime file entries only."
+    },
+    {
+      "name": "axiom-docs-policy",
+      "category": "core",
+      "primary": false,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Show policy file entries only."
+    },
+    {
+      "name": "axiom-docs-tools",
+      "category": "core",
+      "primary": false,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Show tool file entries only."
+    },
+    {
+      "name": "axiom-docs-agent",
+      "category": "core",
+      "primary": false,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Show Phase 5 agent documentation and files only."
+    },
+    {
+      "name": "axiom-system-map",
+      "category": "core",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Show static AXIOM runtime/tool/UI boundary map."
+    },
+    {
+      "name": "axiom-boundaries",
+      "category": "core",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Show terminal/runtime safety boundaries."
+    },
+    {
+      "name": "axiom-runtime-map",
+      "category": "core",
+      "primary": false,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Show AXIOM runtime component map."
+    },
+    {
+      "name": "axiom-terminal-map",
+      "category": "core",
+      "primary": false,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Show AXIOM Terminal component map."
+    },
+    {
+      "name": "axiom-terminal-test",
+      "category": "terminal_ui",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Run AXIOM Terminal suite regression check without touching AXIOM runtime state."
+    },
+    {
+      "name": "axiom-terminal-snapshot",
+      "category": "reports",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Generate saved AXIOM Terminal suite state snapshot artifacts."
+    },
+    {
+      "name": "axiom-watch",
+      "category": "state_visibility",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "medium",
+      "status": "implemented",
+      "description": "Foreground read-only refresh panel for AXIOM Terminal."
+    },
+    {
+      "name": "axiom-watch-once",
+      "category": "state_visibility",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Run one refresh of an AXIOM Terminal read-only watch panel."
+    },
+    {
+      "name": "axiom-watch-help",
+      "category": "terminal_ui",
+      "primary": false,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Show AXIOM watch usage and modes."
+    },
+    {
+      "name": "axiom-task",
+      "category": "state_visibility",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Read-only task detail viewer by task_id."
+    },
+    {
+      "name": "axiom-task-latest",
+      "category": "state_visibility",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Read-only latest task detail viewer."
+    },
+    {
+      "name": "axiom-archive-logs",
+      "category": "reports",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "medium",
+      "status": "implemented",
+      "backing_tools": [
+        "tools/archive_logs.py"
+      ],
+      "description": "Archive older AXIOM log files into logs/archive using the approved archive_logs.py tool."
+    },
+    {
+      "name": "axiom-archive-logs-path",
+      "category": "reports",
+      "primary": false,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Print the archive_logs.py tool path."
+    }
+  ],
+  "compatibility_aliases": [
+    {
+      "name": "axiom-home",
+      "prefer": "axiom",
+      "show_in_primary_help": false
+    },
+    {
+      "name": "axiom-open",
+      "prefer": "axiom-edit",
+      "show_in_primary_help": false
+    },
+    {
+      "name": "np",
+      "prefer": "ae",
+      "show_in_primary_help": false
+    },
+    {
+      "name": "axiom-snapshot",
+      "prefer": "axiom-handoff",
+      "show_in_primary_help": false
+    },
+    {
+      "name": "axiom-terminal-logs",
+      "prefer": "axiom-logs",
+      "show_in_primary_help": false
+    },
+    {
+      "name": "axiom-root",
+      "prefer": "axiom-doctor",
+      "show_in_primary_help": false
+    },
+    {
+      "name": "axiom-files",
+      "prefer": "axiom-doctor",
+      "show_in_primary_help": false
+    }
+  ],
+  "blocked_direct_shortcuts": [
+    {
+      "name": "autonomous_operation",
+      "reason": "AXIOM is intentionally fail-closed and non-autonomous."
+    },
+    {
+      "name": "safe_pass_enablement",
+      "reason": "Safe-pass readiness may be present for bounded Phase 7 E2E readiness only; no direct terminal enablement shortcut is allowed."
+    },
+    {
+      "name": "model_profile_promotion",
+      "reason": "Current trusted model profile cannot be manually promoted."
+    },
+    {
+      "name": "real_model_or_cloud_calls",
+      "reason": "Gateway expansion is not current phase."
+    },
+    {
+      "name": "real_network_fetches",
+      "reason": "NetworkGateway remains controlled/fail-closed."
+    },
+    {
+      "name": "sandbox_process_execution",
+      "reason": "SandboxGateway is not enabled for real process execution."
+    },
+    {
+      "name": "telegram_operator_control_plane",
+      "reason": "Telegram polling is explicit/manual only; direct terminal ingestion, confirmation, and default live bot runtime remain blocked."
+    },
+    {
+      "name": "agent_layer",
+      "reason": "Manual/test-only Phase 5 agent foundation exists, but automatic agent control is blocked."
+    },
+    {
+      "name": "automatic_scheduler_executor_integration",
+      "reason": "Manual no-op cycle exists but must not be automatically connected yet."
+    },
+    {
+      "name": "automatic_scheduler_agent_integration",
+      "reason": "Phase 5 agents must not be connected to scheduler automation yet."
+    }
+  ],
+  "manual_test_tools": [
+    {
+      "name": "tools/run_manual_agent_foundation_smoke.py",
+      "boundary": "Phase 5 manual/test-only smoke; no direct terminal shortcut."
+    },
+    {
+      "name": "tools/audit_agent_boundary.py",
+      "boundary": "Phase 5 read-only audit; exposed through axiom-agent-audit and axiom-preflight."
+    },
+    {
+      "name": "tools/execute_goal_planning_task.py",
+      "boundary": "Phase 5 manual/test-only wrapper; no direct terminal shortcut."
+    },
+    {
+      "name": "tools/execute_task_planning_task.py",
+      "boundary": "Phase 5 manual/test-only wrapper; no direct terminal shortcut."
+    },
+    {
+      "name": "tools/execute_tool_execution_task.py",
+      "boundary": "Phase 5 manual/test-only wrapper; no direct terminal shortcut."
+    },
+    {
+      "name": "tools/execute_result_verification_task.py",
+      "boundary": "Phase 5 manual/test-only wrapper; no direct terminal shortcut."
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+    "Ctrl-s": "Save",
+    "Ctrl-q": "Quit",
+    "Ctrl-f": "Find",
+    "Ctrl-g": "FindNext",
+    "Ctrl-z": "Undo",
+    "Ctrl-y": "Redo"
+}

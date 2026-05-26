@@ -1,0 +1,10 @@
+{
+    "colorscheme": "simple",
+    "mkparents": true,
+    "savecursor": true,
+    "scrollbar": true,
+    "softwrap": false,
+    "tabsize": 4,
+    "tabstospaces": true,
+    "wordwrap": false
+}

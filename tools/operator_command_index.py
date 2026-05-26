@@ -10,7 +10,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 LOG_DIR = ROOT / "logs"
-TOOL_VERSION = "operator_command_index.v2"
+TOOL_VERSION = "operator_command_index.v10"
 
 
 @dataclass(frozen=True)
@@ -21,10 +21,17 @@ class OperatorCommand:
     when_to_run: str
     expected_exit_code: str
     notes: str
+    read_only: bool = True
+    requires_manual_test_override: bool = False
+    dispatches_scheduler: bool = False
+    executes_task_body: bool = False
+    changes_task_state: bool = False
+    calls_model: bool = False
+    calls_network: bool = False
+    calls_sandbox: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
-
 
 COMMANDS: tuple[OperatorCommand, ...] = (
     OperatorCommand(
@@ -50,6 +57,8 @@ COMMANDS: tuple[OperatorCommand, ...] = (
         when_to_run="After model profile registration, bootstrap work, or suspicious session-state drift.",
         expected_exit_code="0 on successful repair/check.",
         notes="Uses schema-valid safe_pass_disabled_reason='no_stored_profile'.",
+        read_only=False,
+        changes_task_state=True,
     ),
     OperatorCommand(
         name="Autonomous Readiness Check",
@@ -66,6 +75,228 @@ COMMANDS: tuple[OperatorCommand, ...] = (
         when_to_run="Before starting new implementation work or after completing a task.",
         expected_exit_code="0 when foundation is healthy; 1 when foundation fails.",
         notes="This is the main quick health command.",
+    ),
+    OperatorCommand(
+        name="Supervisor Health Check",
+        command="python tools\\supervisor_health_check.py",
+        purpose="Assess the health of the autonomous supervisor.",
+        when_to_run="When verifying scheduler state and active task constraints.",
+        expected_exit_code="0 when supervisor is healthy; 1 when unhealthy.",
+        notes="Checks for stale heartbeats and running task invariants.",
+    ),
+    OperatorCommand(
+        name="Audit Task Lifecycle",
+        command="python tools\\audit_task_lifecycle.py",
+        purpose="Audit task lifecycle invariants for a session.",
+        when_to_run="When verifying task state consistency or debugging stuck sessions.",
+        expected_exit_code="0 on a clean audit; 1 on violations.",
+        notes="Requires session_id.",
+    ),
+    OperatorCommand(
+        name="Audit Task Execution",
+        command="python tools\\audit_task_execution.py",
+        purpose="Audit no-op task execution records for coherence.",
+        when_to_run="After task execution tests to verify execution payload formatting and invariants.",
+        expected_exit_code="0 on a clean audit; 1 on violations.",
+        notes="Read-only. Does not mutate task state. Use --all-sessions to audit all.",
+    ),
+    OperatorCommand(
+        name="Audit Policy Security",
+        command="python tools\\audit_policy_security.py",
+        purpose="Run read-only Phase 3 policy/security audit.",
+        when_to_run="After Phase 3 policy/security changes and during preflight verification.",
+        expected_exit_code="0 on a clean audit; 1 on violations.",
+        notes=(
+            "Read-only. Verifies manifest/tool-capability integrity, active "
+            "role/operator manifest schema and policy completeness, operator-control "
+            "command binding, tool-capability semantic contracts, scanner/schema "
+            "coherence, scanner return-contract stability, and security-event "
+            "schema/index/domain coverage. "
+            "Source handoff: docs\\phase3_policy_security_audit.md."
+        ),
+        read_only=True,
+        requires_manual_test_override=False,
+        dispatches_scheduler=False,
+        executes_task_body=False,
+        changes_task_state=False,
+        calls_model=False,
+        calls_network=False,
+        calls_sandbox=False,
+    ),
+    OperatorCommand(
+        name="Execution Readiness Check",
+        command="python tools\\execution_readiness_check.py",
+        purpose="Reports whether the current session is ready for controlled execution based on lifecycle audit, execution audit, supervisor health, pending manifest-bound task count, and running task count.",
+        when_to_run="Before attempting manual or autonomous dispatch and execution.",
+        expected_exit_code="0 when ready for execution; 1 when blocked or not ready.",
+        notes="Read-only. Does not dispatch, start, complete, or execute tasks.",
+    ),
+    OperatorCommand(
+        name="Cloud Cascade Smoke Test",
+        command="python tools\\cloud_cascade_smoke_test.py",
+        purpose="Run dry-run readiness/key-visibility reporting or an explicit bounded live smoke test for the Phase 4 cloud model cascade.",
+        when_to_run="After cloud provider env vars are configured, or when verifying the live ModelGateway cloud cascade.",
+        expected_exit_code="0 when readiness passes and, with --live, the sentinel response matches; 1 on missing keys, provider failure, or sentinel mismatch.",
+        notes=(
+            "Dry-run by default and does not print API keys. Use --target "
+            "groq|cerebras|sambanova|openrouter|cascade. Real model calls require "
+            "--live. Source handoff: docs\\phase4_gateway_readiness.md."
+        ),
+        read_only=False,
+        requires_manual_test_override=True,
+        calls_model=True,
+    ),
+    OperatorCommand(
+        name="Network Gateway Smoke Test",
+        command="python tools\\network_gateway_smoke_test.py",
+        purpose="Run dry-run readiness/key-visibility reporting or an explicit bounded live Brave Search NetworkGateway smoke test.",
+        when_to_run="After BRAVE_SEARCH_API_KEY is configured, or when verifying the live NetworkGateway Brave provider path.",
+        expected_exit_code="0 when dry-run readiness passes and, with --live, Brave returns a bounded response; 1 on missing key, policy denial, or provider failure.",
+        notes=(
+            "Dry-run by default and does not print API keys. Real Brave Search "
+            "network calls require --live. Source handoff: docs\\phase4_gateway_readiness.md."
+        ),
+        read_only=False,
+        requires_manual_test_override=True,
+        calls_network=True,
+    ),
+    OperatorCommand(
+        name="Sandbox Gateway Smoke Test",
+        command="python tools\\sandbox_gateway_smoke_test.py",
+        purpose="Run dry-run readiness reporting or an explicit bounded live Windows Job Object SandboxGateway smoke test.",
+        when_to_run="After verifying Phase 4 SandboxGateway Job Object enforcement or when testing the live sandbox boundary.",
+        expected_exit_code="0 when dry-run readiness passes and, with --live, the bounded process exits within limits; 1 on policy denial, timeout, RAM limit, or runtime failure.",
+        notes=(
+            "Dry-run by default. Real sandbox process execution requires --live. "
+            "Uses Windows Job Object limits: kill-on-close, active process limit 1, "
+            "256 MB RAM cap, 60 second wall-clock cap, network denied. "
+            "Source handoff: docs\\phase4_gateway_readiness.md."
+        ),
+        read_only=False,
+        requires_manual_test_override=True,
+        calls_sandbox=True,
+    ),
+    OperatorCommand(
+        name="Memory Gateway Smoke Test",
+        command="python tools\\memory_gateway_smoke_test.py",
+        purpose="Run dry-run readiness reporting or an explicit bounded live local Ollama MemoryGateway write/query smoke test.",
+        when_to_run="After local Ollama is running with nomic-embed-text available, or when verifying the MemoryGateway embedding provider boundary.",
+        expected_exit_code="0 when dry-run readiness passes and, with --live, MemoryGateway writes and queries the sentinel memory; 1 on provider, policy, invariant, or query failure.",
+        notes=(
+            "Dry-run by default. Real local Ollama /api/embed embedding calls "
+            "and sqlite-vec write/query require --live. Does not call "
+            "/api/chat or /api/generate. Source handoff: "
+            "docs\\phase4_gateway_readiness.md."
+        ),
+        read_only=False,
+        requires_manual_test_override=True,
+        calls_model=True,
+    ),
+    OperatorCommand(
+        name="Classifier Calibration Check",
+        command="python tools\\run_calibration.py",
+        purpose="Run dry-run classifier calibration scoring, or explicitly approved live/write-db calibration checks.",
+        when_to_run="Only when classifier calibration work has separate approval outside Phase 4 gateway closeout.",
+        expected_exit_code="0 when calibration passes; 1 when calibration fails or write approval is missing.",
+        notes=(
+            "Dry-run by default. Live cloud cascade classification requires --live. "
+            "Writing classifier_calibration_runs requires --write-db and explicit "
+            "classifier calibration approval token. This remains outside Phase 4 "
+            "gateway authority."
+        ),
+        read_only=False,
+        requires_manual_test_override=True,
+        calls_model=True,
+    ),
+    OperatorCommand(
+        name="Stage No-op Task",
+        command="python tools\\stage_noop_task.py",
+        purpose="Stage one pending manifest-bound no-op task without dispatching or executing it.",
+        when_to_run=(
+            "After foundation, lifecycle audit, execution audit, and supervisor "
+            "health pass, when execution readiness is blocked only by "
+            "no_pending_manifest_bound_task."
+        ),
+        expected_exit_code="0 when a pending no-op task is staged; 1 when staging is refused.",
+        notes=(
+            "State-changing but bounded. Inserts one pending task only. Does not "
+            "dispatch scheduler work, start tasks, execute task bodies, call models, "
+            "call networks, call sandbox, enable safe-pass, or enable autonomous operation."
+        ),
+        read_only=False,
+        changes_task_state=True,
+    ),
+    OperatorCommand(
+        name="Scheduler Tick",
+        command="python tools\\scheduler_tick.py",
+        purpose="Execute a single scheduler tick manually.",
+        when_to_run="When testing scheduler progression or advancing the system state step-by-step.",
+        expected_exit_code="0 on successful tick completion.",
+        notes="Requires an active session.",
+        read_only=False,
+        requires_manual_test_override=True,
+        dispatches_scheduler=True,
+        changes_task_state=True,
+    ),
+    OperatorCommand(
+        name="Run Scheduler Loop",
+        command="python tools\\run_scheduler_loop.py",
+        purpose="Run a bounded foreground scheduler loop.",
+        when_to_run="To execute multiple scheduler ticks continuously in the foreground.",
+        expected_exit_code="0 on successful bounded loop completion.",
+        notes="Blocks by default when autonomous readiness is unavailable. Manual/test override only with --allow-when-autonomous-blocked.",
+        read_only=False,
+        requires_manual_test_override=True,
+        dispatches_scheduler=True,
+        changes_task_state=True,
+    ),
+    OperatorCommand(
+        name="Dispatch Next Task",
+        command="python tools\\dispatch_next_task.py",
+        purpose="Dispatch the next eligible pending task in the active session.",
+        when_to_run="When testing dispatcher logic manually.",
+        expected_exit_code="0 on successful dispatch evaluation.",
+        notes="Requires session_id. Use --manual-test-override to bypass readiness blocks.",
+        read_only=False,
+        requires_manual_test_override=True,
+        dispatches_scheduler=True,
+        changes_task_state=True,
+    ),
+    OperatorCommand(
+        name="Start Task",
+        command="python tools\\start_task.py",
+        purpose="Transition a dispatched task from pending to running.",
+        when_to_run="When manually executing a specific task.",
+        expected_exit_code="0 on successful task start.",
+        notes="Requires task_id. Use --manual-test-override to bypass readiness blocks.",
+        read_only=False,
+        requires_manual_test_override=True,
+        changes_task_state=True,
+    ),
+    OperatorCommand(
+        name="Execute No-op Task",
+        command="python tools\\execute_noop_task.py",
+        purpose="Execute a manifest-bound pending task through the deterministic no-op executor.",
+        when_to_run="When manually testing the deterministic executor directly on a specific task.",
+        expected_exit_code="0 on successful execution.",
+        notes="Direct execution CLI is blocked unless --manual-test-override is passed while autonomous readiness is unavailable.",
+        read_only=False,
+        requires_manual_test_override=True,
+        executes_task_body=True,
+        changes_task_state=True,
+    ),
+    OperatorCommand(
+        name="Run Manual No-op Cycle",
+        command="python tools\\run_manual_noop_cycle.py",
+        purpose="Run one manual scheduler-dispatched no-op execution cycle.",
+        when_to_run="When verifying the complete dispatch-and-execute flow for a single task.",
+        expected_exit_code="0 on successful cycle completion.",
+        notes="Manual/test-only. Requires --allow-when-autonomous-blocked in the current fail-closed state.",
+        read_only=False,
+        requires_manual_test_override=True,
+        dispatches_scheduler=True,
+        executes_task_body=True,
+        changes_task_state=True,
     ),
     OperatorCommand(
         name="Snapshot Project State",
@@ -97,7 +328,7 @@ COMMANDS: tuple[OperatorCommand, ...] = (
         purpose="Run the full AXIOM regression suite.",
         when_to_run="After every implementation task.",
         expected_exit_code="0 when all tests pass.",
-        notes="Current expected target after this task is 210 passed.",
+        notes="Use current live output as authoritative; snapshot and handoff tools do not run pytest.",
     ),
 )
 
@@ -140,6 +371,12 @@ def command_index_markdown() -> str:
             "## Notes",
             "",
             "- `python tools\\verify_foundation.py` is the preferred quick health check.",
+            "- `python tools\\audit_policy_security.py` is the read-only Phase 3 policy/security audit; it currently covers tool-capability semantics, active manifest completeness, scanner contracts, and security-event audit support. Source handoff is `docs\\phase3_policy_security_audit.md`.",
+            "- `python tools\\cloud_cascade_smoke_test.py` is the Phase 4 cloud cascade smoke wrapper; dry-run is default, and live model calls require `--live`. Source handoff is `docs\\phase4_gateway_readiness.md`.",
+            "- `python tools\\network_gateway_smoke_test.py` is the Phase 4 Brave Search NetworkGateway smoke wrapper; dry-run is default, and live network calls require `--live`. Source handoff is `docs\\phase4_gateway_readiness.md`.",
+            "- `python tools\\sandbox_gateway_smoke_test.py` is the Phase 4 Windows Job Object SandboxGateway smoke wrapper; dry-run is default, and live sandbox process execution requires `--live`. Source handoff is `docs\\phase4_gateway_readiness.md`.",
+            "- `python tools\\memory_gateway_smoke_test.py` is the Phase 4 local Ollama MemoryGateway smoke wrapper; dry-run is default, and live /api/embed write/query calls require `--live`. Source handoff is `docs\\phase4_gateway_readiness.md`.",
+            "- `python tools\\run_calibration.py` remains outside Phase 4 gateway authority; dry-run is default, live classification requires `--live`, and DB writes require explicit calibration approval.",
             "- `python tools\\autonomous_readiness_check.py` returning exit code `2` is expected while AXIOM is fail-closed non-autonomous.",
             "- `pytest tests -v` remains the canonical regression check after implementation changes.",
             "",

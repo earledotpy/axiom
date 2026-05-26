@@ -24,3 +24,15 @@ sqlite_vec:
   
 scheduler:
   stale_threshold_seconds: 120
+
+telegram_gateway:
+  enabled: false
+  operator_whitelist: []
+  allowed_chat_ids: []
+  capability_token_sha256: []
+  max_message_length: 128
+  per_sender_limit_per_minute: 6
+  per_chat_limit_per_minute: 12
+  global_limit_per_minute: 30
+  replay_window_seconds: 86400
+  confirmation_expiry_seconds: 300

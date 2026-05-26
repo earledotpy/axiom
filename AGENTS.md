@@ -6,6 +6,10 @@
 
 `tests/` mirrors implementation areas with focused `test_*.py` modules. `tools/` contains maintenance scripts such as `register_manifests.py`, `config/axiom.yaml` stores runtime defaults, and `governance/` holds project governance and ratification material rather than executable code. Treat `axiom.db`, `logs/`, `.pytest_cache/`, and local virtual environments as runtime artifacts, not source files.
 
+## AXIOM Governance Role
+
+For AXIOM governance work, Codex serves as Implementation Specialist and Troubleshooter. Jeremy is the Operator and final authority. Before changing governance files, read `governance/02_cli_surfaces/codex/AGENTS.governance.md` and the active live spine in `governance/01_live_spine/`. Preserve `governance/06_archives/` and `governance/07_deprecated_legacy/` as historical or deprecated material unless Jeremy explicitly authorizes a migration.
+
 ## Build, Test, and Development Commands
 
 - `python -m pip install -r requirements.txt` — install project dependencies.

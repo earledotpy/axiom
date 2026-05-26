@@ -1,0 +1,66 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 3,
+  "final_space": true,
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "text",
+          "style": "diamond",
+          "leading_diamond": "\u25e2",
+          "trailing_diamond": "\ue0b0",
+          "foreground": "#020806",
+          "background": "#5CFFA4",
+          "template": " AXIOM "
+        },
+        {
+          "type": "path",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#C8FFD8",
+          "background": "#123321",
+          "properties": {
+            "style": "folder"
+          }
+        },
+        {
+          "type": "git",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#020806",
+          "background": "#FFD36E",
+          "template": " {{ .HEAD }}{{ if .Working.Changed }} \u00b1{{ end }} "
+        },
+        {
+          "type": "python",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#C8FFD8",
+          "background": "#214D36",
+          "template": " {{ if .Venv }}{{ .Venv }}{{ end }} "
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "executiontime",
+          "style": "plain",
+          "foreground": "#5CFFA4",
+          "template": "{{ .FormattedMs }}"
+        },
+        {
+          "type": "status",
+          "style": "plain",
+          "foreground": "#FF5F5F",
+          "template": " {{ if gt .Code 0 }}exit:{{ .Code }}{{ end }}"
+        }
+      ]
+    }
+  ]
+}

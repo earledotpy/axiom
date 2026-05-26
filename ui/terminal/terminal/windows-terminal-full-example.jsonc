@@ -1,0 +1,59 @@
+{
+  "$schema": "https://aka.ms/terminal-profiles-schema",
+  "defaultProfile": "{a110ba55-f411-4d61-bb8e-a510f0f0a110}",
+  "profiles": {
+    "list": [
+      {
+        "guid": "{a110ba55-f411-4d61-bb8e-a510f0f0a110}",
+        "name": "AXIOM Terminal",
+        "commandline": "pwsh.exe -NoLogo",
+        "startingDirectory": "C:\\axiom",
+        "icon": "C:\\axiom\\ui\\terminal\\assets\\axiom-terminal-icon.png",
+        "colorScheme": "AXIOM Fail-Closed CRT",
+        "font": {
+          "face": "CaskaydiaCove Nerd Font Mono",
+          "size": 11,
+          "weight": "medium"
+        },
+        "cursorShape": "filledBox",
+        "cursorHeight": 25,
+        "backgroundImage": "C:\\axiom\\ui\\terminal\\assets\\axiom-crt-background.png",
+        "backgroundImageOpacity": 0.18,
+        "backgroundImageStretchMode": "uniformToFill",
+        "opacity": 92,
+        "useAcrylic": true,
+        "padding": "12, 10, 12, 10",
+        "tabTitle": "AXIOM",
+        "suppressApplicationTitle": true
+      }
+    ]
+  },
+  "schemes": [
+    {
+      "name": "AXIOM Fail-Closed CRT",
+      "background": "#020806",
+      "foreground": "#C8FFD8",
+      "black": "#020806",
+      "red": "#FF5F5F",
+      "green": "#5CFFA4",
+      "yellow": "#FFD36E",
+      "blue": "#6CB6FF",
+      "purple": "#B88CFF",
+      "cyan": "#7DFFD6",
+      "white": "#C8FFD8",
+      "brightBlack": "#214D36",
+      "brightRed": "#FF8F8F",
+      "brightGreen": "#9CFFC6",
+      "brightYellow": "#FFE7A8",
+      "brightBlue": "#9DCBFF",
+      "brightPurple": "#D1B6FF",
+      "brightCyan": "#B7FFEA",
+      "brightWhite": "#F0FFF5",
+      "cursorColor": "#5CFFA4",
+      "selectionBackground": "#214D36"
+    }
+  ],
+  "actions": [],
+  "copyFormatting": "none",
+  "copyOnSelect": false
+}

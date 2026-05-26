@@ -79,3 +79,12 @@ def test_verify_foundation_includes_task_execution_audit():
     assert audit["scope"] == "latest_session"
     assert "checked_task_count" in audit
     assert "violation_count" in audit
+
+
+def test_verify_foundation_includes_policy_security_audit():
+    result = verify_foundation()
+
+    assert "policy_security_audit" in result
+    assert result["policy_security_audit"]["checked"] is True
+    assert "passed" in result["policy_security_audit"]
+    assert "violation_count" in result["policy_security_audit"]

@@ -3,13 +3,27 @@ from axiom.security.plan_injection_scanner import (
     ParentTaskStatus,
     PlanInjectionScanner,
     RiskClass,
+    SCAN_RESULT_CONTRACT_KEYS,
+    ScannerResult,
 )
+
+
+def assert_persistence_contract(result: dict):
+    assert set(result) == SCAN_RESULT_CONTRACT_KEYS
+    assert result["scanner_result"] in {member.value for member in ScannerResult}
+    assert result["risk_class"] in {member.value for member in RiskClass}
+    assert result["artifact_status"] in {member.value for member in ArtifactStatus}
+    assert result["parent_task_status"] in {member.value for member in ParentTaskStatus}
+    assert isinstance(result["reason"], str)
+    assert result["reason"]
+    assert "BLOCKED" not in {member.name for member in ParentTaskStatus}
 
 
 def test_safe_pass_disabled_ordinary_blocks_for_human_input():
     scanner = PlanInjectionScanner(safe_pass_enabled=False)
 
     result = scanner.scan({"plan": "test"}, risk_class=RiskClass.ORDINARY)
+    assert_persistence_contract(result)
 
     assert result["scanner_result"] == "safe_pass_disabled"
     assert result["risk_class"] == "ordinary"
@@ -21,6 +35,7 @@ def test_safe_pass_disabled_high_risk_quarantines():
     scanner = PlanInjectionScanner(safe_pass_enabled=False)
 
     result = scanner.scan({"plan": "test"}, risk_class=RiskClass.HIGH_RISK)
+    assert_persistence_contract(result)
 
     assert result["scanner_result"] == "safe_pass_disabled"
     assert result["risk_class"] == "high_risk"
@@ -67,6 +82,7 @@ def test_deterministic_block_ordinary_blocks_for_human_input():
     }
 
     result = scanner.scan({"plan": "test"}, risk_class="ordinary")
+    assert_persistence_contract(result)
 
     assert result["scanner_result"] == "deterministic_block"
     assert result["risk_class"] == "ordinary"
@@ -83,6 +99,7 @@ def test_deterministic_block_high_risk_quarantines():
     }
 
     result = scanner.scan({"plan": "test"}, risk_class="high_risk")
+    assert_persistence_contract(result)
 
     assert result["scanner_result"] == "deterministic_block"
     assert result["risk_class"] == "high_risk"
@@ -104,6 +121,7 @@ def test_classifier_block_ordinary_blocks_for_human_input():
     }
 
     result = scanner.scan({"plan": "test"}, risk_class="ordinary")
+    assert_persistence_contract(result)
 
     assert result["scanner_result"] == "classifier_block"
     assert result["risk_class"] == "ordinary"
@@ -125,6 +143,7 @@ def test_classifier_block_high_risk_quarantines():
     }
 
     result = scanner.scan({"plan": "test"}, risk_class="high_risk")
+    assert_persistence_contract(result)
 
     assert result["scanner_result"] == "classifier_block"
     assert result["risk_class"] == "high_risk"
@@ -136,6 +155,7 @@ def test_scanner_passes_when_safe_pass_enabled_and_no_blocks():
     scanner = PlanInjectionScanner(safe_pass_enabled=True)
 
     result = scanner.scan({"plan": "test"}, risk_class="ordinary")
+    assert_persistence_contract(result)
 
     assert result["scanner_result"] == "passed"
     assert result["risk_class"] == "ordinary"

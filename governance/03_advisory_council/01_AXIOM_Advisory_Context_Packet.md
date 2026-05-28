@@ -90,6 +90,12 @@ governance/
 
 Baseline schema marker: `v1.11.4`. Implementation baseline doc: `AXIOM_Implementation_v1.13.md`.
 
+## Known Open Condition
+
+`verify_foundation.py` currently reports `fail_closed_coherent: False` with `blocking_reasons: autonomous_operation_disabled`. This is a pre-existing runtime flag, observed 2026-05-28, that predates recent governance changes. It is not a defect introduced by ADR-0006 or any panel member action this session.
+
+Do not recommend fixing this flag autonomously or treating it as a safety regression. Root-cause investigation is assigned to Codex as a future scoped task under Jeremy's direction.
+
 ## Review Priorities
 
 When reviewing an AXIOM proposal, focus on:

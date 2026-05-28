@@ -3,7 +3,7 @@
 Audience: Kimi, Qwen, or DeepSeek
 Operator: Jeremy
 Response format: Markdown file format
-Last verified against repository: 2026-05-26 (maintained by Claude Code, Governance Auditor)
+Last verified against repository: 2026-05-28 (maintained by Claude Code, Governance Auditor)
 
 ## What AXIOM Is
 
@@ -11,7 +11,7 @@ AXIOM is a local-first Python framework for orchestrating agentic workflows unde
 
 ## Current Governance Model
 
-AXIOM governance has moved from chat-application project files into a terminal-native system.
+AXIOM governance has moved from chat-application project files into a terminal-native system. All three panel CLIs operate against the live AXIOM worktree in a shared Windows Terminal workspace.
 
 Current panel:
 
@@ -20,6 +20,19 @@ Current panel:
 - Claude Code / Claude: Governance Auditor and Specification Critic.
 - Antigravity / Gemini 3.5: Chief Architect and Researcher.
 - Kimi, Qwen, DeepSeek: External advisory council.
+
+## Active Development Workflow (ADR-0006)
+
+Non-trivial implementation tasks follow the Staged Implementation-Review Loop, ratified 2026-05-28:
+
+1. **Antigravity** reads the live worktree and produces a written task plan. It does not write implementation code.
+2. **Codex** receives the plan, implements the changes, and runs local verification.
+3. **Claude Code** reviews Codex's uncommitted diff, runs `pytest`, and reports findings to Jeremy.
+4. **Jeremy** approves before the change is accepted.
+
+No active binding changed to establish this loop. Role authority (AB-003, AB-004, AB-005) is unchanged. The loop formalizes the existing handoff chain and preserves audit independence by keeping Claude Code as reviewer of Codex's work only.
+
+Protected files that no panel agent may modify without explicit Operator authorization: `governance/01_live_spine/`, `governance/02_cli_surfaces/`, `AGENTS.md`, `CLAUDE.md`, `.antigravity.md`, `axiom/security/`, `axiom/core/state_machine.py`, `axiom/core/policy_engine.py`, `axiom/persistence/schema.sql`, `axiom/policy/`, `tools/register_manifests.py`.
 
 ## Advisory Council Authority
 
@@ -49,7 +62,7 @@ Every integrity mismatch (SHA256, manifest, model fingerprint, operator-control 
 
 ## Live Governance Authority (cite only these as binding)
 
-- Source of truth is `governance/01_live_spine/`. The active bindings are **AB-001 … AB-016**.
+- Source of truth is `governance/01_live_spine/`. The active bindings are **AB-001 … AB-016**. Approved decisions are recorded in `governance/04_decision_records/` (ADR-0001 through ADR-0006). Open questions register has OQ-001 through OQ-004 open; OQ-005 closed by ADR-0006.
 - **CB-001 / CB-002 are DEPRECATED.** They survive only as historical evidence under `governance/06_archives/`. They carry no binding force unless Jeremy re-ratifies them into the live spine. Do not use them as design justification.
 - `governance/06_archives/` is historical evidence — not active governance.
 
@@ -70,7 +83,7 @@ governance/
                         open questions, decision log, runbook
   02_cli_surfaces/      per-CLI role adapters (claude_code, codex, antigravity)
   03_advisory_council/  advisory packets, response template, role instructions (this packet)
-  04_decision_records/  formal decisions (ADRs)
+  04_decision_records/  formal decisions (ADR-0001..ADR-0006; ADR-0006 = staged loop)
   05_handoffs/          active panel draft proposals/reviews
   06_archives/          historical evidence — NON-binding
 ```

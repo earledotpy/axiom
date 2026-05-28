@@ -12,6 +12,8 @@ The canonical baseline doc is `AXIOM_Implementation_v1.13.md` (note: the *schema
 
 Claude Code serves as Governance Auditor and Specification Critic. Jeremy is the Operator and final authority. Before reviewing or changing governance files, read `governance/02_cli_surfaces/claude_code/CLAUDE.governance.md` and the active live spine in `governance/01_live_spine/`. Treat `governance/06_archives/` as historical evidence unless Jeremy explicitly authorizes a migration.
 
+Active implementation work follows the Staged Implementation-Review Loop (ADR-0006): Antigravity plans, Codex implements, Claude Code verifies. Claude Code's Step 3 review duties — running `pytest` and reviewing Codex's uncommitted diff — are defined in `CLAUDE.governance.md`.
+
 ## Operational posture (this is the intended state — do not "fix" it)
 
 Axiom is **local-first, fail-closed, and non-autonomous by design**. The healthy steady state is:
@@ -56,8 +58,6 @@ python tools/run_manual_noop_cycle.py <session_id>    # full dispatch -> start -
 python tools/stage_noop_task.py / start_task.py / complete_task.py / fail_task.py / cancel_task.py
 python tools/status_check.py / supervisor_health_check.py / repair_session_state.py
 ```
-
-Note: `tools/run_scheduer_loop.py` (typo) and `tools/run_scheduler_loop.py` both exist — use the correctly-spelled one.
 
 ### Verification battery (read-only — run before proposing/after integrating work)
 

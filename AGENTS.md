@@ -10,6 +10,8 @@
 
 For AXIOM governance work, Codex serves as Implementation Specialist and Troubleshooter. Jeremy is the Operator and final authority. Before changing governance files, read `governance/02_cli_surfaces/codex/AGENTS.governance.md` and the active live spine in `governance/01_live_spine/`. Preserve `governance/06_archives/` as historical evidence unless Jeremy explicitly authorizes a migration.
 
+Active implementation work follows the Staged Implementation-Review Loop (ADR-0006): Antigravity plans, Codex implements, Claude Code verifies. Codex's Step 2 implementation duties and protected file list are defined in `AGENTS.governance.md`.
+
 ## Build, Test, and Development Commands
 
 - `python -m pip install -r requirements.txt` — install project dependencies.

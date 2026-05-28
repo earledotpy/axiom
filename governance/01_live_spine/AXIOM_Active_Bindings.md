@@ -17,7 +17,7 @@ Effective date: 2026-05-24
 | AB-009 | CLI-specific role adapters live under `governance/02_cli_surfaces/` and must defer to the live spine. |
 | AB-010 | Advisory council paste packets and response files live under `governance/03_advisory_council/`. |
 | AB-011 | Formal governance decisions are recorded under `governance/04_decision_records/` and indexed in `AXIOM_Decision_Log.md`. |
-| AB-012 | Legacy chat-era governance files are deprecated and preserved under `governance/07_deprecated_legacy/`. |
+| AB-012 | Legacy chat-era governance files are retired from the working tree; preserved legacy evidence lives under `governance/06_archives/`. |
 | AB-013 | Historical archives under `governance/06_archives/` are preserved as evidence and are not active governance unless explicitly re-ratified. |
 | AB-014 | No panel member may convert advice into binding governance without Jeremy's approval. |
 | AB-015 | Implementation reports must separate live verification evidence from assumptions, memory-derived context, and recommendations. |

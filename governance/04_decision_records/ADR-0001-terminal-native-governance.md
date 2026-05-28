@@ -3,6 +3,7 @@
 Status: Approved
 Date: 2026-05-24
 Operator: Jeremy
+Superseded in part by: ADR-0005 for deprecated legacy storage location
 
 ## Decision
 
@@ -14,4 +15,4 @@ The previous governance structure was optimized for chat-application upload work
 
 ## Impact
 
-Legacy chat-era governance files are preserved under `governance/07_deprecated_legacy/`. Historical archives remain preserved under `governance/06_archives/`. Active governance decisions should be recorded as ADR files and reflected in the live spine.
+Legacy chat-era governance handling is superseded in part by ADR-0005. Historical archives remain preserved under `governance/06_archives/`. Active governance decisions should be recorded as ADR files and reflected in the live spine.

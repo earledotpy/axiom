@@ -13,7 +13,7 @@ This runbook defines how AXIOM governance is executed in the terminal-native sys
 1. Intake the question, proposal, defect, role change, architecture concern, or policy issue.
 2. Classify the item as implementation, governance, architecture, advisory, or mixed.
 3. Assign the primary reviewer by role.
-4. Gather the minimum context needed from the live spine, repository files, current evidence, and any relevant deprecated legacy material.
+4. Gather the minimum context needed from the live spine, repository files, current evidence, and any relevant archived legacy material.
 5. Produce a recommendation with explicit assumptions, risks, and expected impact.
 6. Jeremy decides whether to approve, reject, defer, narrow, or send to advisory council review.
 7. Approved decisions are recorded as decision records and reflected in active bindings when binding authority changes.
@@ -126,7 +126,7 @@ For implementation or policy changes:
 
 ## Legacy Material Rule
 
-Use `governance/07_deprecated_legacy/` as reference material, not active authority. Pull legacy details forward only by creating or updating active live-spine files and recording the decision when the change becomes binding.
+Use `governance/06_archives/` as historical evidence, not active authority. Pull archived legacy details forward only by creating or updating active live-spine files and recording the decision when the change becomes binding.
 
 Use `governance/06_archives/` as historical evidence. Do not edit archives unless Jeremy explicitly grants that scope.
 

@@ -8,7 +8,7 @@ Effective date: 2026-05-24
 
 AXIOM governance is now terminal-native. The active governance surface exists to give Codex, Claude Code, Antigravity, and the external advisory council enough shared context to make clear judgement calls without carrying the full legacy chat-era file set.
 
-The live spine is the current source of authority. Legacy chat-era materials are preserved under `governance/07_deprecated_legacy/` and historical archives remain under `governance/06_archives/`.
+The live spine is the current source of authority. Legacy chat-era materials are retired from the working tree and preserved as historical evidence under `governance/06_archives/`.
 
 ## Authority Model
 

@@ -22,7 +22,7 @@ The legacy file structure worked for chat upload workflows, but active building 
 
 - Preserve AXIOM's fail-closed, non-autonomous safety posture.
 - Improve governance efficiency by reducing the active document set.
-- Keep legacy governance material preserved but out of the active path.
+- Keep legacy governance material preserved in archives but out of the active path.
 - Give each AI system enough context to make role-appropriate judgement calls.
 - Make advisory council packets complete enough for a fresh chat with no previous context.
 

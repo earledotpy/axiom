@@ -10,7 +10,7 @@ The canonical baseline doc is `AXIOM_Implementation_v1.13.md` (note: the *schema
 
 ## AXIOM governance role
 
-Claude Code serves as Governance Auditor and Specification Critic. Jeremy is the Operator and final authority. Before reviewing or changing governance files, read `governance/02_cli_surfaces/claude_code/CLAUDE.governance.md` and the active live spine in `governance/01_live_spine/`. Treat `governance/06_archives/` and `governance/07_deprecated_legacy/` as historical or deprecated material unless Jeremy explicitly authorizes a migration.
+Claude Code serves as Governance Auditor and Specification Critic. Jeremy is the Operator and final authority. Before reviewing or changing governance files, read `governance/02_cli_surfaces/claude_code/CLAUDE.governance.md` and the active live spine in `governance/01_live_spine/`. Treat `governance/06_archives/` as historical evidence unless Jeremy explicitly authorizes a migration.
 
 ## Operational posture (this is the intended state — do not "fix" it)
 

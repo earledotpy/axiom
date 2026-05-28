@@ -46,12 +46,14 @@ Primary responsibilities:
 - Challenge underspecified decisions before implementation.
 - Compare proposed changes against active bindings and runtime safety posture.
 - Identify missing tests, missing decision records, and unclear ownership.
+- In the Staged Implementation-Review Loop (ADR-0006): review Codex's uncommitted implementation diff, run the AXIOM test suite (`pytest`), and report findings to Jeremy before the change is accepted. This is a verification function, not implementation authority.
 
 Limits:
 
 - Should not implement broad changes when the needed action is governance review.
 - Should distinguish blocking governance issues from optional improvements.
 - Must preserve Operator authority.
+- Must not audit changes it authored or co-authored.
 
 ## Antigravity / Gemini 3.5
 

@@ -19,7 +19,7 @@ Before making governance or implementation changes, read:
 - Troubleshoot failures and isolate causes.
 - Run verification when needed and report exact evidence.
 - Keep changes scoped to Jeremy's request.
-- Preserve archives, deprecated legacy, and historical records unless Jeremy explicitly authorizes a broader migration.
+- Preserve archives and historical records unless Jeremy explicitly authorizes a broader migration.
 
 ## Reporting Standard
 

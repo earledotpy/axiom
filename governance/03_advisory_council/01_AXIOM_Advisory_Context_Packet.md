@@ -3,7 +3,7 @@
 Audience: Kimi, Qwen, or DeepSeek
 Operator: Jeremy
 Response format: Markdown file format
-Last verified against repository: 2026-05-24 (maintained by Claude Code, Governance Auditor)
+Last verified against repository: 2026-05-26 (maintained by Claude Code, Governance Auditor)
 
 ## What AXIOM Is
 
@@ -50,8 +50,8 @@ Every integrity mismatch (SHA256, manifest, model fingerprint, operator-control 
 ## Live Governance Authority (cite only these as binding)
 
 - Source of truth is `governance/01_live_spine/`. The active bindings are **AB-001 … AB-016**.
-- **CB-001 / CB-002 are DEPRECATED.** They survive only under `governance/07_deprecated_legacy/`. They carry no binding force unless Jeremy re-ratifies them into the live spine. Do not use them as design justification.
-- `governance/06_archives/` and `governance/07_deprecated_legacy/` are historical/deprecated — not active governance.
+- **CB-001 / CB-002 are DEPRECATED.** They survive only as historical evidence under `governance/06_archives/`. They carry no binding force unless Jeremy re-ratifies them into the live spine. Do not use them as design justification.
+- `governance/06_archives/` is historical evidence — not active governance.
 
 ## Load-Bearing System Facts (commonly misread without repository access)
 
@@ -73,7 +73,6 @@ governance/
   04_decision_records/  formal decisions (ADRs)
   05_handoffs/          active panel draft proposals/reviews
   06_archives/          historical evidence — NON-binding
-  07_deprecated_legacy/ deprecated chat-era material — NON-binding
 ```
 
 Baseline schema marker: `v1.11.4`. Implementation baseline doc: `AXIOM_Implementation_v1.13.md`.

@@ -1,0 +1,594 @@
+<!-- VARIANT A: fail_closed_non_autonomous -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AXIOM Operator Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base: #050A08;
+    --bg-header: #0D1F16;
+    --bg-panel: #07110D;
+    --fg-base: #C7F7C7;
+    --fg-dim: #5B7C6E;
+    --border-dim: #284036;
+    --green-bright: #A8FF60;
+    --green-accent: #5CFFA4;
+    --green-pass: #78D86F;
+    --cyan-base: #69D6C5;
+    --cyan-bright: #9EF7E6;
+    --blue-base: #5AA7D8;
+    --blue-bright: #7CC7FF;
+    --gold-base: #FFD36E;
+    --gold-dim: #D9B35F;
+    --red-base: #FF4B4B;
+    --red-bright: #FF6B6B;
+    --purple: #C6A7FF;
+    --sigil-claude: #8BCFB8;
+    --sigil-gpt:    #A0C8E8;
+    --sigil-gemini: #B8E8A0;
+    --font-family: 'Fira Code', 'Cascadia Code', monospace;
+    --font-size: 13px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-base);
+    color: var(--fg-base);
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    line-height: 1.45;
+    font-variant-ligatures: none;
+  }
+
+  .shell {
+    position: relative;
+    width: 100vw;
+    min-height: 100vh;
+    background: var(--bg-base);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* CRT scanline overlay */
+  .shell::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 1px,
+      rgba(0, 0, 0, 0.08) 2px,
+      rgba(0, 0, 0, 0.08) 3px
+    );
+    z-index: 9999;
+  }
+
+  /* HEADER BAR */
+  .header {
+    width: 100%;
+    height: 2.2em;
+    background: var(--bg-header);
+    display: flex;
+    align-items: center;
+    padding: 0 1ch;
+    border-bottom: 1px solid var(--border-dim);
+    flex-shrink: 0;
+  }
+  .header-left   { flex: 0 0 40%; display: flex; align-items: center; gap: 0.8ch; }
+  .header-center { flex: 1;       display: flex; align-items: center; gap: 1.2ch; justify-content: center; }
+  .header-right  { flex: 0 0 25%; display: flex; align-items: center; gap: 1.2ch; justify-content: flex-end; }
+
+  .sigil {
+    display: inline-block;
+    width: 1ch;
+    text-align: center;
+    font-weight: 600;
+  }
+  /* ◆ Claude (Anthropic) · ◇ GPT/Codex (OpenAI) · ◈ Gemini/Antigravity (Google) */
+  .sigil-claude { color: var(--sigil-claude); }
+  .sigil-gpt    { color: var(--sigil-gpt); }
+  .sigil-gemini { color: var(--sigil-gemini); }
+
+  .title {
+    color: var(--green-bright);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    margin-left: 0.5ch;
+  }
+  .title-sep { color: var(--fg-dim); margin: 0 0.6ch; }
+  .title-sub { color: var(--fg-dim); }
+
+  .mode-text { color: var(--fg-base); }
+  .live-dot {
+    display: inline-block;
+    color: var(--green-bright);
+    animation: blink 1s step-end infinite;
+    font-size: 1.1em;
+    line-height: 1;
+  }
+  @keyframes blink {
+    0%, 50%   { opacity: 1; }
+    50.01%, 100% { opacity: 0; }
+  }
+
+  .ts { color: var(--fg-dim); }
+  .ro {
+    color: var(--blue-base);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5ch;
+  }
+  .ro-glyph { color: var(--blue-bright); }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    min-width: 7ch;
+    padding: 0 0.4ch;
+    text-align: center;
+    font-family: var(--font-family);
+    font-weight: 600;
+    border: 1px solid currentColor;
+    border-radius: 1px;
+    letter-spacing: 0.04em;
+  }
+  .badge-PASS  { color: var(--green-pass); }
+  .badge-IDLE  { color: var(--gold-base); }
+  .badge-WARN  { color: var(--gold-base); }
+  .badge-BLOCK { color: var(--red-base); }
+  .badge-FAIL  { color: var(--red-bright); }
+  .badge-CAND  { color: var(--gold-dim); }
+  .badge-RUN   { color: var(--green-bright); }
+  .badge-GATE  { color: var(--blue-bright); }
+  .badge-PEND  { color: var(--cyan-bright); }
+  .badge-INFO  { color: var(--cyan-base); }
+  .badge-SKIP  { color: var(--fg-dim); }
+
+  /* GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: 35% 65%;
+    grid-auto-rows: auto;
+    gap: 2px;
+    padding: 2px;
+    background: var(--border-dim);
+  }
+  .panel {
+    border: 1px solid var(--border-dim);
+    background: var(--bg-panel);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .panel-title {
+    color: var(--green-accent);
+    border-bottom: 1px solid var(--border-dim);
+    padding: 0.25em 1ch;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 1ch;
+    background: rgba(168, 255, 96, 0.02);
+  }
+  .panel-title-meta { color: var(--fg-dim); font-weight: 400; margin-left: auto; }
+  .panel-body {
+    padding: 0.5em 1ch 0.7em 1ch;
+    white-space: pre;
+    overflow: hidden;
+  }
+  .panel-body .row { white-space: pre; }
+
+  /* KV row */
+  .kv {
+    display: flex;
+    white-space: pre;
+  }
+  .kv-label {
+    display: inline-block;
+    min-width: 28ch;
+    color: var(--fg-dim);
+  }
+  .kv-value { color: var(--fg-base); }
+
+  .gold        { color: var(--gold-base); }
+  .gold-dim    { color: var(--gold-dim); }
+  .green-pass  { color: var(--green-pass); }
+  .green-accent{ color: var(--green-accent); }
+  .green-bright{ color: var(--green-bright); }
+  .cyan-base   { color: var(--cyan-base); }
+  .cyan-bright { color: var(--cyan-bright); }
+  .blue-base   { color: var(--blue-base); }
+  .blue-bright { color: var(--blue-bright); }
+  .red-base    { color: var(--red-base); }
+  .red-bright  { color: var(--red-bright); }
+  .purple      { color: var(--purple); }
+  .dim         { color: var(--fg-dim); }
+
+  .subhead {
+    color: var(--fg-dim);
+    margin-top: 0.6em;
+    border-top: 1px dashed var(--border-dim);
+    padding-top: 0.35em;
+    letter-spacing: 0.06em;
+  }
+
+  .agent-row {
+    display: flex;
+    align-items: center;
+    gap: 1ch;
+    white-space: pre;
+  }
+  .agent-sub {
+    color: var(--green-pass);
+    padding-left: 4ch;
+    white-space: pre;
+  }
+  .agent-dot { color: var(--fg-dim); }
+  .agent-dot.idle { color: var(--gold-base); }
+
+  /* Tables */
+  table.tt {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+  table.tt td {
+    padding: 0 1ch 0 0;
+    vertical-align: top;
+    white-space: pre;
+  }
+  table.tt .col-dim { color: var(--fg-dim); }
+
+  /* Event stream */
+  .ev-row {
+    display: grid;
+    grid-template-columns: 9ch 8ch 1fr;
+    column-gap: 1ch;
+    white-space: pre;
+    padding: 0 0.4ch;
+  }
+  .ev-warn { background: rgba(255, 211, 110, 0.05); }
+
+  /* Full width sections */
+  .fullband {
+    border: 1px solid var(--border-dim);
+    border-top: none;
+    background: var(--bg-panel);
+  }
+  .fullband .panel-title { border-bottom: 1px solid var(--border-dim); }
+
+  .footer-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2ch 4ch;
+    padding: 0.6em 1.5ch 0.8em 1.5ch;
+  }
+  .action {
+    display: flex;
+    gap: 1ch;
+    white-space: pre;
+  }
+  .action .cmd  { color: var(--green-accent); font-weight: 600; }
+  .action .desc { color: var(--fg-dim); }
+
+  .rule-para {
+    color: var(--fg-dim);
+    padding: 0.4em 1.5ch 0.6em 1.5ch;
+    white-space: normal;
+    max-width: 110ch;
+    line-height: 1.55;
+  }
+  .rule-para .pin { color: var(--gold-base); }
+
+  hr.soft {
+    border: none;
+    border-top: 1px dashed var(--border-dim);
+    margin: 0.4em 0;
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- HEADER BAR
+       Sigil order: ◆ Claude (Anthropic) · ◇ GPT/Codex (OpenAI) · ◈ Gemini/Antigravity (Google) -->
+  <header class="header">
+    <div class="header-left">
+      <span class="sigil sigil-claude">◆</span><span class="sigil sigil-gpt">◇</span><span class="sigil sigil-gemini">◈</span>
+      <span class="title">AXIOM</span><span class="title-sep">//</span><span class="title-sub">operator_console</span>
+      <span class="title-sep">·</span><span class="title-sub">v1.13</span>
+    </div>
+    <div class="header-center">
+      <span class="badge badge-IDLE">IDLE  </span>
+      <span class="mode-text">mode: <span class="gold">fail_closed_non_autonomous</span></span>
+      <span class="live-dot">●</span>
+      <span class="dim">live</span>
+    </div>
+    <div class="header-right">
+      <span class="ts">2026-05-28 14:07:42 UTC</span>
+      <span class="ro"><span class="ro-glyph">⬡</span> read-only</span>
+    </div>
+  </header>
+
+  <!-- MAIN GRID -->
+  <div class="grid">
+
+    <!-- 1. SYSTEM POSTURE -->
+    <section class="panel">
+      <div class="panel-title">▌ SYSTEM POSTURE <span class="panel-title-meta">posture.toml · sealed</span></div>
+      <div class="panel-body">
+<div class="row"><span class="badge badge-IDLE">IDLE  </span>  <span class="gold">fail_closed_non_autonomous</span></div>
+<hr class="soft">
+<div class="kv"><span class="kv-label">autonomous_allowed</span><span class="kv-value gold">false (by design)</span></div>
+<div class="kv"><span class="kv-label">safe_pass_enabled</span><span class="kv-value gold">false (by design)</span></div>
+<div class="kv"><span class="kv-label">scheduler_status</span><span class="kv-value">idle</span></div>
+<div class="kv"><span class="kv-label">session_id</span><span class="kv-value">42</span></div>
+<div class="kv"><span class="kv-label">operator</span><span class="kv-value cyan-base">o.kessler</span></div>
+<div class="kv"><span class="kv-label">posture_hash</span><span class="kv-value dim">7a3f…b21c</span></div>
+
+<div class="subhead">BLOCKERS</div>
+<div class="row"><span class="badge badge-SKIP">SKIP  </span>  <span class="dim">scheduler_tick                  · gated by autonomous_allowed</span></div>
+<div class="row"><span class="badge badge-SKIP">SKIP  </span>  <span class="dim">unattended_provider_dispatch    · gated by safe_pass_enabled</span></div>
+<div class="row"><span class="badge badge-SKIP">SKIP  </span>  <span class="dim">manifest_auto_promote           · requires operator countersign</span></div>
+      </div>
+    </section>
+
+    <!-- 2. TASK QUEUE -->
+    <section class="panel">
+      <div class="panel-title">▌ TASK QUEUE <span class="panel-title-meta">manifest-bound · operator-dispatched</span></div>
+      <div class="panel-body">
+<div class="row">
+  <span class="badge badge-PEND">PEND  </span> <span class="cyan-bright">pending 3</span>   <span class="dim">·</span>
+  <span class="badge badge-IDLE">IDLE  </span> <span class="gold">running 0</span>   <span class="dim">·</span>
+  <span class="badge badge-PASS">PASS  </span> <span class="green-pass">completed 7</span>   <span class="dim">·</span>
+  <span class="dim">total 10</span>
+</div>
+<hr class="soft">
+<table class="tt">
+  <tr>
+    <td class="col-dim">#0008</td>
+    <td><span class="badge badge-PEND">PEND  </span></td>
+    <td class="cyan-bright">manifest.posture.audit</td>
+    <td class="col-dim">prio:hi</td>
+    <td class="col-dim">eta —</td>
+    <td class="col-dim">awaits: operator.dispatch</td>
+  </tr>
+  <tr>
+    <td class="col-dim">#0009</td>
+    <td><span class="badge badge-PEND">PEND  </span></td>
+    <td class="cyan-bright">manifest.ledger.compact</td>
+    <td class="col-dim">prio:md</td>
+    <td class="col-dim">eta —</td>
+    <td class="col-dim">awaits: operator.dispatch</td>
+  </tr>
+  <tr>
+    <td class="col-dim">#0010</td>
+    <td><span class="badge badge-PEND">PEND  </span></td>
+    <td class="cyan-bright">manifest.trust.recompute</td>
+    <td class="col-dim">prio:lo</td>
+    <td class="col-dim">eta —</td>
+    <td class="col-dim">awaits: countersign</td>
+  </tr>
+</table>
+<div class="row dim" style="margin-top:0.5em;">↳ no task may execute without explicit `axiom dispatch &lt;id&gt;`</div>
+      </div>
+    </section>
+
+    <!-- 3. AGENT BOUNDARY -->
+    <section class="panel">
+      <div class="panel-title">▌ AGENT BOUNDARY <span class="panel-title-meta">4 registered · 0 active</span></div>
+      <div class="panel-body">
+<div class="agent-row">
+  <span class="agent-dot idle">◯</span>
+  <span class="badge badge-IDLE">IDLE  </span>
+  <span class="cyan-bright">archivist</span>
+  <span class="dim">·</span>
+  <span class="dim">mf://agent.archivist@v1.0</span>
+</div>
+<div class="agent-sub">tasks:0  provider_calls:0  last_seen:14:02:11</div>
+
+<div class="agent-row">
+  <span class="agent-dot idle">◯</span>
+  <span class="badge badge-IDLE">IDLE  </span>
+  <span class="cyan-bright">ledger_keeper</span>
+  <span class="dim">·</span>
+  <span class="dim">mf://agent.ledger_keeper@v1.0</span>
+</div>
+<div class="agent-sub">tasks:0  provider_calls:0  last_seen:14:05:48</div>
+
+<div class="agent-row">
+  <span class="agent-dot idle">◯</span>
+  <span class="badge badge-IDLE">IDLE  </span>
+  <span class="cyan-bright">posture_auditor</span>
+  <span class="dim">·</span>
+  <span class="dim">mf://agent.posture_auditor@v1.0</span>
+</div>
+<div class="agent-sub">tasks:0  provider_calls:0  last_seen:14:06:59</div>
+
+<div class="agent-row">
+  <span class="agent-dot idle">◯</span>
+  <span class="badge badge-IDLE">IDLE  </span>
+  <span class="cyan-bright">trust_reviewer</span>
+  <span class="dim">·</span>
+  <span class="dim">mf://agent.trust_reviewer@v1.0</span>
+</div>
+<div class="agent-sub">tasks:0  provider_calls:0  last_seen:13:58:02</div>
+      </div>
+    </section>
+
+    <!-- 4. OPERATOR COMMAND LEDGER -->
+    <section class="panel">
+      <div class="panel-title">▌ OPERATOR COMMAND LEDGER <span class="panel-title-meta">append-only · hash-chained</span></div>
+      <div class="panel-body">
+<div class="row">
+  <span class="dim">commands:</span> <span class="cyan-bright">12</span> <span class="dim">·</span>
+  <span class="green-pass">auth:9</span> <span class="dim">·</span>
+  <span class="gold">gated:2</span> <span class="dim">·</span>
+  <span class="red-base">refused:1</span> <span class="dim">·</span>
+  <span class="dim">chain_ok ✓</span>
+</div>
+<hr class="soft">
+<table class="tt">
+  <tr>
+    <td class="col-dim">14:06:51</td>
+    <td><span class="badge badge-PASS">PASS  </span></td>
+    <td class="green-accent">axiom posture show</td>
+    <td class="col-dim">auth:operator</td>
+    <td class="green-pass">authorized</td>
+  </tr>
+  <tr>
+    <td class="col-dim">14:05:30</td>
+    <td><span class="badge badge-PASS">PASS  </span></td>
+    <td class="green-accent">axiom manifest verify --all</td>
+    <td class="col-dim">auth:operator</td>
+    <td class="green-pass">authorized</td>
+  </tr>
+  <tr>
+    <td class="col-dim">14:04:12</td>
+    <td><span class="badge badge-GATE">GATE  </span></td>
+    <td class="green-accent">axiom model register qwen3:4b</td>
+    <td class="col-dim">auth:pending</td>
+    <td class="blue-bright">awaiting countersign</td>
+  </tr>
+  <tr>
+    <td class="col-dim">14:02:47</td>
+    <td><span class="badge badge-BLOCK">BLOCK </span></td>
+    <td class="green-accent">axiom dispatch --all</td>
+    <td class="col-dim">auth:operator</td>
+    <td class="red-base">refused · posture=fail_closed</td>
+  </tr>
+  <tr>
+    <td class="col-dim">14:01:09</td>
+    <td><span class="badge badge-PASS">PASS  </span></td>
+    <td class="green-accent">axiom session attach 42</td>
+    <td class="col-dim">auth:operator</td>
+    <td class="green-pass">authorized</td>
+  </tr>
+</table>
+      </div>
+    </section>
+
+    <!-- 5. MANIFEST INTEGRITY -->
+    <section class="panel">
+      <div class="panel-title">▌ MANIFEST INTEGRITY <span class="panel-title-meta">ed25519 · last verified 14:05:30</span></div>
+      <div class="panel-body">
+<div class="row"><span class="badge badge-PASS">PASS  </span>  <span class="green-pass">12/12 manifests verified · chain intact</span></div>
+<hr class="soft">
+<table class="tt">
+  <tr>
+    <td class="col-dim">mf://agent.archivist@v1.0</td>
+    <td class="cyan-base">agent</td>
+    <td><span class="green-pass">✓</span></td>
+  </tr>
+  <tr>
+    <td class="col-dim">mf://agent.ledger_keeper@v1.0</td>
+    <td class="cyan-base">agent</td>
+    <td><span class="green-pass">✓</span></td>
+  </tr>
+  <tr>
+    <td class="col-dim">mf://agent.posture_auditor@v1.0</td>
+    <td class="cyan-base">agent</td>
+    <td><span class="green-pass">✓</span></td>
+  </tr>
+  <tr>
+    <td class="col-dim">mf://agent.trust_reviewer@v1.0</td>
+    <td class="cyan-base">agent</td>
+    <td><span class="green-pass">✓</span></td>
+  </tr>
+  <tr>
+    <td class="col-dim">mf://policy.core_constraints@v1.0</td>
+    <td class="cyan-base">policy</td>
+    <td><span class="green-pass">✓</span></td>
+  </tr>
+  <tr>
+    <td class="col-dim">mf://model.qwen3-4b@candidate</td>
+    <td class="cyan-base">model</td>
+    <td><span class="green-pass">✓</span></td>
+  </tr>
+  <tr>
+    <td class="col-dim">mf://ledger.commands@append</td>
+    <td class="cyan-base">store</td>
+    <td><span class="green-pass">✓</span></td>
+  </tr>
+</table>
+      </div>
+    </section>
+
+    <!-- 6. LIVE EVENT STREAM -->
+    <section class="panel">
+      <div class="panel-title">▌ LIVE EVENT STREAM <span class="panel-title-meta">tail -f · 10 of 1284</span></div>
+      <div class="panel-body" style="padding-left:0; padding-right:0;">
+<div class="ev-row"><span class="dim">14:07:42</span><span class="badge badge-INFO">INFO  </span><span>posture heartbeat ok · mode=fail_closed_non_autonomous</span></div>
+<div class="ev-row"><span class="dim">14:07:38</span><span class="badge badge-INFO">INFO  </span><span>manifest cache refresh · 12 entries</span></div>
+<div class="ev-row"><span class="dim">14:07:21</span><span class="badge badge-PASS">PASS  </span><span><span class="green-pass">ledger.append ok</span> · seq=1283 · hash=4f1a…<span class="dim">9c</span></span></div>
+<div class="ev-row ev-warn"><span class="dim">14:06:55</span><span class="badge badge-WARN">WARN  </span><span><span class="gold">candidate model</span> qwen3:4b registered without countersign · gated</span></div>
+<div class="ev-row"><span class="dim">14:06:51</span><span class="badge badge-INFO">INFO  </span><span>operator command · <span class="green-accent">axiom posture show</span></span></div>
+<div class="ev-row"><span class="dim">14:06:30</span><span class="badge badge-INFO">INFO  </span><span>agent.posture_auditor heartbeat · idle</span></div>
+<div class="ev-row"><span class="dim">14:05:48</span><span class="badge badge-INFO">INFO  </span><span>agent.ledger_keeper heartbeat · idle</span></div>
+<div class="ev-row"><span class="dim">14:05:30</span><span class="badge badge-PASS">PASS  </span><span><span class="green-pass">manifest verify --all</span> · 12/12 ok</span></div>
+<div class="ev-row"><span class="dim">14:04:12</span><span class="badge badge-INFO">INFO  </span><span>gate opened · model.register awaits countersign</span></div>
+<div class="ev-row"><span class="dim">14:02:47</span><span class="badge badge-INFO">INFO  </span><span>refused · dispatch --all against fail_closed posture</span></div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- 7. MODEL PROFILE / TRUST -->
+  <section class="fullband">
+    <div class="panel-title">▌ MODEL PROFILE / TRUST <span class="panel-title-meta">candidate registration · awaiting operator countersign</span></div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0 2ch; padding: 0.5em 1.5ch 0 1.5ch;">
+      <div>
+        <div class="row" style="margin-bottom:0.4em;"><span class="badge badge-CAND">CAND  </span>  <span class="gold-dim">candidate</span></div>
+        <div class="kv"><span class="kv-label">model</span><span class="kv-value gold">qwen3:4b</span></div>
+        <div class="kv"><span class="kv-label">provider</span><span class="kv-value dim">local.ollama</span></div>
+      </div>
+      <div>
+        <div class="kv"><span class="kv-label">registration_status</span><span class="kv-value gold">candidate</span></div>
+        <div class="kv"><span class="kv-label">is_current</span><span class="kv-value gold">0</span></div>
+        <div class="kv"><span class="kv-label">trust_tier</span><span class="kv-value dim">untrusted</span></div>
+      </div>
+      <div>
+        <div class="kv"><span class="kv-label">thinking_mode</span><span class="kv-value green-pass">disabled ✓</span></div>
+        <div class="kv"><span class="kv-label">context_window</span><span class="kv-value dim">32k</span></div>
+        <div class="kv"><span class="kv-label">deterministic_seed</span><span class="kv-value dim">0xA1B2</span></div>
+      </div>
+      <div>
+        <div class="kv"><span class="kv-label">first_seen</span><span class="kv-value dim">2026-05-28 14:04:12</span></div>
+        <div class="kv"><span class="kv-label">manifest_hash</span><span class="kv-value dim">b30e…11d4</span></div>
+        <div class="kv"><span class="kv-label">countersign</span><span class="kv-value gold">required (1 of 1)</span></div>
+      </div>
+    </div>
+    <p class="rule-para">
+      <span class="pin">rule.</span> a candidate model holds no execution authority. it may be inspected, hashed, and benchmarked under read-only conditions, but cannot serve dispatch, agent, or ledger calls until an operator countersigns its manifest and the posture explicitly admits it. thinking_mode must remain <span style="color:var(--green-pass)">disabled</span> for all candidate models — chain-of-thought emission against an untrusted weight is treated as an integrity event and refused at the boundary.
+    </p>
+  </section>
+
+  <!-- 8. NEXT SAFE ACTIONS FOOTER -->
+  <section class="fullband">
+    <div class="panel-title">▌ NEXT SAFE ACTIONS <span class="panel-title-meta">read-only · no state mutation</span></div>
+    <div class="footer-actions">
+      <div class="action"><span class="cmd">axiom posture show</span><span class="desc">— inspect current posture &amp; sealed hash</span></div>
+      <div class="action"><span class="cmd">axiom manifest verify --all</span><span class="desc">— re-verify ed25519 chain across registry</span></div>
+      <div class="action"><span class="cmd">axiom ledger tail</span><span class="desc">— follow command ledger append stream</span></div>
+      <div class="action"><span class="cmd">axiom model inspect qwen3:4b</span><span class="desc">— review candidate trust card (read-only)</span></div>
+      <div class="action"><span class="cmd">axiom agent list --idle</span><span class="desc">— enumerate boundary-registered agents</span></div>
+      <div class="action"><span class="cmd">axiom queue peek</span><span class="desc">— show pending task envelopes without dispatch</span></div>
+      <div class="action"><span class="cmd">axiom countersign --review</span><span class="desc">— stage countersign decision for gated commands</span></div>
+      <div class="action"><span class="cmd">axiom session detach</span><span class="desc">— release session 42 (queue remains held)</span></div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

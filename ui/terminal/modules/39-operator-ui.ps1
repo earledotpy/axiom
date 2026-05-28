@@ -42,13 +42,22 @@ function Get-AxiomUiStatusColor {
     param([string]$Status)
 
     switch ($Status) {
-        "PASS" { return "Green" }
+        "PASS"  { return "Green" }
         "READY" { return "Green" }
-        "OK" { return "Green" }
-        "INFO" { return "Cyan" }
-        "WARN" { return "Yellow" }
+        "OK"    { return "Green" }
+        "RUN"   { return "Green" }        # future: agent actively executing
+        "INFO"  { return "Cyan" }
+        "PEND"  { return "Cyan" }         # queued, manifest-bound
+        "GATE"  { return "Blue" }         # future: awaiting operator approval
+        "INIT"  { return "DarkGray" }     # initialized, not yet warm
+        "WARN"  { return "Yellow" }
+        "CAND"  { return "DarkYellow" }   # candidate — not yet promoted (expected)
+        "IDLE"  { return "DarkGray" }     # registered, not running (healthy containment)
+        "SKIP"  { return "DarkGray" }     # skipped by design — expected condition
         "BLOCK" { return "Red" }
-        "FAIL" { return "Red" }
+        "FAIL"  { return "Red" }
+        "LOCK"  { return "Red" }          # hard policy lock, fail-closed
+        "QRNT"  { return "Magenta" }      # quarantined — security hold
         default { return "Gray" }
     }
 }

@@ -32,15 +32,19 @@ if (-not $script:AxiomTerminalVersion) {
 
 $script:AxiomEsc = [char]27
 $script:AxiomAnsi = @{
-    Reset = "$script:AxiomEsc[0m"
-    Dim   = "$script:AxiomEsc[38;2;91;124;110m"
-    Green = "$script:AxiomEsc[38;2;168;255;96m"
+    Reset     = "$script:AxiomEsc[0m"
+    Dim       = "$script:AxiomEsc[38;2;91;124;110m"
+    Green     = "$script:AxiomEsc[38;2;168;255;96m"
     DarkGreen = "$script:AxiomEsc[38;2;120;216;111m"
-    Cyan  = "$script:AxiomEsc[38;2;105;214;197m"
-    Blue  = "$script:AxiomEsc[38;2;124;199;255m"
-    Amber = "$script:AxiomEsc[38;2;255;209;102m"
-    Red   = "$script:AxiomEsc[38;2;255;107;107m"
-    Soft  = "$script:AxiomEsc[38;2;199;247;199m"
+    Cyan      = "$script:AxiomEsc[38;2;105;214;197m"
+    Blue      = "$script:AxiomEsc[38;2;124;199;255m"
+    Amber     = "$script:AxiomEsc[38;2;255;209;102m"
+    Red       = "$script:AxiomEsc[38;2;255;107;107m"
+    Soft      = "$script:AxiomEsc[38;2;199;247;199m"
+    # Three-AI provenance sigils: ◆ (Claude) · ◇ (GPT/Codex) · ◈ (Gemini/Antigravity)
+    Sigil1    = "$script:AxiomEsc[38;2;139;207;184m"   # Claude / Anthropic — muted teal
+    Sigil2    = "$script:AxiomEsc[38;2;160;200;232m"   # GPT / OpenAI — muted blue
+    Sigil3    = "$script:AxiomEsc[38;2;184;232;160m"   # Gemini / Google — muted green
 }
 
 # -----------------------------
@@ -185,7 +189,7 @@ function Write-AxiomStartupBanner {
     $gitColor = if ($gitState -like "*`*") { $a.Amber } elseif ($gitState -like "git:*") { $a.Cyan } else { $a.Dim }
 
     Write-Host ""
-    Write-Host "$($a.Green) AXIOM TERMINAL$($a.Reset) $($a.Dim):: operator console$($a.Reset)"
+    Write-Host "$($a.Sigil1)◆$($a.Reset) $($a.Sigil2)◇$($a.Reset) $($a.Sigil3)◈$($a.Reset)  $($a.Green)AXIOM TERMINAL$($a.Reset) $($a.Dim):: operator console$($a.Reset)"
     Write-Host "$($a.Dim) boundary:$($a.Reset) $($a.Amber)fail-closed / non-autonomous$($a.Reset)"
     Write-Host "$($a.Dim) status:  $($rootColor)$rootState$($a.Reset)  $($venvColor)$venvState$($a.Reset)  $($dbColor)$dbState$($a.Reset)  $($gitColor)$gitState$($a.Reset)"
     Write-Host "$($a.Dim) next:    $($a.Soft)axiom-now$($a.Reset)  $($a.Dim)|$($a.Reset)  $($a.Soft)axiom-preflight$($a.Reset)  $($a.Dim)|$($a.Reset)  $($a.Soft)axiom-help$($a.Reset)"

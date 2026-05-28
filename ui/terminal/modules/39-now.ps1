@@ -284,21 +284,37 @@ function axiom-now {
         $blockers.Add("no_current_trusted_model")
     }
 
-    $modeStatus = if ($blockers.Count -gt 0) { "WARN" } else { "READY" }
+    # The three expected fail_closed blockers together form the healthy
+    # non-autonomous steady state. Treat them as IDLE (by design), not WARN.
+    $expectedBlockerSet = @("autonomous_disabled", "safe_pass_disabled", "no_current_trusted_model")
+    $unexpectedBlockers = @($blockers | Where-Object { $_ -notin $expectedBlockerSet })
+
+    $modeStatus = if ($blockers.Count -eq 0) {
+        "READY"
+    } elseif ($unexpectedBlockers.Count -eq 0) {
+        "IDLE"   # all blockers are expected — fail_closed by design
+    } else {
+        "WARN"   # at least one unexpected blocker
+    }
+
     Write-AxiomUiStatus $modeStatus "posture" "fail_closed_non_autonomous"
 
-    if ($blockers.Count -gt 0) {
-        Write-AxiomUiLine "blockers" ($blockers -join ", ") "Yellow"
+    if ($blockers.Count -eq 0) {
+        Write-AxiomUiLine "blockers" "none detected by axiom-now" "Green"
+    }
+    elseif ($unexpectedBlockers.Count -eq 0) {
+        Write-AxiomUiLine "blockers" ($blockers -join ", ") "DarkGray"
+        Write-AxiomUiLine "" "(expected — fail-closed by design)" "DarkGray"
     }
     else {
-        Write-AxiomUiLine "blockers" "none detected by axiom-now" "Green"
+        Write-AxiomUiLine "blockers" ($blockers -join ", ") "Yellow"
     }
 
     Write-AxiomUiSection "Operator-critical state"
 
     if ($session) {
         Write-AxiomUiLine "session" "id=$($session.session_id); scheduler=$($session.scheduler_status)" "Cyan"
-        Write-AxiomUiLine "safe-pass" "$(Convert-AxiomNowBool $session.safe_pass_enabled); reason=$($session.safe_pass_disabled_reason)" "Yellow"
+        Write-AxiomUiLine "safe-pass" "$(Convert-AxiomNowBool $session.safe_pass_enabled); reason=$($session.safe_pass_disabled_reason)" "DarkGray"
     }
     else {
         Write-AxiomUiLine "session" "none found" "Yellow"

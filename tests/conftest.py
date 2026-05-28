@@ -82,6 +82,13 @@ def seed_tool_capability_map_manifest(db_module) -> None:
 
 
 @pytest.fixture(autouse=True)
+def isolate_tool_logs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("tools.snapshot_project_state.LOG_DIR", tmp_path)
+    monkeypatch.setattr("tools.generate_handoff.LOG_DIR", tmp_path)
+    monkeypatch.setattr("tools.generate_handoff_bundle.LOG_DIR", tmp_path)
+
+
+@pytest.fixture(autouse=True)
 def isolate_axiom_db(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     """
     Prevent tests from writing to the real operational database.

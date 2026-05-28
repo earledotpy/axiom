@@ -29,6 +29,12 @@ For non-trivial implementation tasks, the panel follows this loop:
 
 Jeremy may direct a shorter path (Codex directly) for narrow or well-specified tasks.
 
+## Known Open Condition
+
+`verify_foundation.py` reports `fail_closed_coherent: False` with `blocking_reasons: autonomous_operation_disabled`. This flag predates ADR-0006 and is unrelated to governance changes. It is a pre-existing runtime condition, not a defect introduced in the current work session.
+
+Do not treat this as a defect to fix autonomously. Codex owns investigation of the root cause as a future scoped task under Jeremy's direction.
+
 ## Active Priorities
 
 - Preserve AXIOM's fail-closed, non-autonomous safety posture.

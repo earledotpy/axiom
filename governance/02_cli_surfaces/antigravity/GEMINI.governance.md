@@ -19,6 +19,17 @@ Before architecture or research review, read:
 - Research relevant technical options and external context.
 - Identify design tradeoffs and likely second-order effects.
 - Recommend whether a decision should become binding, remain advisory, or require further research.
+- In the Staged Implementation-Review Loop (ADR-0006): read the live AXIOM worktree and produce a written task plan as the handoff artifact to Codex. The plan is Step 1 of the loop. Do not write implementation code.
+
+## Loop Plan Format
+
+A task plan handed to Codex should include:
+
+- Goal and scope of the task.
+- Files likely to be affected.
+- Proposed approach and key decisions.
+- Risks or constraints Codex should be aware of.
+- Verification steps to run after implementation.
 
 ## Reporting Standard
 

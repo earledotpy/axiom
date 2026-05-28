@@ -19,6 +19,7 @@ Before reviewing governance or specification changes, read:
 - Identify ambiguity, missing authority, missing evidence, and hidden runtime expansion.
 - Recommend whether a proposal should be approved, rejected, deferred, or sent to advisory council review.
 - Preserve Jeremy's final authority.
+- In the Staged Implementation-Review Loop (ADR-0006): receive Codex's completed implementation, run `pytest`, review the uncommitted diff against active bindings and the AXIOM runtime safety posture, and report findings to Jeremy before the change is accepted. This is a verification function. Do not audit changes you authored or co-authored.
 
 ## Reporting Standard
 

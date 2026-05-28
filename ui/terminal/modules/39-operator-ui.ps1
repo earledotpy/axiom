@@ -49,7 +49,7 @@ function Get-AxiomUiStatusColor {
         "INFO"  { return "Cyan" }
         "PEND"  { return "Cyan" }         # queued, manifest-bound
         "GATE"  { return "Blue" }         # future: awaiting operator approval
-        "INIT"  { return "Blue" }         # initialized, not yet warm
+        "INIT"  { return "DarkGray" }     # initialized, not yet warm
         "WARN"  { return "Yellow" }
         "CAND"  { return "DarkYellow" }   # candidate — not yet promoted (expected)
         "IDLE"  { return "DarkGray" }     # registered, not running (healthy containment)

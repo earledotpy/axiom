@@ -314,7 +314,7 @@ function axiom-now {
 
     if ($session) {
         Write-AxiomUiLine "session" "id=$($session.session_id); scheduler=$($session.scheduler_status)" "Cyan"
-        Write-AxiomUiLine "safe-pass" "$(Convert-AxiomNowBool $session.safe_pass_enabled); reason=$($session.safe_pass_disabled_reason)" "Yellow"
+        Write-AxiomUiLine "safe-pass" "$(Convert-AxiomNowBool $session.safe_pass_enabled); reason=$($session.safe_pass_disabled_reason)" "DarkGray"
     }
     else {
         Write-AxiomUiLine "session" "none found" "Yellow"

@@ -65,6 +65,7 @@ def main() -> int:
         print(f"ticks_run: {result.ticks_run}")
         print(f"stopped_reason: {result.stopped_reason}")
         print(f"final_tick_status: {result.final_tick_status}")
+        print(f"execution_result: {result.execution_result}")
 
     return 0
 

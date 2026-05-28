@@ -2,7 +2,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOC_PATH = ROOT / "docs" / "scheduler_executor_boundary.md"
+DOC_PATH = ROOT / "docs" / "phase2.md"
 
 
 def test_scheduler_executor_boundary_doc_exists():
@@ -46,3 +46,4 @@ def test_scheduler_executor_boundary_blocks_dangerous_adjacent_steps():
 
     for item in prohibited:
         assert item in text
+

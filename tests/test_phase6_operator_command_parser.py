@@ -9,8 +9,8 @@ from axiom.core.operator_command_parser import OperatorCommandParser
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOC = ROOT / "docs" / "phase6_operator_command_parser.md"
-ROADMAP = ROOT / "docs" / "phase6_roadmap.md"
+DOC = ROOT / "docs" / "phase6.md"
+ROADMAP = ROOT / "docs" / "phase6.md"
 DOCS_MODULE = ROOT / "ui" / "terminal" / "modules" / "52-docs.ps1"
 
 
@@ -128,6 +128,8 @@ def test_phase6_operator_command_parser_docs_and_index_are_current():
     for phrase in required:
         assert phrase in text
 
-    assert "docs\\phase6_operator_command_parser.md" in roadmap
-    assert "phase6-command-parser" in docs_module
+    assert "docs\\phase6.md" in roadmap
+    assert "phase6" in docs_module
     assert "operator-command-parser-tool" in docs_module
+
+

@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOC = ROOT / "docs" / "phase8b_repository_cleanup_plan.md"
+DOC = ROOT / "docs" / "phase8.md"
 
 
 def test_phase8b_doc_records_audit_only_scope_and_boundaries():
@@ -64,3 +64,4 @@ def test_phase8b_doc_records_reference_maps_and_future_verification():
 
     for phrase in required:
         assert phrase in text
+

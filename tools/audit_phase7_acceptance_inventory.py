@@ -10,7 +10,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 IMPLEMENTATION = ROOT / "AXIOM_Implementation_v1.13.md"
-INVENTORY_DOC = ROOT / "docs" / "phase7_acceptance_inventory.md"
+INVENTORY_DOC = ROOT / "docs" / "phase7.md"
 
 ACCEPTANCE_RE = re.compile(r"^(\d+)\.\s+\*\*(Phase \d+)\*\*\s+—\s+(.+?)\s*$")
 
@@ -303,3 +303,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

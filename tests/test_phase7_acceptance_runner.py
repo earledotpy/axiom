@@ -18,7 +18,7 @@ from tools.run_phase7_acceptance import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOC = ROOT / "docs" / "phase7_acceptance_runner.md"
+DOC = ROOT / "docs" / "phase7.md"
 TOOL = ROOT / "tools" / "run_phase7_acceptance.py"
 TERMINAL_TOOLS = ROOT / "ui" / "terminal" / "modules" / "20-axiom-tools.ps1"
 TERMINAL_DOCTOR = ROOT / "ui" / "terminal" / "modules" / "49-doctor.ps1"
@@ -261,3 +261,4 @@ def test_phase7b_terminal_surface_exposes_acceptance_runner():
     assert command["mutates_axiom_runtime"] is False
     assert command["risk"] == "low"
     assert command["backing_tools"] == ["tools/run_phase7_acceptance.py"]
+

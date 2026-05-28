@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOC = ROOT / "docs" / "phase4_gateway_readiness.md"
+DOC = ROOT / "docs" / "phase4.md"
 
 
 def test_phase4_gateway_readiness_doc_exists():
@@ -291,8 +291,9 @@ def test_phase4_gateway_readiness_doc_lists_remaining_phase4_work():
     required = [
         "Remaining Phase 4 implementation is:",
         "none",
-        r"docs\phase4_closeout.md",
+        r"docs\phase4.md",
     ]
 
     for phrase in required:
         assert phrase in text
+

@@ -18,8 +18,8 @@ from tools.audit_telegram_gateway import audit_telegram_gateway
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOC = ROOT / "docs" / "phase6_telegram_gateway_runtime_foundation.md"
-ROADMAP = ROOT / "docs" / "phase6_roadmap.md"
+DOC = ROOT / "docs" / "phase6.md"
+ROADMAP = ROOT / "docs" / "phase6.md"
 DOCS_MODULE = ROOT / "ui" / "terminal" / "modules" / "52-docs.ps1"
 TOOLS_MODULE = ROOT / "ui" / "terminal" / "modules" / "20-axiom-tools.ps1"
 HELP_MODULE = ROOT / "ui" / "terminal" / "modules" / "90-safety-help.ps1"
@@ -241,7 +241,7 @@ def test_phase6_telegram_gateway_docs_terminal_and_registry_are_current():
         assert phrase in doc
 
     assert "### 6G. Telegram Gateway Runtime Foundation" in roadmap
-    assert "phase6-telegram-gateway-foundation" in docs_module
+    assert "phase6" in docs_module
     assert "telegram-gateway-audit" in docs_module
     assert "axiom-telegram-gateway-audit" in tools_module
     assert "axiom-telegram-gateway-audit" in help_module
@@ -265,3 +265,5 @@ def test_telegram_gateway_module_has_no_live_telegram_network_runtime():
     ]
     for forbidden in forbidden_imports:
         assert forbidden not in source
+
+

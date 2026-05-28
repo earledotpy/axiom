@@ -4,9 +4,9 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-BOUNDARY = ROOT / "docs" / "phase5_agent_boundary.md"
-CLOSEOUT = ROOT / "docs" / "phase5_closeout.md"
-PHASE6_ROADMAP = ROOT / "docs" / "phase6_roadmap.md"
+BOUNDARY = ROOT / "docs" / "phase5.md"
+CLOSEOUT = ROOT / "docs" / "phase5.md"
+PHASE6_ROADMAP = ROOT / "docs" / "phase6.md"
 
 
 def test_phase5_agent_boundary_doc_exists_and_names_manual_entrypoints():
@@ -105,3 +105,5 @@ def test_phase6_roadmap_tracks_current_bounded_phase6_runtime():
 
     for phrase in required:
         assert phrase in text
+
+

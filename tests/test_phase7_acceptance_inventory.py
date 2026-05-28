@@ -12,7 +12,7 @@ from tools.audit_phase7_acceptance_inventory import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOC = ROOT / "docs" / "phase7_acceptance_inventory.md"
+DOC = ROOT / "docs" / "phase7.md"
 TOOL = ROOT / "tools" / "audit_phase7_acceptance_inventory.py"
 TERMINAL_TOOLS = ROOT / "ui" / "terminal" / "modules" / "20-axiom-tools.ps1"
 TERMINAL_DOCTOR = ROOT / "ui" / "terminal" / "modules" / "49-doctor.ps1"
@@ -102,3 +102,4 @@ def test_phase7a_terminal_surface_exposes_read_only_inventory_audit():
     assert command["risk"] == "low"
     assert command["backing_tools"] == ["tools/audit_phase7_acceptance_inventory.py"]
     assert "tools/audit_phase7_acceptance_inventory.py" in commands["axiom-preflight"]["backing_tools"]
+

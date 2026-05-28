@@ -22,7 +22,7 @@ from tools.verify_foundation import verify_foundation
 
 TOOL_VERSION = "snapshot_project_state.v1"
 LOG_DIR = ROOT / "logs"
-PHASE3_POLICY_SECURITY_AUDIT_DOC = ROOT / "docs" / "phase3_policy_security_audit.md"
+PHASE3_POLICY_SECURITY_AUDIT_DOC = ROOT / "docs" / "phase3.md"
 
 
 def _utc_timestamp() -> str:
@@ -205,3 +205,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

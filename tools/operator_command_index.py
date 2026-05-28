@@ -112,7 +112,7 @@ COMMANDS: tuple[OperatorCommand, ...] = (
             "command binding, tool-capability semantic contracts, scanner/schema "
             "coherence, scanner return-contract stability, and security-event "
             "schema/index/domain coverage. "
-            "Source handoff: docs\\phase3_policy_security_audit.md."
+            "Source handoff: docs\\phase3.md."
         ),
         read_only=True,
         requires_manual_test_override=False,
@@ -140,7 +140,7 @@ COMMANDS: tuple[OperatorCommand, ...] = (
         notes=(
             "Dry-run by default and does not print API keys. Use --target "
             "groq|cerebras|sambanova|openrouter|cascade. Real model calls require "
-            "--live. Source handoff: docs\\phase4_gateway_readiness.md."
+            "--live. Source handoff: docs\\phase4.md."
         ),
         read_only=False,
         requires_manual_test_override=True,
@@ -154,7 +154,7 @@ COMMANDS: tuple[OperatorCommand, ...] = (
         expected_exit_code="0 when dry-run readiness passes and, with --live, Brave returns a bounded response; 1 on missing key, policy denial, or provider failure.",
         notes=(
             "Dry-run by default and does not print API keys. Real Brave Search "
-            "network calls require --live. Source handoff: docs\\phase4_gateway_readiness.md."
+            "network calls require --live. Source handoff: docs\\phase4.md."
         ),
         read_only=False,
         requires_manual_test_override=True,
@@ -170,7 +170,7 @@ COMMANDS: tuple[OperatorCommand, ...] = (
             "Dry-run by default. Real sandbox process execution requires --live. "
             "Uses Windows Job Object limits: kill-on-close, active process limit 1, "
             "256 MB RAM cap, 60 second wall-clock cap, network denied. "
-            "Source handoff: docs\\phase4_gateway_readiness.md."
+            "Source handoff: docs\\phase4.md."
         ),
         read_only=False,
         requires_manual_test_override=True,
@@ -186,7 +186,7 @@ COMMANDS: tuple[OperatorCommand, ...] = (
             "Dry-run by default. Real local Ollama /api/embed embedding calls "
             "and sqlite-vec write/query require --live. Does not call "
             "/api/chat or /api/generate. Source handoff: "
-            "docs\\phase4_gateway_readiness.md."
+            "docs\\phase4.md."
         ),
         read_only=False,
         requires_manual_test_override=True,
@@ -371,11 +371,11 @@ def command_index_markdown() -> str:
             "## Notes",
             "",
             "- `python tools\\verify_foundation.py` is the preferred quick health check.",
-            "- `python tools\\audit_policy_security.py` is the read-only Phase 3 policy/security audit; it currently covers tool-capability semantics, active manifest completeness, scanner contracts, and security-event audit support. Source handoff is `docs\\phase3_policy_security_audit.md`.",
-            "- `python tools\\cloud_cascade_smoke_test.py` is the Phase 4 cloud cascade smoke wrapper; dry-run is default, and live model calls require `--live`. Source handoff is `docs\\phase4_gateway_readiness.md`.",
-            "- `python tools\\network_gateway_smoke_test.py` is the Phase 4 Brave Search NetworkGateway smoke wrapper; dry-run is default, and live network calls require `--live`. Source handoff is `docs\\phase4_gateway_readiness.md`.",
-            "- `python tools\\sandbox_gateway_smoke_test.py` is the Phase 4 Windows Job Object SandboxGateway smoke wrapper; dry-run is default, and live sandbox process execution requires `--live`. Source handoff is `docs\\phase4_gateway_readiness.md`.",
-            "- `python tools\\memory_gateway_smoke_test.py` is the Phase 4 local Ollama MemoryGateway smoke wrapper; dry-run is default, and live /api/embed write/query calls require `--live`. Source handoff is `docs\\phase4_gateway_readiness.md`.",
+            "- `python tools\\audit_policy_security.py` is the read-only Phase 3 policy/security audit; it currently covers tool-capability semantics, active manifest completeness, scanner contracts, and security-event audit support. Source handoff is `docs\\phase3.md`.",
+            "- `python tools\\cloud_cascade_smoke_test.py` is the Phase 4 cloud cascade smoke wrapper; dry-run is default, and live model calls require `--live`. Source handoff is `docs\\phase4.md`.",
+            "- `python tools\\network_gateway_smoke_test.py` is the Phase 4 Brave Search NetworkGateway smoke wrapper; dry-run is default, and live network calls require `--live`. Source handoff is `docs\\phase4.md`.",
+            "- `python tools\\sandbox_gateway_smoke_test.py` is the Phase 4 Windows Job Object SandboxGateway smoke wrapper; dry-run is default, and live sandbox process execution requires `--live`. Source handoff is `docs\\phase4.md`.",
+            "- `python tools\\memory_gateway_smoke_test.py` is the Phase 4 local Ollama MemoryGateway smoke wrapper; dry-run is default, and live /api/embed write/query calls require `--live`. Source handoff is `docs\\phase4.md`.",
             "- `python tools\\run_calibration.py` remains outside Phase 4 gateway authority; dry-run is default, live classification requires `--live`, and DB writes require explicit calibration approval.",
             "- `python tools\\autonomous_readiness_check.py` returning exit code `2` is expected while AXIOM is fail-closed non-autonomous.",
             "- `pytest tests -v` remains the canonical regression check after implementation changes.",
@@ -444,3 +444,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

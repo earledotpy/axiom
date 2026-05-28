@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOC = ROOT / "docs" / "phase4_closeout.md"
+DOC = ROOT / "docs" / "phase4.md"
 
 
 def test_phase4_closeout_doc_exists():
@@ -133,3 +133,4 @@ def test_phase4_closeout_doc_records_phase5_transition_checklist():
 
     for phrase in required:
         assert phrase in text
+

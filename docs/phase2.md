@@ -1,3 +1,157 @@
+# AXIOM Phase 2
+
+Canonical consolidated Phase 2 documentation. This file supersedes the former closeout, closeout source, and handoff files while preserving verification and boundary evidence.
+
+## Consolidated Sections
+- Phase 2 Closeout Source
+- Phase 2 Closeout
+- Phase 2 Closeout Handoff
+
+## Source Section: Phase 2 Closeout Source
+
+## AXIOM Phase 2 Closeout Source
+
+## Status
+
+Phase 2 is closed.
+
+AXIOM remains fail-closed and non-autonomous.
+
+```text
+autonomous_allowed = False
+safe_pass_enabled = False
+
+
+## Source Section: Phase 2 Closeout
+
+## AXIOM Phase 2 Closeout
+
+## Status
+
+Phase 2 is closed when this document is present, tested, and the live repository verifies the Phase 2 runtime boundary.
+
+AXIOM remains:
+
+```text
+fail_closed_non_autonomous
+autonomous_allowed = False
+safe_pass_enabled = False
+```
+
+This closeout does not authorize autonomous operation, safe-pass enablement, model profile promotion, real model calls, network fetches, sandbox execution, Telegram/operator control, agent-layer execution, persistent scheduler service, or automatic scheduler-to-executor integration.
+
+## Phase 2 scope closed
+
+Phase 2 covered the local fail-closed runtime mechanics:
+
+```text
+StateMachine
+Scheduler
+TaskCommitter
+SupervisorMonitor
+ContextBuilder
+TokenEstimator
+ResourceLimitEvaluator
+lifecycle audits
+execution audits
+manual no-op execution harness
+manual no-op staging
+manual scheduler-dispatched no-op cycle
+execution readiness reporting
+operator command indexing
+snapshot/handoff reporting
+```
+
+## Required invariants preserved
+
+```text
+strict sequential execution
+one running task at a time
+tasks.manifest_id must be non-null before transition to running
+heartbeat ordering preserved around lifecycle transitions
+context bundles capped at 500 KB serialized size
+SQLite cache_size remains -32768
+sqlite-vec batches capped at 100 vectors
+runtime thread limit remains four
+ModelGateway rejects caller think=True and injects think=False
+safe-pass remains disabled
+autonomous operation remains disabled
+```
+
+## Verified Phase 2 proof
+
+The Phase 2 proof is:
+
+```text
+1. A real active role manifest exists for manual no-op staging.
+2. One pending manifest-bound no-op task can be staged.
+3. execution_readiness.ready becomes True while the task is pending.
+4. The manual no-op cycle can dispatch the task through Scheduler.run_once().
+5. The no-op executor completes the task deterministically.
+6. task_lifecycle_audit passes.
+7. task_execution_audit passes.
+8. supervisor_health_check reports supervisor_health_ok.
+9. verify_foundation reports foundation_passed: True.
+10. pytest tests -v passes.
+```
+
+## Manual no-op result contract
+
+A completed manual no-op task must record a deterministic no-op result equivalent to:
+
+```json
+{
+  "executor": "noop_task_executor",
+  "executed": true,
+  "side_effects": "none",
+  "tools_used": [],
+  "model_calls": [],
+  "network_calls": [],
+  "sandbox_calls": []
+}
+```
+
+## Explicit non-goals
+
+Phase 2 closeout does not authorize:
+
+```text
+automatic scheduler-to-executor integration
+persistent scheduler loop
+autonomous operation
+safe-pass enablement
+classifier calibration approval
+model profile promotion to current
+model profile promotion
+real Ollama chat/generate calls
+cloud provider calls
+real NetworkGateway fetches
+real SandboxGateway process execution
+real MemoryGateway embedding writes/query
+Telegram operator control plane
+agent layer
+```
+
+## Next phase
+
+The next phase is Phase 3 security-layer hardening.
+
+Phase 3 begins with read-only and fail-closed security verification around:
+
+```text
+ManifestBinder integrity
+PolicyEngine authorization
+PlanInjectionScanner contract and persistence
+tool-capability map verification
+manifest completeness checks
+security event coverage
+```
+
+Phase 3 must not start by adding autonomous behavior or real gateway execution.
+
+
+## Source Section: Phase 2 Closeout Handoff
+
 AXIOM Phase 2 Closeout Handoff
 
 Generated: 2026-05-21Project root: C:\axiomCanonical baseline: AXIOM_Implementation_v1.13.mdCurrent implementation area: Phase 2 closeout / transition checkpoint before Phase 3
@@ -213,7 +367,7 @@ This remains manual/test-only. It is not automatic scheduler-to-executor integra
 
 Directed creation of:
 
-docs/phase2_closeout.md
+docs/phase2.md
 tests/test_phase2_closeout_doc.py
 
 Purpose:
@@ -232,7 +386,7 @@ tests/test_phase2_closeout_doc.py::test_phase2_closeout_doc_records_noop_result_
 
 Root cause:
 
-docs/phase2_closeout.md was incomplete/truncated.
+docs/phase2.md was incomplete/truncated.
 
 A deterministic PowerShell here-string overwrite was provided to replace the file completely.
 
@@ -259,14 +413,14 @@ supervisor_health_check.py 4573 -> supervisor_health_ok
 
 5. Exact Immediate Next Step
 
-Overwrite docs\phase2_closeout.md deterministically, then prove it is complete.
+Overwrite docs\phase2.md deterministically, then prove it is complete.
 
 Recommended command:
 
 Set-Location C:\axiom
 
 @'
-# AXIOM Phase 2 Closeout
+## AXIOM Phase 2 Closeout
 
 ## Status
 
@@ -375,15 +529,15 @@ tool-capability map verification
 manifest completeness checks
 security event coverage
 
-Phase 3 must not start by adding autonomous behavior or real gateway execution.'@ | Set-Content -Path C:\axiom\docs\phase2_closeout.md -Encoding UTF8
+Phase 3 must not start by adding autonomous behavior or real gateway execution.'@ | Set-Content -Path C:\axiom\docs\phase2.md -Encoding UTF8
 
 
 Then run:
 
 ```powershell
-(Get-Content C:\axiom\docs\phase2_closeout.md).Count
-Get-Content C:\axiom\docs\phase2_closeout.md -Tail 12
-Select-String -Path C:\axiom\docs\phase2_closeout.md -Pattern "StateMachine","automatic scheduler-to-executor integration","noop_task_executor"
+(Get-Content C:\axiom\docs\phase2.md).Count
+Get-Content C:\axiom\docs\phase2.md -Tail 12
+Select-String -Path C:\axiom\docs\phase2.md -Pattern "StateMachine","automatic scheduler-to-executor integration","noop_task_executor"
 pytest tests\test_phase2_closeout_doc.py -v
 
 Expected:
@@ -457,3 +611,160 @@ Telegram/operator control
 agent layer
 automatic scheduler-to-executor integration
 persistent scheduler service
+
+
+
+
+## Source Section: Scheduler / Executor Boundary
+
+## AXIOM Scheduler / Executor Boundary
+
+## Current status
+
+AXIOM currently supports a manual, test-only no-op execution cycle.
+
+The current verified execution path is:
+
+```text
+pending manifest-bound task
+-> Scheduler.run_once()
+-> running task
+-> complete_running_noop_task()
+-> completed task
+-> task_execution_audit verifies coherence
+```
+
+This path is intentionally manual and must not be connected automatically yet.
+
+## Current safe state
+
+The healthy fail-closed baseline is:
+
+```text
+foundation_passed: True
+operational_mode: fail_closed_non_autonomous
+autonomous_allowed: False
+fail_closed_coherent: True
+supervisor_health_ok
+task_lifecycle_audit passed
+task_execution_audit passed
+running_count: 0
+active_task_present: False
+```
+
+`autonomous_allowed: False` is not a failure.
+
+`execution_readiness.ready: False` is also not a failure when the only reason is:
+
+```text
+no_pending_manifest_bound_task
+```
+
+That means the system is clean but no manifest-bound pending task is staged for a controlled manual execution test.
+
+## Existing manual-only execution tools
+
+The following tools are allowed only as explicit manual/test actions:
+
+```text
+tools/run_scheduler_loop.py
+tools/scheduler_tick.py
+tools/dispatch_next_task.py
+tools/start_task.py
+tools/execute_noop_task.py
+tools/run_manual_noop_cycle.py
+```
+
+The following tools are read-only:
+
+```text
+tools/audit_task_lifecycle.py
+tools/audit_task_execution.py
+tools/supervisor_health_check.py
+tools/execution_readiness_check.py
+tools/verify_foundation.py
+```
+
+## Future integration preconditions
+
+Automatic scheduler-to-executor integration must not be implemented until all of the following are true:
+
+```text
+foundation_passed: True
+task_lifecycle_audit passed
+task_execution_audit passed
+supervisor_health_ok
+execution_readiness.ready: True
+running_task_count: 0
+pending_manifest_bound_task_count >= 1
+```
+
+Additionally:
+
+```text
+tasks.manifest_id must be non-null before transition to running
+one-running-task invariant must remain enforced
+heartbeat ordering must be preserved around blocking operations
+no model calls may be introduced
+no network calls may be introduced
+no sandbox process execution may be introduced
+no Telegram/operator control plane may be introduced
+no autonomous operation may be enabled
+```
+
+## Future allowed integration shape
+
+The only future integration shape currently under consideration is:
+
+```text
+Scheduler.run_once()
+-> dispatch exactly one pending manifest-bound no-op task to running
+-> no-op executor completes that already-running no-op task
+-> task_execution_audit validates result
+-> supervisor_health_check validates idle clean state
+```
+
+The executor must operate only on a task already transitioned to `running` by scheduler logic.
+
+The executor must not select its own pending task.
+
+The executor must not bypass the scheduler.
+
+The executor must not create child tasks.
+
+The executor must not call gateways.
+
+The executor must not perform filesystem, model, network, sandbox, memory, Telegram, or agent actions.
+
+## Non-goals
+
+This boundary does not authorize:
+
+```text
+autonomous operation
+safe-pass enablement
+model profile promotion
+real model calls
+real gateway execution
+real network fetches
+sandbox process execution
+Telegram/operator control plane
+agent layer
+persistent scheduler service
+automatic scheduler-to-executor integration
+```
+
+## Required next review before implementation
+
+Before implementing automatic scheduler-to-executor integration, the operator must explicitly approve a bounded patch that names:
+
+```text
+exact files to edit
+exact function entrypoint
+exact task class and task_type allowed
+exact no-op-only executor binding
+exact test proving no gateway calls occur
+exact audit verification commands
+rollback plan
+```
+

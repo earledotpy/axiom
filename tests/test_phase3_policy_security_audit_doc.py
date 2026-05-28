@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOC = ROOT / "docs" / "phase3_policy_security_audit.md"
+DOC = ROOT / "docs" / "phase3.md"
 
 
 def test_phase3_policy_security_audit_doc_exists():
@@ -84,3 +84,4 @@ def test_phase3_policy_security_audit_doc_preserves_prohibited_boundaries():
 
     for phrase in prohibited:
         assert phrase in text
+

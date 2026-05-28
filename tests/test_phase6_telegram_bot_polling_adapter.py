@@ -21,7 +21,7 @@ from axiom.persistence.repositories import create_session
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOC = ROOT / "docs" / "phase6_telegram_bot_polling_adapter.md"
+DOC = ROOT / "docs" / "phase6.md"
 
 
 class FakeTelegramClient:
@@ -216,3 +216,5 @@ def test_polling_adapter_doc_records_live_boundary():
     ]
     for phrase in required:
         assert phrase in text
+
+

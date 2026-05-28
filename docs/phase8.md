@@ -1,4 +1,15 @@
-# Phase 8B Repository Cleanup Plan
+# AXIOM Phase 8
+
+Canonical consolidated Phase 8 documentation. This file supersedes the former Phase 8 release-freeze, closeout, and repository-cleanup planning documents.
+
+## Consolidated Sections
+- Phase 8B Repository Cleanup Plan
+- Phase 8A Release Freeze And Documentation Reconciliation
+- Phase 8A Closeout
+
+## Source Section: Phase 8B Repository Cleanup Plan
+
+## Phase 8B Repository Cleanup Plan
 
 ## Scope
 
@@ -100,7 +111,7 @@ artifacts:
 | `axiom\gateways\telegram_bot_adapter.py`, `telegram_gateway.py` | untracked | Source code / gateway | Keep only if Phase 6 gateway scope is approved; otherwise leave untouched | high | gateway imports, tests, docs, terminal commands, config/env references | gateway tests, boundary audits, Telegram audit |
 | `axiom\tools\` | untracked | Source code / tools | Inspect; likely namespace candidate or artifact depending contents | medium | Python imports, CLI docs, tests, terminal registry | compile and focused tool tests |
 | `tests\*.py`, `tests\e2e\` | modified/untracked | Tests | Keep; do not cleanup as artifact | medium | test imports, fixtures, command docs, CI expectations | focused pytest selection and full pytest |
-| `docs\*.md`, `docs\codex\CODEX_HANDOFF.md` | untracked docs tree | Docs | Keep as phase documentation unless superseded by approved archival slice | medium | docs links, terminal docs index, closeout references, implementation plan references | phase doc tests; docs-focused pytest |
+| `docs\*.md`, `archived docs source/handoff material` | untracked docs tree | Docs | Keep as phase documentation unless superseded by approved archival slice | medium | docs links, terminal docs index, closeout references, implementation plan references | phase doc tests; docs-focused pytest |
 | `texts\` | existing docs/support | Docs | Keep; no action without doc taxonomy review | low | docs references and governance references | docs tests |
 | `governance\` | present | Governance | Do not touch without separate explicit approval | blocked | governance spine, CLI surfaces, archives/deprecated links | governance-specific review only |
 | `ui\terminal\` | untracked tree | Terminal UI | Keep for terminal surface review; no cleanup in Phase 8B | high | PowerShell function names, registry entries, docs/help, tests, command aliases | terminal visibility tests, registry tests, `axiom-preflight` |
@@ -304,3 +315,393 @@ active governance live spine.
 - Phase 8A boundaries remain intact.
 - Future implementation slices are separated into safe, medium-risk, high-risk,
   and blocked groups.
+
+
+## Source Section: Phase 8A Release Freeze And Documentation Reconciliation
+
+## Phase 8A Release Freeze And Documentation Reconciliation
+
+## Status
+
+Phase 8A is a release-freeze/documentation-reconciliation slice.
+
+Phase 7 E2E readiness/passing is now recorded. The current accepted state is
+documentation reconciliation only, not a runtime expansion.
+
+## Scope
+
+Phase 8A reconciles documentation against the accepted Phase 7 proof and the
+existing Phase 5 and Phase 6 boundaries. It may update stale phase language,
+cross-references, and closeout wording.
+
+No feature work belongs in Phase 8A.
+
+## Current Verified Proof
+
+The current accepted proof records:
+
+```text
+acceptance_inventory_passed = true
+e2e_ready = true
+e2e_blockers = []
+e2e_test_present = true
+executed = true
+passed = true
+final mapped acceptance run: 130 passed in 23.08s
+```
+
+Satisfied Phase 7 prerequisites:
+
+```text
+approved live classifier calibration run present
+current model fingerprint tied to approved calibration present
+safe-pass readiness enabled in latest session
+explicit operator approval material supplied
+```
+
+## Documentation Reconciliation Targets
+
+Phase 8A should reconcile:
+
+```text
+Phase 7 docs that still describe E2E as blocked after readiness
+Phase 5 docs that could imply safe-pass must remain globally disabled
+Phase 6 docs that blur local Telegram gateway, explicit polling adapter, and default service boundaries
+historical closeout docs that need clear snapshot wording
+stale test counts or command names
+obsolete next-phase language
+authority language that overstates or understates the current system posture
+```
+
+## Preserved Runtime Boundaries
+
+Phase 8A preserves these boundaries:
+
+```text
+autonomous_operation_enabled remains false / 0
+no autonomous operation is authorized
+scheduler-to-agent automation remains unauthorized
+scheduler-to-executor automation remains unauthorized
+automatic execution remains forbidden
+live Telegram polling remains explicit/manual and not a default service
+terminal surfaces remain read-only unless backed by approved tools
+gateway authority is not expanded
+```
+
+## Safe-Pass Interpretation After Phase 7 Readiness
+
+Safe-pass readiness may be enabled for the bounded Phase 7 E2E path.
+In exact boundary terms: safe-pass readiness may be enabled for the bounded Phase 7 E2E path.
+That is a readiness gate state, not autonomous authority.
+
+Safe-pass readiness does not authorize:
+
+```text
+autonomous operation
+scheduler-to-agent automation
+scheduler-to-executor automation
+agent execution
+runtime command execution
+default Telegram service startup
+```
+
+## Explicit Non-Goals
+
+Phase 8A does not include:
+
+```text
+runtime code changes
+new tools
+autonomous behavior
+Telegram polling startup or registration
+scheduler-to-agent integration
+scheduler-to-executor integration
+agent executor changes
+gateway authority changes
+database schema changes
+```
+
+## Verification Commands
+
+Run the release-freeze baseline from the repository root:
+
+```powershell
+Set-Location C:\axiom
+.\venv\Scripts\Activate.ps1
+
+axiom-preflight
+axiom-phase7
+python tools\run_phase7_acceptance.py --json
+python tools\run_phase7_acceptance.py --run --include-e2e --operator-approved-e2e
+python tools\audit_phase6_closeout.py
+python tools\audit_agent_boundary.py
+python tools\audit_telegram_gateway.py
+pytest tests -v
+```
+
+## Exit Criteria
+
+Phase 8A exits when:
+
+```text
+Phase 7 readiness/passing is reflected without authorizing autonomy
+Phase 5 agent docs remain manual-only and manifest-bound
+Phase 6 docs distinguish local gateway, explicit polling adapter, and default service boundaries
+safe-pass readiness is described as bounded E2E readiness only
+terminal and gateway authority remain unchanged
+verification commands pass or any first real failure is recorded
+no runtime feature work is included
+```
+
+## Next-Phase Warning
+
+The next phase must not begin by enabling autonomous operation, default
+Telegram polling, scheduler-to-agent automation, scheduler-to-executor
+automation, or gateway authority expansion.
+
+Any later runtime expansion requires a separately approved phase, named entry
+points, explicit operator authorization, rollback instructions, and fresh
+verification evidence.
+
+
+## Source Section: Phase 8A Closeout
+
+## Phase 8A Closeout
+
+## Status
+
+Phase 8A is closed as a release-freeze and documentation-reconciliation slice.
+
+Phase 8A performed documentation reconciliation and release-freeze validation
+only. It did not authorize autonomous operation, live Telegram default runtime,
+automatic scheduler-to-agent integration, automatic scheduler-to-executor
+integration, or automatic execution after operator confirmation.
+
+## What Phase 8A Changed
+
+Phase 8A reconciled documentation and terminal navigation after Phase 7 E2E
+readiness/passing was accepted.
+
+Changed documentation:
+
+```text
+docs\phase7.md
+docs\phase7.md
+docs\phase7.md
+docs\phase7.md
+docs\phase7.md
+docs\phase5.md
+docs\phase5.md
+docs\phase6.md
+docs\phase6.md
+docs\phase6.md
+docs\phase6.md
+docs\phase6.md
+docs\phase8.md
+```
+
+Changed terminal documentation/navigation surfaces:
+
+```text
+ui\terminal\modules\50-terminal-report.ps1
+ui\terminal\modules\52-docs.ps1
+ui\terminal\modules\60-phase7.ps1
+ui\terminal\modules\90-safety-help.ps1
+ui\terminal\registry\axiom-terminal-command-registry.json
+```
+
+The terminal updates made the Phase 8A document discoverable through
+`axiom-docs`, made the current Phase 7 accepted E2E state visible in the
+read-only Phase 7 panel, and kept Phase 8A described as documentation-only.
+
+## What Phase 8A Deliberately Did Not Change
+
+Phase 8A did not change:
+
+```text
+runtime code
+gateway authority
+Telegram polling behavior
+Telegram startup or service registration
+scheduler behavior
+scheduler-to-agent automation
+scheduler-to-executor automation
+agent executors
+database schema
+model profile registration behavior
+classifier calibration behavior
+operator command confirmation behavior
+```
+
+No feature work belongs to Phase 8A.
+
+## Final Verification Commands And Results
+
+Final verification was run from `C:\axiom` with the AXIOM virtual environment
+active.
+
+Commands:
+
+```powershell
+python -m py_compile tools\run_phase7_acceptance.py tools\audit_phase7_e2e_gate.py tools\audit_phase7_closeout.py tools\audit_phase6_closeout.py tools\audit_agent_boundary.py tools\audit_telegram_gateway.py
+
+python tools\verify_foundation.py
+python tools\audit_task_lifecycle.py
+python tools\audit_task_execution.py
+python tools\audit_policy_security.py
+python tools\audit_agent_boundary.py
+python tools\audit_operator_command_ledger.py
+python tools\audit_telegram_gateway.py
+python tools\audit_phase6_closeout.py
+python tools\run_phase7_acceptance.py --json
+python tools\run_phase7_acceptance.py --run --include-e2e --operator-approved-e2e
+
+axiom-preflight
+axiom-phase7
+pytest tests -v
+```
+
+Results:
+
+```text
+py_compile: passed
+verify_foundation: foundation_passed True
+audit_task_lifecycle: passed True
+audit_task_execution: passed True
+audit_policy_security: passed True, violation_count 0
+audit_agent_boundary: passed True, violation_count 0
+audit_operator_command_ledger: passed True, violation_count 0
+audit_telegram_gateway: passed True, violation_count 0
+audit_phase6_closeout: passed True, violation_count 0
+run_phase7_acceptance --json: e2e_ready true, e2e_blockers []
+run_phase7_acceptance --run --include-e2e --operator-approved-e2e: passed True, executed True, returncode 0
+axiom-preflight: passed all included audits
+axiom-phase7: accepted e2e_ready True, blockers none
+pytest tests -v: 608 passed in 127.74s
+```
+
+The isolated Phase 7 gate audit still reports blocked when no explicit
+per-command E2E approval flag is supplied. That is expected gate-audit behavior
+and is separate from the accepted stored Phase 7 readiness state.
+
+## Final Runtime Posture
+
+Final runtime posture:
+
+```text
+operational_mode: fail_closed_non_autonomous
+autonomous_allowed: False
+autonomous_operation_enabled: 0
+safe_pass_enabled: 1 for bounded Phase 7 E2E readiness
+scheduler_stale: False
+running_count: 0
+active_task_present: False
+operator command ledger violations: none
+Telegram gateway violations: none
+```
+
+Safe-pass readiness is a bounded Phase 7 E2E readiness state. It is not
+autonomous authority.
+
+## Phase 7 E2E Proof State
+
+Accepted Phase 7 proof state:
+
+```text
+acceptance_inventory_passed = true
+e2e_ready = true
+e2e_blockers = []
+e2e_test_present = true
+executed = true
+passed = true
+approved live classifier calibration run present
+current model fingerprint tied to approved calibration present
+safe-pass readiness enabled in latest session
+explicit operator approval material supplied
+```
+
+The earlier accepted mapped Phase 7 run recorded:
+
+```text
+final mapped acceptance run: 130 passed in 23.08s
+```
+
+The final Phase 8A verification reran the approved mapped acceptance command
+with E2E selected and returned `passed: True`, `executed: True`, and
+`returncode: 0`.
+
+## Preserved Phase 5 And Phase 6 Prohibitions
+
+Phase 5 prohibitions remain preserved:
+
+```text
+agents remain manual-only and manifest-bound
+scheduler-to-agent automation remains unauthorized
+agent task creation remains unauthorized
+child task commits remain unauthorized
+real model calls remain unauthorized
+cloud cascade calls remain unauthorized
+network fetches remain unauthorized
+sandbox execution remains unauthorized
+memory reads or writes remain unauthorized
+filesystem reads or writes remain unauthorized
+```
+
+Phase 6 prohibitions remain preserved:
+
+```text
+operator-control foundation remains bounded
+confirmed operator command rows remain pending and non-executing
+automatic execution after confirmation remains unauthorized
+live Telegram polling remains explicit/manual and not a default service
+terminal shortcuts for Telegram envelope ingestion remain unauthorized
+terminal shortcuts for Telegram confirmation remain unauthorized
+default live Telegram runtime remains unauthorized
+gateway authority is not expanded
+```
+
+## Remaining Risks
+
+Remaining risks:
+
+```text
+The worktree remains visibly dirty and is not ready for release tagging without a separate cleanup pass.
+Historical source/chat documents may still contain old counts or old phase-local posture language.
+Phase 7 terminal output intentionally shows both accepted readiness and isolated gate-audit blocked behavior; future docs must preserve that distinction.
+The terminal doctor still warns that ui\terminal\modules\43-visual-mode.ps1 should not remain.
+```
+
+None of these risks blocks Phase 8A closeout because Phase 8A was a
+documentation reconciliation and release-freeze validation slice, not a cleanup
+or rename slice.
+
+## Recommended Next Phase
+
+Recommended next phase:
+
+```text
+Phase 8B - Repository Cleanup Plan And Professional File Naming Audit
+```
+
+Phase 8B should be audit/planning only. Do not rename files in Phase 8B until
+all imports, tests, docs, terminal registry entries, and manifest references
+have been mapped.
+
+Phase 8B should produce a cleanup plan that names:
+
+```text
+candidate file rename targets
+import references
+test references
+documentation references
+terminal registry references
+manifest or policy references
+risk level per rename
+verification commands before and after any later rename slice
+```
+
+
+
+
+
+

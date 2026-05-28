@@ -194,12 +194,12 @@ def test_operator_command_index_includes_policy_security_audit():
     assert "scanner return-contract stability" in payload_text
     assert "security-event schema/index/domain coverage" in payload_text
     assert (
-        "docs\\phase3_policy_security_audit.md"
+        "docs\\phase3.md"
         in entries["python tools\\audit_policy_security.py"]["notes"]
     )
 
     markdown = command_index_markdown()
-    assert "docs\\phase3_policy_security_audit.md" in markdown
+    assert "docs\\phase3.md" in markdown
 
 
 def test_operator_command_index_classifies_cloud_cascade_smoke_test():
@@ -217,7 +217,7 @@ def test_operator_command_index_classifies_cloud_cascade_smoke_test():
     assert entry["calls_network"] is False
     assert entry["calls_sandbox"] is False
     assert "--live" in entry["notes"]
-    assert "docs\\phase4_gateway_readiness.md" in entry["notes"]
+    assert "docs\\phase4.md" in entry["notes"]
 
 
 def test_operator_command_index_classifies_network_gateway_smoke_test():
@@ -235,7 +235,7 @@ def test_operator_command_index_classifies_network_gateway_smoke_test():
     assert entry["calls_network"] is True
     assert entry["calls_sandbox"] is False
     assert "--live" in entry["notes"]
-    assert "docs\\phase4_gateway_readiness.md" in entry["notes"]
+    assert "docs\\phase4.md" in entry["notes"]
 
 
 def test_operator_command_index_classifies_sandbox_gateway_smoke_test():
@@ -253,7 +253,7 @@ def test_operator_command_index_classifies_sandbox_gateway_smoke_test():
     assert entry["calls_network"] is False
     assert entry["calls_sandbox"] is True
     assert "--live" in entry["notes"]
-    assert "docs\\phase4_gateway_readiness.md" in entry["notes"]
+    assert "docs\\phase4.md" in entry["notes"]
 
 
 def test_operator_command_index_classifies_memory_gateway_smoke_test():
@@ -274,7 +274,7 @@ def test_operator_command_index_classifies_memory_gateway_smoke_test():
     assert "/api/embed" in entry["notes"]
     assert "/api/chat" in entry["notes"]
     assert "/api/generate" in entry["notes"]
-    assert "docs\\phase4_gateway_readiness.md" in entry["notes"]
+    assert "docs\\phase4.md" in entry["notes"]
 
 
 def test_operator_command_index_classifies_classifier_calibration_check():
@@ -294,3 +294,4 @@ def test_operator_command_index_classifies_classifier_calibration_check():
     assert "--live" in entry["notes"]
     assert "--write-db" in entry["notes"]
     assert "outside Phase 4 gateway authority" in entry["notes"]
+

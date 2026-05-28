@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOC = ROOT / "docs" / "phase8a_release_freeze_documentation_reconciliation.md"
+DOC = ROOT / "docs" / "phase8.md"
 
 
 def test_phase8a_doc_records_release_freeze_scope_and_current_proof():
@@ -66,3 +66,4 @@ def test_phase8a_doc_records_verification_commands_and_exit_criteria():
 
     for phrase in required:
         assert phrase in text
+

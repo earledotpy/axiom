@@ -18,7 +18,7 @@ STATUS_MANIFEST = (
 MANIFEST_SCHEMA = POLICY_ROOT / "schemas" / "manifest_schema.json"
 TOOL_MAP_SCHEMA = POLICY_ROOT / "schemas" / "tool_capability_map_schema.json"
 TOOL_MAP = POLICY_ROOT / "security_artifacts" / "tool_capability_map.json"
-DOC = ROOT / "docs" / "phase6_operator_command_manifests.md"
+DOC = ROOT / "docs" / "phase6.md"
 
 
 def load_status_manifest() -> dict:
@@ -107,3 +107,5 @@ def test_phase6_operator_manifest_doc_records_6b_scope():
 
     for phrase in required:
         assert phrase in text
+
+

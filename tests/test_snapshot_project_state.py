@@ -44,7 +44,7 @@ def test_project_state_snapshot_shape():
     assert "current pytest tests -v output" in snapshot["pytest"]["note"]
 
     phase3_doc = snapshot["source_documents"]["phase3_policy_security_audit"]
-    assert phase3_doc["path"] == "docs\\phase3_policy_security_audit.md"
+    assert phase3_doc["path"] == "docs\\phase3.md"
     assert phase3_doc["exists"] is True
     assert "Read-only Phase 3 policy/security audit" in phase3_doc["purpose"]
 
@@ -203,3 +203,4 @@ def test_project_state_snapshot_includes_policy_security_audit():
     assert "policy_security_audit" in snapshot
     assert snapshot["policy_security_audit"]["checked"] is True
     assert snapshot["policy_security_audit"]["checked_count"] >= 14
+

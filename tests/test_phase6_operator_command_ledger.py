@@ -14,8 +14,8 @@ from axiom.persistence.repositories import create_session
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOC = ROOT / "docs" / "phase6_operator_command_ledger.md"
-ROADMAP = ROOT / "docs" / "phase6_roadmap.md"
+DOC = ROOT / "docs" / "phase6.md"
+ROADMAP = ROOT / "docs" / "phase6.md"
 DOCS_MODULE = ROOT / "ui" / "terminal" / "modules" / "52-docs.ps1"
 TERMINAL_MODULE = ROOT / "ui" / "terminal" / "modules" / "58-operator-commands.ps1"
 REGISTRY = ROOT / "ui" / "terminal" / "registry" / "axiom-terminal-command-registry.json"
@@ -212,10 +212,12 @@ def test_phase6_operator_command_ledger_docs_terminal_and_index_are_current():
     for phrase in required_doc_phrases:
         assert phrase in text
 
-    assert "docs\\phase6_operator_command_ledger.md" in roadmap
-    assert "phase6-command-ledger" in docs_module
+    assert "docs\\phase6.md" in roadmap
+    assert "phase6" in docs_module
     assert "operator-command-ledger-tool" in docs_module
     assert "operator-command-ledger-audit" in docs_module
     assert "mode=ro" in terminal_module
     assert "record_operator_command_intent.py" in terminal_module
     assert "axiom-operator-commands" in registry
+
+

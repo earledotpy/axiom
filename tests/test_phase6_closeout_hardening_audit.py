@@ -9,8 +9,8 @@ from tools.audit_phase6_closeout import audit_phase6_closeout
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOC = ROOT / "docs" / "phase6_closeout_hardening_audit.md"
-ROADMAP = ROOT / "docs" / "phase6_roadmap.md"
+DOC = ROOT / "docs" / "phase6.md"
+ROADMAP = ROOT / "docs" / "phase6.md"
 DOCS_MODULE = ROOT / "ui" / "terminal" / "modules" / "52-docs.ps1"
 TOOLS_MODULE = ROOT / "ui" / "terminal" / "modules" / "20-axiom-tools.ps1"
 HELP_MODULE = ROOT / "ui" / "terminal" / "modules" / "90-safety-help.ps1"
@@ -75,10 +75,10 @@ def test_phase6i_roadmap_and_terminal_registry_are_current():
 
     assert "Slices 6A through 6I are implemented" in roadmap
     assert "### 6I. Closeout And Hardening Audit" in roadmap
-    assert "docs\\phase6_closeout_hardening_audit.md" in roadmap
+    assert "docs\\phase6.md" in roadmap
     assert "tools\\audit_phase6_closeout.py" in roadmap
-    assert "phase6-closeout-hardening" in docs
-    assert "phase6-closeout-audit" in docs
+    assert "phase6" in docs
+    assert "phase6" in docs
     assert "function axiom-phase6-audit" in tools
     assert "8. Phase 6I closeout audit" in tools
     assert "axiom-phase6-audit" in help_text
@@ -88,3 +88,5 @@ def test_phase6i_roadmap_and_terminal_registry_are_current():
     assert commands["axiom-phase6-audit"]["backing_tools"] == [
         "tools/audit_phase6_closeout.py"
     ]
+
+

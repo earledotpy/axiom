@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOC = ROOT / "docs" / "phase7_terminal_visibility.md"
+DOC = ROOT / "docs" / "phase7.md"
 MODULE = ROOT / "ui" / "terminal" / "modules" / "60-phase7.ps1"
 DOCTOR = ROOT / "ui" / "terminal" / "modules" / "49-doctor.ps1"
 DOCS = ROOT / "ui" / "terminal" / "modules" / "52-docs.ps1"
@@ -73,3 +73,4 @@ def test_phase7d_terminal_registry_docs_help_and_doctor_are_wired():
     assert command["mutates_axiom_runtime"] is False
     assert command["risk"] == "low"
     assert command["status"] == "implemented"
+

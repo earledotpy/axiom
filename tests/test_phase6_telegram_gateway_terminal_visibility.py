@@ -5,8 +5,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOC = ROOT / "docs" / "phase6_telegram_gateway_terminal_visibility.md"
-ROADMAP = ROOT / "docs" / "phase6_roadmap.md"
+DOC = ROOT / "docs" / "phase6.md"
+ROADMAP = ROOT / "docs" / "phase6.md"
 PANEL = ROOT / "ui" / "terminal" / "modules" / "59-telegram-gateway.ps1"
 DOCS_MODULE = ROOT / "ui" / "terminal" / "modules" / "52-docs.ps1"
 TOOLS_MODULE = ROOT / "ui" / "terminal" / "modules" / "20-axiom-tools.ps1"
@@ -57,7 +57,7 @@ def test_phase6h_help_doctor_report_docs_cover_gateway_visibility():
     doctor = DOCTOR_MODULE.read_text(encoding="utf-8")
     report = REPORT_MODULE.read_text(encoding="utf-8")
 
-    assert "phase6-telegram-gateway-terminal" in docs
+    assert "phase6" in docs
     assert "telegram-gateway-terminal" in docs
     assert "axiom-telegram-gateway-audit" in tools
     assert "axiom-telegram-gateway" in help_text
@@ -87,5 +87,7 @@ def test_phase6h_doc_and_roadmap_are_current():
 
     assert "Slices 6A through 6I are implemented" in roadmap
     assert "### 6H. Telegram Gateway Terminal Visibility" in roadmap
-    assert "docs\\phase6_telegram_gateway_terminal_visibility.md" in roadmap
+    assert "docs\\phase6.md" in roadmap
     assert "ui\\terminal\\modules\\59-telegram-gateway.ps1" in roadmap
+
+

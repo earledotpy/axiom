@@ -5,8 +5,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOC = ROOT / "docs" / "phase6_terminal_operator_control_visibility.md"
-ROADMAP = ROOT / "docs" / "phase6_roadmap.md"
+DOC = ROOT / "docs" / "phase6.md"
+ROADMAP = ROOT / "docs" / "phase6.md"
 TOOLS_MODULE = ROOT / "ui" / "terminal" / "modules" / "20-axiom-tools.ps1"
 HELP_MODULE = ROOT / "ui" / "terminal" / "modules" / "90-safety-help.ps1"
 DOCTOR_MODULE = ROOT / "ui" / "terminal" / "modules" / "49-doctor.ps1"
@@ -56,7 +56,7 @@ def test_phase6e_help_doctor_report_docs_cover_operator_visibility():
     assert "Operator control visibility" in report_text
     assert "preflight hook" in report_text
     assert "runtime_mutation_shortcut: none" in report_text
-    assert "phase6-terminal-visibility" in docs_text
+    assert "phase6" in docs_text
     assert "mode=ro" in panel_text
     assert "record_operator_command_intent.py" in panel_text
 
@@ -78,5 +78,7 @@ def test_phase6e_doc_and_roadmap_are_current():
         assert phrase in doc
 
     assert "Slices 6A through 6" in roadmap
-    assert "docs\\phase6_terminal_operator_control_visibility.md" in roadmap
+    assert "docs\\phase6.md" in roadmap
     assert "preflight read-only audit hook" in roadmap
+
+

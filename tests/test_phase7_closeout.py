@@ -9,7 +9,7 @@ from tools.audit_phase7_closeout import audit_phase7_closeout
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOC = ROOT / "docs" / "phase7_closeout.md"
+DOC = ROOT / "docs" / "phase7.md"
 TOOLS_MODULE = ROOT / "ui" / "terminal" / "modules" / "20-axiom-tools.ps1"
 DOCTOR_MODULE = ROOT / "ui" / "terminal" / "modules" / "49-doctor.ps1"
 DOCS_MODULE = ROOT / "ui" / "terminal" / "modules" / "52-docs.ps1"
@@ -88,3 +88,4 @@ def test_phase7e_terminal_registry_docs_help_and_preflight_are_wired():
     assert command["risk"] == "low"
     assert command["backing_tools"] == ["tools/audit_phase7_closeout.py"]
     assert "tools/audit_phase7_closeout.py" in commands["axiom-preflight"]["backing_tools"]
+

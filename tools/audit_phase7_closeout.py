@@ -66,12 +66,7 @@ class Phase7CloseoutAuditResult:
 
 
 PHASE7_REQUIRED_ARTIFACTS = [
-    "docs/phase7_acceptance_inventory.md",
-    "docs/phase7_acceptance_runner.md",
-    "docs/phase7_e2e_gate_audit.md",
-    "docs/phase7_e2e_readiness_approval.md",
-    "docs/phase7_terminal_visibility.md",
-    "docs/phase7_closeout.md",
+    "docs/phase7.md",
     "tools/audit_phase7_acceptance_inventory.py",
     "tools/run_phase7_acceptance.py",
     "tools/audit_phase7_e2e_gate.py",
@@ -316,7 +311,7 @@ def audit_phase7_closeout() -> Phase7CloseoutAuditResult:
                 {"term": forbidden},
             )
 
-    closeout_doc = _read("docs/phase7_closeout.md")
+    closeout_doc = _read("docs/phase7.md")
     for phrase in REQUIRED_CLOSEOUT_DOC_PHRASES:
         if phrase not in closeout_doc:
             _violation(
@@ -400,3 +395,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

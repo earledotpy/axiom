@@ -77,7 +77,7 @@ def fake_snapshot() -> dict:
         },
         "source_documents": {
             "phase3_policy_security_audit": {
-                "path": "docs\\phase3_policy_security_audit.md",
+                "path": "docs\\phase3.md",
                 "exists": True,
                 "purpose": "Read-only Phase 3 policy/security audit source handoff.",
             },
@@ -106,7 +106,7 @@ def test_build_handoff_markdown_contains_core_state():
     assert "candidate" in markdown
     assert "pytest tests -v" in markdown
     assert "## Source Documents" in markdown
-    assert "docs\\phase3_policy_security_audit.md" in markdown
+    assert "docs\\phase3.md" in markdown
     
     assert "## Supervisor Health" in markdown
     assert "supervisor_health_ok" in markdown
@@ -306,7 +306,7 @@ def test_handoff_includes_policy_security_audit_section():
         },
         "source_documents": {
             "phase3_policy_security_audit": {
-                "path": "docs\\phase3_policy_security_audit.md",
+                "path": "docs\\phase3.md",
                 "exists": True,
                 "purpose": "Read-only Phase 3 policy/security audit source handoff.",
             },
@@ -331,7 +331,7 @@ def test_handoff_includes_policy_security_audit_section():
     assert "plan_injection_scanner_return_contract_is_stable" in markdown
     assert "security_events_table_supports_audit_coverage" in markdown
     assert "## Source Documents" in markdown
-    assert "docs\\phase3_policy_security_audit.md" in markdown
+    assert "docs\\phase3.md" in markdown
 
 
 def test_handoff_verification_commands_include_phase3_audits_and_session_note():
@@ -343,3 +343,4 @@ def test_handoff_verification_commands_include_phase3_audits_and_session_note():
     assert "python tools\\audit_policy_security.py" in markdown
     assert "python tools\\supervisor_health_check.py <SESSION_ID>" in markdown
     assert "Do not type angle brackets literally" in markdown
+

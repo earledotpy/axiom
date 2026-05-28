@@ -157,92 +157,47 @@ $script:AxiomDocsIndex = [ordered]@{
     }
     "phase5-agent-boundary" = @{
         label = "Phase 5 agent boundary"
-        path = "docs\phase5_agent_boundary.md"
+        path = "docs\phase5.md"
         category = "agent"
     }
     "phase5-closeout" = @{
         label = "Phase 5 closeout"
-        path = "docs\phase5_closeout.md"
+        path = "docs\phase5.md"
         category = "agent"
     }
-    "phase6-roadmap" = @{
-        label = "Phase 6 roadmap implementation plan"
-        path = "docs\phase6_roadmap.md"
-        category = "agent"
-    }
-    "phase6-entry-gate" = @{
-        label = "Phase 6 entry gate and scope lock"
-        path = "docs\phase6_entry_gate.md"
-        category = "agent"
-    }
-    "phase6-operator-manifests" = @{
-        label = "Phase 6 operator command manifests"
-        path = "docs\phase6_operator_command_manifests.md"
-        category = "agent"
-    }
-    "phase6-command-parser" = @{
-        label = "Phase 6 local operator command parser"
-        path = "docs\phase6_operator_command_parser.md"
-        category = "agent"
-    }
-    "phase6-command-ledger" = @{
-        label = "Phase 6 operator command ledger"
-        path = "docs\phase6_operator_command_ledger.md"
-        category = "agent"
-    }
-    "phase6-terminal-visibility" = @{
-        label = "Phase 6 terminal operator control visibility"
-        path = "docs\phase6_terminal_operator_control_visibility.md"
-        category = "agent"
-    }
-    "phase6-external-adapter-design" = @{
-        label = "Phase 6 external adapter design packet"
-        path = "docs\phase6_external_adapter_design.md"
-        category = "agent"
-    }
-    "phase6-telegram-gateway-foundation" = @{
-        label = "Phase 6G Telegram gateway runtime foundation"
-        path = "docs\phase6_telegram_gateway_runtime_foundation.md"
-        category = "agent"
-    }
-    "phase6-telegram-gateway-terminal" = @{
-        label = "Phase 6H Telegram gateway terminal visibility"
-        path = "docs\phase6_telegram_gateway_terminal_visibility.md"
-        category = "agent"
-    }
-    "phase6-closeout-hardening" = @{
-        label = "Phase 6I closeout and hardening audit"
-        path = "docs\phase6_closeout_hardening_audit.md"
+    "phase6" = @{
+        label = "Phase 6 consolidated documentation"
+        path = "docs\phase6.md"
         category = "agent"
     }
     "phase7-acceptance-inventory" = @{
         label = "Phase 7A acceptance inventory"
-        path = "docs\phase7_acceptance_inventory.md"
+        path = "docs\phase7.md"
         category = "agent"
     }
     "phase7-acceptance-runner" = @{
         label = "Phase 7B acceptance runner"
-        path = "docs\phase7_acceptance_runner.md"
+        path = "docs\phase7.md"
         category = "agent"
     }
     "phase7-e2e-gate-audit" = @{
         label = "Phase 7C full-goal E2E gate audit"
-        path = "docs\phase7_e2e_gate_audit.md"
+        path = "docs\phase7.md"
         category = "agent"
     }
     "phase7-terminal-visibility" = @{
         label = "Phase 7D terminal visibility"
-        path = "docs\phase7_terminal_visibility.md"
+        path = "docs\phase7.md"
         category = "agent"
     }
     "phase7-closeout" = @{
         label = "Phase 7E closeout and hardening audit"
-        path = "docs\phase7_closeout.md"
+        path = "docs\phase7.md"
         category = "agent"
     }
     "phase8a-release-freeze" = @{
         label = "Phase 8A release freeze and documentation reconciliation"
-        path = "docs\phase8a_release_freeze_documentation_reconciliation.md"
+        path = "docs\phase8.md"
         category = "agent"
     }
     "operator-command-parser" = @{
@@ -575,3 +530,7 @@ function axiom-docs-tools {
 function axiom-docs-agent {
     axiom-docs -Category "agent"
 }
+
+
+
+

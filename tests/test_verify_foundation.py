@@ -3,7 +3,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-from tools.verify_foundation import verify_foundation
+from axiom.core.autonomous_gate import AutonomousReadinessDecision
+from tools.verify_foundation import _is_fail_closed_coherent, verify_foundation
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -66,8 +67,8 @@ def test_verify_foundation_cli_json_exits_zero_and_is_parseable():
     assert "status" in payload
     assert "autonomous_readiness" in payload
     assert "supervisor_health" in payload
-    
-    
+
+
 def test_verify_foundation_includes_task_execution_audit():
     result = verify_foundation()
 
@@ -88,3 +89,79 @@ def test_verify_foundation_includes_policy_security_audit():
     assert result["policy_security_audit"]["checked"] is True
     assert "passed" in result["policy_security_audit"]
     assert "violation_count" in result["policy_security_audit"]
+
+
+def test_fail_closed_coherent_when_only_autonomous_operation_is_disabled():
+    readiness = AutonomousReadinessDecision(
+        allowed=False,
+        blocking_reasons=["autonomous_operation_disabled"],
+        status={
+            "current_trusted_model_profile_present": True,
+            "safe_pass_enabled": True,
+            "autonomous_operation_enabled": False,
+        },
+    )
+
+    assert _is_fail_closed_coherent(
+        foundation_passed=True,
+        operational_mode="fail_closed_non_autonomous",
+        readiness=readiness,
+    ) is True
+
+
+def test_fail_closed_coherent_for_early_untrusted_profile_state():
+    readiness = AutonomousReadinessDecision(
+        allowed=False,
+        blocking_reasons=[
+            "no_current_trusted_model_profile",
+            "safe_pass_disabled",
+            "autonomous_operation_disabled",
+        ],
+        status={
+            "current_trusted_model_profile_present": False,
+            "safe_pass_enabled": False,
+            "autonomous_operation_enabled": False,
+        },
+    )
+
+    assert _is_fail_closed_coherent(
+        foundation_passed=True,
+        operational_mode="fail_closed_non_autonomous",
+        readiness=readiness,
+    ) is True
+
+
+def test_fail_closed_coherent_rejects_unknown_blocker():
+    readiness = AutonomousReadinessDecision(
+        allowed=False,
+        blocking_reasons=["unexpected_blocker"],
+        status={
+            "current_trusted_model_profile_present": True,
+            "safe_pass_enabled": True,
+            "autonomous_operation_enabled": False,
+        },
+    )
+
+    assert _is_fail_closed_coherent(
+        foundation_passed=True,
+        operational_mode="fail_closed_non_autonomous",
+        readiness=readiness,
+    ) is False
+
+
+def test_fail_closed_coherent_rejects_autonomous_ready_state():
+    readiness = AutonomousReadinessDecision(
+        allowed=True,
+        blocking_reasons=[],
+        status={
+            "current_trusted_model_profile_present": True,
+            "safe_pass_enabled": True,
+            "autonomous_operation_enabled": True,
+        },
+    )
+
+    assert _is_fail_closed_coherent(
+        foundation_passed=True,
+        operational_mode="autonomous_available",
+        readiness=readiness,
+    ) is False

@@ -42,15 +42,7 @@ class Phase6CloseoutAuditResult:
 
 
 PHASE6_REQUIRED_ARTIFACTS = [
-    "docs/phase6_entry_gate.md",
-    "docs/phase6_operator_command_manifests.md",
-    "docs/phase6_operator_command_parser.md",
-    "docs/phase6_operator_command_ledger.md",
-    "docs/phase6_terminal_operator_control_visibility.md",
-    "docs/phase6_external_adapter_design.md",
-    "docs/phase6_telegram_gateway_runtime_foundation.md",
-    "docs/phase6_telegram_gateway_terminal_visibility.md",
-    "docs/phase6_closeout_hardening_audit.md",
+    "docs/phase6.md",
     "axiom/policy/operator_control_manifests/status.v1.json",
     "axiom/core/operator_command_parser.py",
     "axiom/core/operator_command_ledger.py",
@@ -128,7 +120,7 @@ def audit_phase6_closeout() -> Phase6CloseoutAuditResult:
                 {"path": artifact},
             )
 
-    roadmap = _read("docs/phase6_roadmap.md")
+    roadmap = _read("docs/phase6.md")
     if "Slices 6A through 6I are implemented" not in roadmap:
         _violation(
             violations,
@@ -237,7 +229,7 @@ def audit_phase6_closeout() -> Phase6CloseoutAuditResult:
         "axiom-operator-command-audit",
         "axiom-telegram-gateway",
         "axiom-telegram-gateway-audit",
-        "axiom-phase6-audit",
+        "axiom-phase6",
     )
     phase6_mentions = sum(help_text.count(term) for term in phase6_terms)
     if phase6_mentions > 18:
@@ -248,7 +240,7 @@ def audit_phase6_closeout() -> Phase6CloseoutAuditResult:
             {"phase6_mentions": phase6_mentions, "max_allowed": 18},
         )
 
-    closeout = _read("docs/phase6_closeout_hardening_audit.md")
+    closeout = _read("docs/phase6.md")
     for phrase in DEFERRED_RUNTIME_PHRASES:
         if phrase not in closeout:
             _violation(
@@ -303,3 +295,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

@@ -4,8 +4,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-ENTRY_GATE = ROOT / "docs" / "phase6_entry_gate.md"
-ROADMAP = ROOT / "docs" / "phase6_roadmap.md"
+ENTRY_GATE = ROOT / "docs" / "phase6.md"
+ROADMAP = ROOT / "docs" / "phase6.md"
 DOCS_MODULE = ROOT / "ui" / "terminal" / "modules" / "52-docs.ps1"
 
 
@@ -83,9 +83,9 @@ def test_phase6_entry_gate_doc_records_rollback_and_verification():
     text = ENTRY_GATE.read_text(encoding="utf-8")
 
     required = [
-        "remove docs\\phase6_entry_gate.md",
-        "remove Phase 6A references from docs\\phase6_roadmap.md",
-        "remove phase6-entry-gate from ui\\terminal\\modules\\52-docs.ps1",
+        "remove docs\\phase6.md",
+        "remove Phase 6A references from docs\\phase6.md",
+        "remove phase6 from ui\\terminal\\modules\\52-docs.ps1",
         "python tools\\verify_foundation.py",
         "python tools\\audit_task_lifecycle.py",
         "python tools\\audit_task_execution.py",
@@ -102,6 +102,8 @@ def test_phase6_roadmap_and_terminal_docs_index_entry_gate():
     roadmap = ROADMAP.read_text(encoding="utf-8")
     docs_module = DOCS_MODULE.read_text(encoding="utf-8")
 
-    assert "docs\\phase6_entry_gate.md" in roadmap
-    assert "phase6-entry-gate" in docs_module
-    assert "docs\\phase6_entry_gate.md" in docs_module
+    assert "docs\\phase6.md" in roadmap
+    assert "phase6" in docs_module
+    assert "docs\\phase6.md" in docs_module
+
+

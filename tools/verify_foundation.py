@@ -11,7 +11,10 @@ sys.path.insert(0, str(ROOT))
 
 from axiom.app.bootstrap_validation import BootstrapValidator
 from axiom.app.status_report import build_status_report
-from axiom.core.autonomous_gate import evaluate_autonomous_readiness
+from axiom.core.autonomous_gate import (
+    AutonomousReadinessDecision,
+    evaluate_autonomous_readiness,
+)
 from axiom.core.supervisor_monitor import SupervisorMonitor
 from axiom.core.task_execution_audit import audit_task_execution
 from axiom.core.policy_security_audit import audit_policy_security
@@ -20,6 +23,41 @@ from tools.repair_session_state import repair_session_state
 
 
 TOOL_VERSION = "verify_foundation.v2"
+EXPECTED_FAIL_CLOSED_BLOCKERS = {
+    "no_current_trusted_model_profile",
+    "safe_pass_disabled",
+    "autonomous_operation_disabled",
+}
+
+
+def _is_fail_closed_coherent(
+    *,
+    foundation_passed: bool,
+    operational_mode: str,
+    readiness: AutonomousReadinessDecision,
+) -> bool:
+    blockers = set(readiness.blocking_reasons)
+    status = readiness.status
+
+    if not foundation_passed:
+        return False
+
+    if readiness.allowed:
+        return False
+
+    if operational_mode != "fail_closed_non_autonomous":
+        return False
+
+    if not blockers or blockers - EXPECTED_FAIL_CLOSED_BLOCKERS:
+        return False
+
+    if (
+        not status.get("current_trusted_model_profile_present", False)
+        and status.get("safe_pass_enabled", False)
+    ):
+        return False
+
+    return True
 
 
 def _latest_session_id() -> int | None:
@@ -93,14 +131,14 @@ def verify_foundation(profile_label: str = "default") -> dict[str, Any]:
     policy_security_audit = _policy_security_audit_payload()
 
     foundation_passed = (
-        bootstrap_result.passed 
+        bootstrap_result.passed
         and task_execution_audit["passed"]
         and policy_security_audit["passed"]
     )
-    fail_closed_coherent = (
-        not readiness.allowed
-        and "no_current_trusted_model_profile" in readiness.blocking_reasons
-        and "safe_pass_disabled" in readiness.blocking_reasons
+    fail_closed_coherent = _is_fail_closed_coherent(
+        foundation_passed=foundation_passed,
+        operational_mode=bootstrap_result.operational_mode,
+        readiness=readiness,
     )
 
     return {

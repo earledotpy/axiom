@@ -15,7 +15,7 @@ from tools.run_phase7_acceptance import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOC = ROOT / "docs" / "phase7_e2e_gate_audit.md"
+DOC = ROOT / "docs" / "phase7.md"
 TOOL = ROOT / "tools" / "audit_phase7_e2e_gate.py"
 TERMINAL_TOOLS = ROOT / "ui" / "terminal" / "modules" / "20-axiom-tools.ps1"
 TERMINAL_DOCTOR = ROOT / "ui" / "terminal" / "modules" / "49-doctor.ps1"
@@ -228,7 +228,7 @@ def test_phase7c_doc_records_gate_scope_and_current_blockers():
         "axiom-phase7-e2e-gate",
         "gate_status: blocked",
         "explicit operator approval for full-goal E2E not supplied",
-        "docs\\phase7_acceptance_runner.md",
+        "docs\\phase7.md",
     ]
     for phrase in required:
         assert phrase in text
@@ -258,3 +258,4 @@ def test_phase7c_terminal_surface_exposes_e2e_gate_audit():
     assert command["mutates_axiom_runtime"] is False
     assert command["risk"] == "low"
     assert command["backing_tools"] == ["tools/audit_phase7_e2e_gate.py"]
+

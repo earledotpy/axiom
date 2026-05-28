@@ -8,7 +8,7 @@ Effective date: 2026-05-24
 | --- | --- | --- | --- |
 | OQ-001 | Antigravity | What architecture changes are needed for long-term multi-agent governance support inside AXIOM? | Open |
 | OQ-002 | Claude Code | What governance checks should block or warn before role, binding, or decision-record changes are accepted? | Open |
-| OQ-003 | Codex | What local verification command should become the standard governance-change preflight? | Approved — Implementation assigned to Codex (2026-05-28) |
+| OQ-003 | Codex | What local verification command should become the standard governance-change preflight? | Closed — `pytest tests -k "not doc and not cli" -v` adopted as fast preflight; doc tests consolidated; log isolation added (2026-05-28) |
 | OQ-004 | Jeremy | Which advisory council topics require Kimi, Qwen, and DeepSeek review before approval? | Open |
 | OQ-005 | Antigravity | How can AXIOM safely partition implementation and build duties among Codex, Claude Code, and Antigravity to mitigate rate limits? | Closed — resolved by ADR-0006 (2026-05-28) |
 | OQ-006 | Codex | Why does `verify_foundation.py` report `fail_closed_coherent: False` with `blocking_reasons: autonomous_operation_disabled`, and what is the correct fix? | Closed |

@@ -282,10 +282,7 @@ function axiom-model {
         [int]$Limit = 10
     )
 
-    Write-Host ""
-    Write-Host "AXIOM MODEL PROFILE / TRUST BOUNDARY" -ForegroundColor Green
-    Write-Host "====================================" -ForegroundColor Green
-    Write-Host ""
+    Write-AxiomUiTitle "MODEL PROFILE / TRUST" "candidate registration"
 
     if (-not (Test-Path $script:AxiomRoot)) {
         Write-AxiomModelLine "root" "$script:AxiomRoot missing" "Red"
@@ -303,7 +300,7 @@ function axiom-model {
     $profiles = @(Get-AxiomModelProfiles -ProfileLabel $ProfileLabel -Limit $Limit)
     $currentProfiles = @(Get-AxiomCurrentModelProfiles -ProfileLabel $ProfileLabel)
 
-    Write-Host "Profile labels" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Profile labels"
     if ($labels.Count -eq 0) {
         Write-AxiomModelLine "labels" "none found" "Yellow"
     }
@@ -314,12 +311,10 @@ function axiom-model {
         }
     }
 
-    Write-Host ""
-    Write-Host "Profiles for label: $ProfileLabel" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Profiles for label: $ProfileLabel"
     Write-AxiomModelProfileTable -Rows $profiles
 
-    Write-Host ""
-    Write-Host "Trust assessment" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Trust assessment"
 
     if ($currentProfiles.Count -eq 0) {
         Write-AxiomModelLine "current trusted profile" "absent" "Yellow"
@@ -346,8 +341,7 @@ function axiom-model {
         $latest = $profiles[0]
         $latestAssessment = Get-AxiomModelTrustAssessment -Profile $latest
 
-        Write-Host ""
-        Write-Host "Latest profile detail" -ForegroundColor DarkGreen
+        Write-AxiomUiSection "Latest profile detail"
         Write-AxiomModelLine "profile_id" ([string]$latest.profile_id) "Gray"
         Write-AxiomModelLine "model" ([string]$latest.model_name) "Cyan"
         Write-AxiomModelLine "host" ([string]$latest.ollama_host) "Gray"
@@ -370,8 +364,7 @@ function axiom-model {
         if ($latest.calibration_run_id) {
             $calibrationRows = @(Get-AxiomModelCalibration -CalibrationRunId ([string]$latest.calibration_run_id))
 
-            Write-Host ""
-            Write-Host "Calibration row" -ForegroundColor DarkGreen
+            Write-AxiomUiSection "Calibration row"
 
             if ($calibrationRows.Count -eq 0) {
                 Write-AxiomModelLine "calibration" "row missing" "Red"
@@ -388,14 +381,13 @@ function axiom-model {
         }
     }
 
-    Write-Host ""
-    Write-Host "Canonical rule" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Canonical rule"
     Write-Host "  A profile is trusted only when registration_status=current," -ForegroundColor Gray
     Write-Host "  thinking_mode=disabled, calibration exists and passed, and is_current=1." -ForegroundColor Gray
     Write-Host "  Do not manually promote candidate profiles." -ForegroundColor Yellow
     Write-Host ""
 
-    Write-Host "Next safe commands" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Next safe commands"
     Write-Host "  axiom-dashboard" -ForegroundColor Gray
     Write-Host "  axiom-readiness" -ForegroundColor Gray
     Write-Host "  axiom-preflight" -ForegroundColor Gray

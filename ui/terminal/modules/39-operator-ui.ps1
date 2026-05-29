@@ -11,24 +11,37 @@
 # ============================================================
 
 function Write-AxiomUiTitle {
-    param([Parameter(Mandatory = $true)][string]$Title)
+    param(
+        [Parameter(Mandatory = $true)][string]$Title,
+        [string]$Meta = ""
+    )
 
     Write-Host ""
-    Write-Host $Title -ForegroundColor Green
-    Write-Host ("=" * $Title.Length) -ForegroundColor Green
-    Write-Host ""
+    Write-Host "▌ " -NoNewline -ForegroundColor Green
+    Write-Host $Title -NoNewline -ForegroundColor Green
+    if ($Meta) {
+        Write-Host "    $Meta" -ForegroundColor DarkGray
+    }
+    else {
+        Write-Host ""
+    }
+    Write-Host ("  " + ("─" * 70)) -ForegroundColor DarkGray
 }
 
 function Write-AxiomUiSection {
     param([Parameter(Mandatory = $true)][string]$Title)
 
     Write-Host ""
-    Write-Host $Title -ForegroundColor DarkGreen
+    Write-Host "  ▸ $Title" -ForegroundColor DarkGreen
+}
+
+function Write-AxiomUiRule {
+    Write-Host ("  " + ("─" * 68)) -ForegroundColor DarkGray
 }
 
 function Write-AxiomUiLine {
     param(
-        [Parameter(Mandatory = $true)][string]$Label,
+        [Parameter(Mandatory = $true)][AllowEmptyString()][string]$Label,
         [AllowEmptyString()][string]$Value,
         [string]$Color = "Gray",
         [int]$Width = 28

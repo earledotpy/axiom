@@ -324,10 +324,7 @@ function Write-AxiomReadinessCheck {
 }
 
 function axiom-readiness {
-    Write-Host ""
-    Write-Host "AXIOM EXECUTION READINESS" -ForegroundColor Green
-    Write-Host "=========================" -ForegroundColor Green
-    Write-Host ""
+    Write-AxiomUiTitle "EXECUTION READINESS" "30+ checks · read-only"
 
     $checks = New-Object System.Collections.Generic.List[object]
 
@@ -465,7 +462,7 @@ function axiom-readiness {
     }
 
     Write-Host ""
-    Write-Host "Next safe commands:" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Next safe commands"
     Write-Host "  axiom-preflight" -ForegroundColor Gray
     Write-Host "  axiom-regression" -ForegroundColor Gray
     Write-Host "  axiom-dashboard" -ForegroundColor Gray

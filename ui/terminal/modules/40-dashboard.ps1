@@ -365,10 +365,7 @@ function Get-AxiomDashboardPosture {
 }
 
 function axiom-dashboard {
-    Write-Host ""
-    Write-Host "AXIOM DASHBOARD" -ForegroundColor Green
-    Write-Host "===============" -ForegroundColor Green
-    Write-Host ""
+    Write-AxiomUiTitle "AXIOM DASHBOARD" "read-only · fail-closed"
 
     if (-not (Test-Path $script:AxiomRoot)) {
         Write-AxiomDashboardLine "root" "$script:AxiomRoot missing" "Red"
@@ -393,7 +390,7 @@ function axiom-dashboard {
     $events = @(Get-AxiomDashboardRecentEvents -Session $session)
     $blockingReasons = @(Get-AxiomDashboardPosture -Session $session -ModelProfile $model -RunningTasks $runningTasks)
 
-    Write-Host "System" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "System"
     Write-AxiomDashboardLine "root" $script:AxiomRoot "Green"
     Write-AxiomDashboardLine "database" "present / read-only dashboard" "Green"
     Write-AxiomDashboardLine "operational mode" "fail_closed_non_autonomous" "Yellow"
@@ -405,9 +402,9 @@ function axiom-dashboard {
         Write-AxiomDashboardLine "blocking reasons" ($blockingReasons -join ", ") "Yellow"
     }
 
-    Write-Host ""
+    Write-AxiomUiRule
 
-    Write-Host "Latest session" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Latest session"
     if ($session) {
         Write-AxiomDashboardLine "session_id" ([string]$session.session_id) "Green"
         Write-AxiomDashboardLine "scheduler_status" ([string]$session.scheduler_status) "Cyan"
@@ -424,9 +421,9 @@ function axiom-dashboard {
         Write-AxiomDashboardLine "session" "none found" "Yellow"
     }
 
-    Write-Host ""
+    Write-AxiomUiRule
 
-    Write-Host "Supervisor / heartbeat" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Supervisor / heartbeat"
     if ($heartbeat) {
         Write-AxiomDashboardLine "scheduler_state" ([string]$heartbeat.scheduler_state) "Cyan"
         Write-AxiomDashboardLine "last_action" ([string]$heartbeat.last_action) "Cyan"
@@ -438,9 +435,9 @@ function axiom-dashboard {
         Write-AxiomDashboardLine "heartbeat" "none found" "Yellow"
     }
 
-    Write-Host ""
+    Write-AxiomUiRule
 
-    Write-Host "Task queue" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Task queue"
     if ($taskCounts -and $taskCounts.Count -gt 0) {
         foreach ($row in $taskCounts) {
             $color = if ($row.status -eq "running") { "Yellow" } elseif ($row.status -eq "failed" -or $row.status -eq "quarantined") { "Red" } else { "Gray" }
@@ -458,9 +455,9 @@ function axiom-dashboard {
         Write-AxiomDashboardLine "pending manifest-bound" "0" "Gray"
     }
 
-    Write-Host ""
+    Write-AxiomUiRule
 
-    Write-Host "Model profile" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Model profile"
     if ($model) {
         Write-AxiomDashboardLine "profile_id" ([string]$model.profile_id) "Gray"
         Write-AxiomDashboardLine "model" ([string]$model.model_name) "Cyan"
@@ -475,9 +472,9 @@ function axiom-dashboard {
         Write-AxiomDashboardLine "model profile" "none found" "Yellow"
     }
 
-    Write-Host ""
+    Write-AxiomUiRule
 
-    Write-Host "Manifests" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Manifests"
     if ($manifestSummary.Count -gt 0) {
         foreach ($row in $manifestSummary) {
             Write-AxiomDashboardLine $row.manifest_type ([string]$row.count) "Cyan"
@@ -495,9 +492,9 @@ function axiom-dashboard {
         }
     }
 
-    Write-Host ""
+    Write-AxiomUiRule
 
-    Write-Host "Recent events" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Recent events"
     if ($events.Count -gt 0) {
         foreach ($event in $events) {
             $label = "$($event.source):$($event.event_type)"
@@ -510,9 +507,9 @@ function axiom-dashboard {
         Write-AxiomDashboardLine "events" "none found for latest session" "Gray"
     }
 
-    Write-Host ""
+    Write-AxiomUiRule
 
-    Write-Host "Next safe commands" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Next safe commands"
     Write-Host "  axiom-preflight" -ForegroundColor Gray
     Write-Host "  axiom-regression" -ForegroundColor Gray
     Write-Host "  axiom-handoff" -ForegroundColor Gray

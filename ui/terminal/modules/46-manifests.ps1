@@ -281,7 +281,7 @@ function Get-AxiomManifestHashFindings {
         }
     }
 
-    return @($findings)
+    return $findings.ToArray()
 }
 
 function Get-AxiomToolCapabilityMapSummary {
@@ -317,10 +317,7 @@ function Get-AxiomToolCapabilityMapSummary {
 }
 
 function axiom-manifests {
-    Write-Host ""
-    Write-Host "AXIOM MANIFEST / TOOL-CAPABILITY INTEGRITY" -ForegroundColor Green
-    Write-Host "==========================================" -ForegroundColor Green
-    Write-Host ""
+    Write-AxiomUiTitle "MANIFEST INTEGRITY" "SHA256 · active manifests"
 
     if (-not (Test-Path $script:AxiomRoot)) {
         Write-AxiomManifestLine "root" "$script:AxiomRoot missing" "Red"
@@ -340,13 +337,12 @@ function axiom-manifests {
     $findings = @(Get-AxiomManifestHashFindings -Rows $rows)
     $toolMapSummary = Get-AxiomToolCapabilityMapSummary
 
-    Write-Host "Files" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Files"
     Write-AxiomManifestLine "manifest schema" $script:AxiomManifestSchemaPath $(if (Test-Path $script:AxiomManifestSchemaPath) { "Green" } else { "Red" })
     Write-AxiomManifestLine "tool map schema" $script:AxiomToolCapabilityMapSchemaPath $(if (Test-Path $script:AxiomToolCapabilityMapSchemaPath) { "Green" } else { "Red" })
     Write-AxiomManifestLine "tool capability map" $script:AxiomToolCapabilityMapPath $(if (Test-Path $script:AxiomToolCapabilityMapPath) { "Green" } else { "Red" })
 
-    Write-Host ""
-    Write-Host "Registry counts" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Registry counts"
     Write-AxiomManifestLine "active rows" ([string]$rows.Count) $(if ($rows.Count -gt 0) { "Green" } else { "Yellow" })
     Write-AxiomManifestLine "inactive rows" ([string]$inactiveCount) "Gray"
 
@@ -357,12 +353,10 @@ function axiom-manifests {
         }
     }
 
-    Write-Host ""
-    Write-Host "Active manifest rows" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Active manifest rows"
     Write-AxiomManifestRowTable -Rows $rows
 
-    Write-Host ""
-    Write-Host "Tool-capability map" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Tool-capability map"
     Write-AxiomManifestLine "exists" ([string]$toolMapSummary.exists) $(if ($toolMapSummary.exists) { "Green" } else { "Red" })
     Write-AxiomManifestLine "json parses" ([string]$toolMapSummary.json_ok) $(if ($toolMapSummary.json_ok) { "Green" } else { "Red" })
     Write-AxiomManifestLine "schema_version" ([string]$toolMapSummary.schema_version) "Gray"
@@ -372,8 +366,7 @@ function axiom-manifests {
     Write-AxiomManifestLine "standard tools" ([string]$toolMapSummary.standard_tool_count) "Gray"
     Write-AxiomManifestLine "operator-control tools" ([string]$toolMapSummary.operator_control_tool_count) "Gray"
 
-    Write-Host ""
-    Write-Host "Integrity assessment" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Integrity assessment"
 
     if ($findings.Count -eq 0 -and $rows.Count -gt 0) {
         Write-AxiomManifestLine "registered file hashes" "all active rows match disk" "Green"
@@ -402,13 +395,12 @@ function axiom-manifests {
         Write-AxiomManifestLine "tool map registered" "multiple active rows" "Red"
     }
 
-    Write-Host ""
-    Write-Host "Canonical rule" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Canonical rule"
     Write-Host "  Manifest SHA256 mismatch, missing registration, or tool-capability-map" -ForegroundColor Gray
     Write-Host "  integrity failure must fail closed. This panel reports only; it does not repair." -ForegroundColor Gray
     Write-Host ""
 
-    Write-Host "Next safe commands" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Next safe commands"
     Write-Host "  axiom-dashboard" -ForegroundColor Gray
     Write-Host "  axiom-readiness" -ForegroundColor Gray
     Write-Host "  axiom-preflight" -ForegroundColor Gray

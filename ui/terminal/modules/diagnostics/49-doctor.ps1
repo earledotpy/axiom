@@ -198,7 +198,16 @@ function Test-AxiomDoctorModuleOrder {
         return $checks
     }
 
-    $modules = @(Get-ChildItem $moduleDir -Filter "*.ps1" | Sort-Object Name)
+    $modules = @()
+    $moduleGroups = @('core', 'foundation', 'utilities', 'shared', 'operators', 'diagnostics', 'phase10', 'safety')
+
+    foreach ($group in $moduleGroups) {
+        $groupPath = Join-Path $moduleDir $group
+        if (Test-Path $groupPath) {
+            $modules += @(Get-ChildItem $groupPath -Filter "*.ps1" -ErrorAction SilentlyContinue | Sort-Object Name)
+        }
+    }
+
     $moduleNames = @($modules | ForEach-Object { $_.Name })
 
     $checks.Add((New-AxiomDoctorCheck "module count" ($modules.Count -gt 0) "count=$($modules.Count)"))
@@ -237,7 +246,8 @@ function Test-AxiomDoctorModuleOrder {
     $checks.Add((New-AxiomDoctorCheck "visual module order" $orderOk "04 before 05 before 06"))
 
     $oldVisualMode = Join-Path $moduleDir "43-visual-mode.ps1"
-    $checks.Add((New-AxiomDoctorCheck "old visual module absent" (-not (Test-Path $oldVisualMode)) "43-visual-mode.ps1 should not remain" "warning"))
+    $oldVisualModeInFoundation = Join-Path $moduleDir "foundation" "43-visual-mode.ps1"
+    $checks.Add((New-AxiomDoctorCheck "old visual module absent" (-not ((Test-Path $oldVisualMode) -or (Test-Path $oldVisualModeInFoundation))) "43-visual-mode.ps1 should not remain" "warning"))
 
     return $checks
 }

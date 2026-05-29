@@ -547,5 +547,5 @@ def test_historical_docs_record_required_text(relative_path: str, phrases: list[
 
 
 def test_historical_docs_terminal_docs_index_includes_phase6() -> None:
-    docs_module = ROOT / "ui" / "terminal" / "modules" / "52-docs.ps1"
+    docs_module = ROOT / "ui" / "terminal" / "modules" / "diagnostics" / "52-docs.ps1"
     assert_contains_all(docs_module, ["phase6", "docs\\phase6.md"])

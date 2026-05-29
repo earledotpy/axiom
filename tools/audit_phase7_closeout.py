@@ -73,7 +73,7 @@ PHASE7_REQUIRED_ARTIFACTS = [
     "tools/approve_phase7_e2e_readiness.py",
     "tools/audit_phase7_closeout.py",
     "tests/e2e/test_full_goal_flow_minimum.py",
-    "ui/terminal/modules/60-phase7.ps1",
+    "ui/terminal/modules/operators/60-phase7.ps1",
 ]
 
 PHASE7_REQUIRED_COMMANDS = {
@@ -273,11 +273,11 @@ def audit_phase7_closeout() -> Phase7CloseoutAuditResult:
             {},
         )
 
-    terminal_tools = _read("ui/terminal/modules/20-axiom-tools.ps1")
-    doctor = _read("ui/terminal/modules/49-doctor.ps1")
-    docs = _read("ui/terminal/modules/52-docs.ps1")
-    help_text = _read("ui/terminal/modules/90-safety-help.ps1")
-    phase7_panel = _read("ui/terminal/modules/60-phase7.ps1")
+    terminal_tools = _read("ui/terminal/modules/utilities/20-axiom-tools.ps1")
+    doctor = _read("ui/terminal/modules/diagnostics/49-doctor.ps1")
+    docs = _read("ui/terminal/modules/diagnostics/52-docs.ps1")
+    help_text = _read("ui/terminal/modules/safety/90-safety-help.ps1")
+    phase7_panel = _read("ui/terminal/modules/operators/60-phase7.ps1")
 
     for phrase, source_name, source_text in [
         ("function axiom-phase7-closeout", "20-axiom-tools.ps1", terminal_tools),

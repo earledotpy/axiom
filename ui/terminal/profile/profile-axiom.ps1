@@ -62,22 +62,31 @@ if (-not (Test-Path $script:AxiomTerminalModules)) {
 }
 
 # ------------------------------------------------------------
-# Load numbered AXIOM Terminal modules.
+# Load numbered AXIOM Terminal modules from organized subdirectories.
 #
-# Important order:
+# Load order: core → foundation → utilities → shared → operators → diagnostics → phase10 → safety
+#
+# Important intra-order dependencies:
 #   04-visual-mode.ps1 must load before 05-visual.ps1
 #   05-visual.ps1 must load before 06-oh-my-posh.ps1
 # ------------------------------------------------------------
 
-$moduleFiles = Get-ChildItem $script:AxiomTerminalModules -Filter '*.ps1' |
-    Sort-Object Name
+$moduleGroups = @('core', 'foundation', 'utilities', 'shared', 'operators', 'diagnostics', 'phase10', 'safety')
+$moduleFiles = @()
+
+foreach ($group in $moduleGroups) {
+    $groupPath = Join-Path $script:AxiomTerminalModules $group
+    if (Test-Path $groupPath) {
+        $moduleFiles += @(Get-ChildItem $groupPath -Filter '*.ps1' -ErrorAction SilentlyContinue | Sort-Object Name)
+    }
+}
 
 foreach ($module in $moduleFiles) {
     try {
         . $module.FullName
     }
     catch {
-        Write-AxiomProfileError "Failed loading module: $($module.Name)"
+        Write-AxiomProfileError "Failed loading module: $($module.Name) from $($module.Directory.Name)/"
         Write-AxiomProfileError $_.Exception.Message
     }
 }
@@ -88,14 +97,14 @@ foreach ($module in $moduleFiles) {
 # ------------------------------------------------------------
 
 $visualModeOldPath = Join-Path $script:AxiomTerminalModules '43-visual-mode.ps1'
-$visualModeNewPath = Join-Path $script:AxiomTerminalModules '04-visual-mode.ps1'
+$visualModeFoundationPath = Join-Path $script:AxiomTerminalModules 'foundation' '04-visual-mode.ps1'
 
-if ((Test-Path $visualModeOldPath) -and -not (Test-Path $visualModeNewPath)) {
-    Write-AxiomProfileWarning "visual-mode module is named 43-visual-mode.ps1. Rename to 04-visual-mode.ps1 so it loads before visual/Oh My Posh modules."
+if ((Test-Path $visualModeOldPath) -and -not (Test-Path $visualModeFoundationPath)) {
+    Write-AxiomProfileWarning "visual-mode module is named 43-visual-mode.ps1. Rename to 04-visual-mode.ps1 under foundation/ subdirectory."
 }
 
 if (-not (Get-Command axiom-help -ErrorAction SilentlyContinue)) {
-    Write-AxiomProfileWarning "axiom-help is not loaded. Check modules under $script:AxiomTerminalModules"
+    Write-AxiomProfileWarning "axiom-help is not loaded. Check modules under $script:AxiomTerminalModules subdirectories (core, foundation, utilities, shared, operators, diagnostics, phase10, safety)."
 }
 
 if (-not (Get-Command axiom-edit -ErrorAction SilentlyContinue)) {

@@ -6,7 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DOC = ROOT / "docs" / "phase6.md"
 ROADMAP = ROOT / "docs" / "phase6.md"
-DOCS_MODULE = ROOT / "ui" / "terminal" / "modules" / "52-docs.ps1"
+DOCS_MODULE = ROOT / "ui" / "terminal" / "modules" / "diagnostics" / "52-docs.ps1"
 TOOLS = ROOT / "tools"
 AXIOM = ROOT / "axiom"
 

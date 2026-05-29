@@ -1,16 +1,34 @@
 # tmux bridge — send-keys injection + capture-pane for agent interaction.
-# Requires tmux installed via Git Bash MSYS2: pacman -S tmux
-# Falls back to $null if tmux unavailable; callers use ConPTY/codex-exec as fallback.
+# Supports psmux (native Windows) or falls back to Git Bash MSYS2 tmux.
+# Falls back to $null if neither available; callers use ConPTY/codex-exec as fallback.
 #
 # ConPTY is retained alongside this for:
 #   - One-shot headless capture (agy --print, audit runs)
 #   - Windows-native processes using Win32 console APIs (not VT sequences)
 #   - Backup when tmux session is not running
 
-$TMUX_EXE = "C:\Program Files\Git\usr\bin\tmux.exe"
+function Get-TmuxBinary {
+    # Test for psmux (native Windows) first, then fall back to MSYS2 tmux
+    $paths = @(
+        "psmux.exe",  # System PATH
+        "C:\Users\tanne\AppData\Local\Microsoft\WinGet\Packages\psmux.psmux_Active\psmux.exe",  # WinGet default
+        "C:\Program Files\psmux\psmux.exe",  # Common install
+        "C:\Program Files\Git\usr\bin\tmux.exe"  # MSYS2 fallback
+    )
+
+    foreach ($path in $paths) {
+        if (Test-Path $path -ErrorAction SilentlyContinue) {
+            return $path
+        }
+    }
+
+    return $null
+}
+
+$TMUX_EXE = Get-TmuxBinary
 
 function Test-TmuxAvailable {
-    return (Test-Path $TMUX_EXE)
+    return ($null -ne $TMUX_EXE)
 }
 
 function Test-TmuxSession {

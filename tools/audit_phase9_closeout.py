@@ -68,7 +68,7 @@ FORBIDDEN_DIRECT_SHORTCUTS = [
 
 TERMINAL_HOOKS = [
     (
-        "ui/terminal/modules/20-axiom-tools.ps1",
+        "ui/terminal/modules/utilities/20-axiom-tools.ps1",
         [
             "function axiom-phase9-closeout",
             "tools\\audit_phase9_closeout.py",
@@ -76,14 +76,14 @@ TERMINAL_HOOKS = [
         ],
     ),
     (
-        "ui/terminal/modules/49-doctor.ps1",
+        "ui/terminal/modules/diagnostics/49-doctor.ps1",
         [
             "axiom-phase9-closeout",
             "tools\\audit_phase9_closeout.py",
         ],
     ),
     (
-        "ui/terminal/modules/52-docs.ps1",
+        "ui/terminal/modules/diagnostics/52-docs.ps1",
         [
             "phase9-closeout",
             "docs\\phase9.md",
@@ -92,7 +92,7 @@ TERMINAL_HOOKS = [
         ],
     ),
     (
-        "ui/terminal/modules/90-safety-help.ps1",
+        "ui/terminal/modules/safety/90-safety-help.ps1",
         [
             "axiom-phase9-closeout Phase 9 closeout audit",
             "Phase 9 bounded manual_noop scheduler-to-executor closeout audit",
@@ -282,9 +282,9 @@ def audit_phase9_closeout() -> Phase9CloseoutAuditResult:
 
     terminal_text = "\n".join(
         [
-            _read("ui/terminal/modules/20-axiom-tools.ps1"),
-            _read("ui/terminal/modules/49-doctor.ps1"),
-            _read("ui/terminal/modules/90-safety-help.ps1"),
+            _read("ui/terminal/modules/utilities/20-axiom-tools.ps1"),
+            _read("ui/terminal/modules/diagnostics/49-doctor.ps1"),
+            _read("ui/terminal/modules/safety/90-safety-help.ps1"),
         ]
     )
     command_names = {command["name"] for command in registry["commands"]}

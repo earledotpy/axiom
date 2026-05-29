@@ -18,7 +18,7 @@ if (-not $script:AxiomRoot) {
 $script:AxiomDbPath = Join-Path $script:AxiomRoot "axiom.db"
 
 # Load new panel modules for variant B
-. "C:\axiom\ui\terminal\modules\39-operator-ui.ps1" -ErrorAction SilentlyContinue
+. "C:\axiom\ui\terminal\modules\shared\39-operator-ui.ps1" -ErrorAction SilentlyContinue
 
 function Invoke-AxiomDashboardQuery {
     param(

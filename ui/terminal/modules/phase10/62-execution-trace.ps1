@@ -10,8 +10,8 @@
 #   Read-only. No runtime state mutations.
 # ============================================================
 
-. "C:\axiom\ui\terminal\modules\39-operator-ui.ps1"
-. "C:\axiom\ui\terminal\modules\40-dashboard.ps1"
+. "C:\axiom\ui\terminal\modules\shared\39-operator-ui.ps1"
+. "C:\axiom\ui\terminal\modules\operators\40-dashboard.ps1"
 
 function Get-ExecutionTraceStages {
     param(

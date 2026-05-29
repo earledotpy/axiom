@@ -10,8 +10,8 @@
 #   Read-only. No runtime state mutations.
 # ============================================================
 
-. "C:\axiom\ui\terminal\modules\39-operator-ui.ps1"
-. "C:\axiom\ui\terminal\modules\40-dashboard.ps1"
+. "C:\axiom\ui\terminal\modules\shared\39-operator-ui.ps1"
+. "C:\axiom\ui\terminal\modules\operators\40-dashboard.ps1"
 
 function Get-BlockedTasks {
     param(
@@ -64,8 +64,9 @@ function axiom-approval-gate {
             }
 
             Write-Host "  " -NoNewline
-            Write-Host ("[$($task.status.ToUpper(),-18}] " -f "BLOCKED") -NoNewline -ForegroundColor $statusColor
-            Write-Host $task.task_type -NoNewline -ForegroundColor Gray
+            $statusLabel = "[{0,-18}]" -f ($task.status.ToUpper())
+            Write-Host $statusLabel -NoNewline -ForegroundColor $statusColor
+            Write-Host " $($task.task_type)" -NoNewline -ForegroundColor Gray
             Write-Host " (task #$($task.task_id))" -ForegroundColor DarkGray
 
             Write-Host "    " -NoNewline

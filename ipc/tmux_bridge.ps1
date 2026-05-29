@@ -9,9 +9,17 @@
 
 function Get-TmuxBinary {
     # Test for psmux (native Windows) first, then fall back to MSYS2 tmux
+
+    # Try to find psmux in PATH
+    try {
+        $cmd = Get-Command psmux -ErrorAction Stop
+        if ($cmd) { return $cmd.Source }
+    } catch {}
+
+    # Try explicit paths
     $paths = @(
-        "psmux.exe",  # System PATH
-        "C:\Users\tanne\AppData\Local\Microsoft\WinGet\Packages\psmux.psmux_Active\psmux.exe",  # WinGet default
+        "C:\Users\tanne\AppData\Local\Microsoft\WinGet\Packages\marlocarlo.psmux_Microsoft.Winget.Source_8wekyb3d8bbwe\psmux.exe",  # WinGet actual path
+        "C:\Users\tanne\AppData\Local\Microsoft\WinGet\Packages\psmux.psmux_Active\psmux.exe",  # WinGet legacy path
         "C:\Program Files\psmux\psmux.exe",  # Common install
         "C:\Program Files\Git\usr\bin\tmux.exe"  # MSYS2 fallback
     )

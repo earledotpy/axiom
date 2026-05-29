@@ -1,0 +1,1 @@
+RESULT=[colored_text]

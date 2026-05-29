@@ -1,4 +1,5 @@
 import pytest
+from datetime import datetime, timezone
 
 from axiom.core.autonomous_gate import (
     AutonomousReadinessError,
@@ -162,13 +163,25 @@ def test_autonomous_gate_allows_when_all_status_conditions_are_true():
             ),
         )
 
-        conn.execute(
+        cur = conn.execute(
             """
             INSERT INTO sessions
             (safe_pass_enabled, autonomous_operation_enabled,
              safe_pass_disabled_reason)
             VALUES (1, 1, NULL)
             """
+        )
+        session_id = cur.lastrowid
+
+        # Create fresh heartbeat (required for step 6)
+        now = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
+        conn.execute(
+            """
+            INSERT INTO scheduler_heartbeat
+            (session_id, last_freshness_at, scheduler_state)
+            VALUES (?, ?, 'ready')
+            """,
+            (session_id, now),
         )
 
     decision = evaluate_autonomous_readiness(profile_label=profile_label)
@@ -237,13 +250,25 @@ def test_require_autonomous_ready_does_not_raise_when_allowed():
             ),
         )
 
-        conn.execute(
+        cur = conn.execute(
             """
             INSERT INTO sessions
             (safe_pass_enabled, autonomous_operation_enabled,
              safe_pass_disabled_reason)
             VALUES (1, 1, NULL)
             """
+        )
+        session_id = cur.lastrowid
+
+        # Create fresh heartbeat (required for step 6)
+        now = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
+        conn.execute(
+            """
+            INSERT INTO scheduler_heartbeat
+            (session_id, last_freshness_at, scheduler_state)
+            VALUES (?, ?, 'ready')
+            """,
+            (session_id, now),
         )
 
     require_autonomous_ready(profile_label=profile_label)

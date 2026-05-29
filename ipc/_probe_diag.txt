@@ -1,0 +1,3 @@
+BYTES=105
+[?9001h[?1004h[?25l[2J[m[Hhello_from_conpty
+]0;C:\Windows\System32\cmd.exe[?25h[?9001l[?1004l

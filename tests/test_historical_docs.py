@@ -529,6 +529,17 @@ def assert_contains_all(path: Path, phrases: list[str]) -> None:
                 "python -m pytest tests -k \"phase8 or docs or terminal\" -v",
             ],
         ),
+        (
+            "docs/phase9.md",
+            [
+                "Phase 9 is closed",
+                "automatic scheduler-to-executor integration for manual_noop tasks",
+                "fail_closed_non_autonomous",
+                "one-running-task invariant remains enforced",
+                "verification commands: pytest tests",
+                "no real model, cloud, network, sandbox, memory, Telegram, agent, or general task scheduler authority is enabled",
+            ],
+        ),
     ],
 )
 def test_historical_docs_record_required_text(relative_path: str, phrases: list[str]) -> None:

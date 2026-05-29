@@ -126,6 +126,21 @@ This is the active build area (the recent "manual scheduler-dispatched noop exec
 - Tests mirror `axiom/` layout under `tests/` as `test_<area>.py`. Cover **both allowed and denied paths** for any policy or state-transition change — the suite's value is in those negative tests.
 - After touching anything in `axiom/policy/` (manifests, schemas, the tool-capability map), rerun `python tools/register_manifests.py` then `pytest`. The fingerprints in the DB will mismatch otherwise and `BootstrapValidator` will fail on next boot.
 
+## IPC layer (`ipc/`)
+
+A file-based inter-process communication channel connecting the three operator-facing agents: Claude Code (executor), Codex (implementer), Antigravity/Gemini (architect). This is **development infrastructure only** — it has no effect on the Axiom runtime or tests.
+
+**Message bus**: Three markdown inbox files (`ipc/to_claude.md`, `ipc/to_codex.md`, `ipc/to_antigravity.md`). All messages are appended via `ipc/send.ps1 -To <agent> -Subject <str> -Body <str>`.
+
+**Per-pane auto-start** (fired by each pane's Windows Terminal profile on workspace launch via `launch-workspace.ps1`):
+- `ipc/startup_claude.ps1` → starts `watcher_service.ps1` (popup notifications) + `loop_watcher.ps1` (auto-executes inbox commands in PowerShell) + `claude` CLI
+- `ipc/startup_codex.ps1` → starts `watcher_service.ps1` + `agent_bridge.ps1 -Agent codex` (hidden window; routes inbox prompts through `codex exec --output-last-message`) + `codex` CLI
+- `ipc/startup_agy.ps1` → starts `watcher_service.ps1` + `agent_bridge.ps1 -Agent antigravity` (hidden window; routes prompts through `Invoke-ConPtyCaptureHosted` — see below) + `agy` CLI
+
+**ConPTY bridge** (`ipc/conpty_capture.ps1`): `agy` writes output directly to the Windows console handle (CONOUT$), not stdout. `conpty_capture.ps1` contains a C# P/Invoke `ConPtySession` class that creates a Windows Pseudo Console (ConPTY) via `kernel32.dll`, spawns the target process inside it, and reads all VT output from the pipe. Because nested ConPTY fails inside Windows Terminal (child attaches to the parent's console), every agy call is wrapped in `Invoke-ConPtyCaptureHosted`, which spawns a fresh hidden `pwsh -WindowStyle Hidden` host to sever the console inheritance chain. `conpty_capture.ps1` must be dot-sourced, not imported as a module, because `Add-Type` is session-scoped.
+
+**loop_watcher** runs `Invoke-Expression` on every new message body in `to_claude.md` and sends the output back to the sender. This makes Claude Code the execution hub for the other agents. The security surface is intentional and reviewed — do not remove or gate it without Jeremy's direction.
+
 ## Runtime artifacts (do not treat as source)
 
 `axiom.db`, `axiom.db-wal`, `axiom.db-shm`, `logs/`, `.pytest_cache/`, `__pycache__/`, the `venv/` tree, and the `governance/` working tree (ratification history, handoffs, archives) are local state, not code. The repo also accumulates ad-hoc `inspect_*.py` scripts at the root for one-off DB inspection — not part of the framework.

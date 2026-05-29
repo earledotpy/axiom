@@ -216,12 +216,15 @@ function Test-AxiomDoctorModuleOrder {
         "48-events.ps1",
         "49-doctor.ps1",
         "60-phase7.ps1",
+        "62-execution-trace.ps1",
+        "63-approval-gate.ps1",
+        "64-autonomous-posture.ps1",
         "90-safety-help.ps1"
     )
 
     foreach ($name in $requiredModules) {
         $exists = $moduleNames -contains $name
-        $severity = if ($name -in @("45-model.ps1", "46-manifests.ps1", "47-budget.ps1", "48-events.ps1")) { "warning" } else { "required" }
+        $severity = if ($name -in @("45-model.ps1", "46-manifests.ps1", "47-budget.ps1", "48-events.ps1", "62-execution-trace.ps1", "63-approval-gate.ps1", "64-autonomous-posture.ps1")) { "warning" } else { "required" }
         $checks.Add((New-AxiomDoctorCheck "module: $name" $exists $(if ($exists) { "loaded path present" } else { "missing" }) $severity))
     }
 
@@ -315,6 +318,7 @@ function Test-AxiomDoctorAxiomTools {
         "tools\run_phase7_acceptance.py",
         "tools\audit_phase7_e2e_gate.py",
         "tools\audit_phase7_closeout.py",
+        "tools\audit_phase9_closeout.py",
         "tools\record_operator_command_intent.py",
         "tools\supervisor_health_check.py",
         "tools\snapshot_project_state.py",
@@ -419,6 +423,7 @@ function axiom-doctor {
         "axiom-phase7-acceptance",
         "axiom-phase7-e2e-gate",
         "axiom-phase7-closeout",
+        "axiom-phase9-closeout",
         "axiom-health",
         "axiom-regression",
         "axiom-test",

@@ -17,6 +17,9 @@ if (-not $script:AxiomRoot) {
 
 $script:AxiomDbPath = Join-Path $script:AxiomRoot "axiom.db"
 
+# Load new panel modules for variant B
+. "C:\axiom\ui\terminal\modules\39-operator-ui.ps1" -ErrorAction SilentlyContinue
+
 function Invoke-AxiomDashboardQuery {
     param(
         [Parameter(Mandatory = $true)]
@@ -390,6 +393,21 @@ function axiom-dashboard {
     $events = @(Get-AxiomDashboardRecentEvents -Session $session)
     $blockingReasons = @(Get-AxiomDashboardPosture -Session $session -ModelProfile $model -RunningTasks $runningTasks)
 
+    # Determine dashboard variant based on autonomous_operation_enabled
+    $useVariantB = $false
+    if ($session -and [string]$session.autonomous_operation_enabled -eq "1") {
+        $useVariantB = $true
+    }
+
+    # Allow override via command-line arguments
+    if ($args -contains "--force-variant") {
+        $variantIdx = [Array]::IndexOf($args, "--force-variant")
+        if ($variantIdx + 1 -lt $args.Count) {
+            $forceVariant = $args[$variantIdx + 1]
+            $useVariantB = ($forceVariant -eq "B")
+        }
+    }
+
     Write-AxiomUiSection "System"
     Write-AxiomDashboardLine "root" $script:AxiomRoot "Green"
     Write-AxiomDashboardLine "database" "present / read-only dashboard" "Green"
@@ -494,20 +512,43 @@ function axiom-dashboard {
 
     Write-AxiomUiRule
 
-    Write-AxiomUiSection "Recent events"
-    if ($events.Count -gt 0) {
-        foreach ($event in $events) {
-            $label = "$($event.source):$($event.event_type)"
-            $value = $event.created_at
-            Write-Host ("  {0,-36}" -f $label) -NoNewline -ForegroundColor DarkGray
-            Write-Host ([string]$value) -ForegroundColor Gray
-        }
+    # Variant-specific panels
+    if ($useVariantB) {
+        # Variant B: Dynamic panels for autonomous mode
+        Write-Host ""
+        Write-Host "  [VARIANT B: Autonomous Mode Panels]" -ForegroundColor Cyan
+
+        # Execution trace
+        Write-AxiomUiSection "Execution Trace"
+        & "C:\axiom\ui\terminal\modules\62-execution-trace.ps1" | Out-Null
+
+        # Approval gate
+        Write-AxiomUiSection "Approval Gate"
+        & "C:\axiom\ui\terminal\modules\63-approval-gate.ps1" | Out-Null
+
+        # Autonomous posture
+        Write-AxiomUiSection "Autonomous Posture"
+        & "C:\axiom\ui\terminal\modules\64-autonomous-posture.ps1" | Out-Null
+
+        Write-AxiomUiRule
     }
     else {
-        Write-AxiomDashboardLine "events" "none found for latest session" "Gray"
-    }
+        # Variant A: Original recent events display
+        Write-AxiomUiSection "Recent events"
+        if ($events.Count -gt 0) {
+            foreach ($event in $events) {
+                $label = "$($event.source):$($event.event_type)"
+                $value = $event.created_at
+                Write-Host ("  {0,-36}" -f $label) -NoNewline -ForegroundColor DarkGray
+                Write-Host ([string]$value) -ForegroundColor Gray
+            }
+        }
+        else {
+            Write-AxiomDashboardLine "events" "none found for latest session" "Gray"
+        }
 
-    Write-AxiomUiRule
+        Write-AxiomUiRule
+    }
 
     Write-AxiomUiSection "Next safe commands"
     Write-Host "  axiom-preflight" -ForegroundColor Gray

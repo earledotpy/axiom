@@ -50,8 +50,8 @@ PHASE6_REQUIRED_ARTIFACTS = [
     "tools/audit_operator_command_ledger.py",
     "tools/audit_telegram_gateway.py",
     "tools/audit_phase6_closeout.py",
-    "ui/terminal/modules/58-operator-commands.ps1",
-    "ui/terminal/modules/59-telegram-gateway.ps1",
+    "ui/terminal/modules/operators/58-operator-commands.ps1",
+    "ui/terminal/modules/operators/59-telegram-gateway.ps1",
 ]
 
 V113_PHASE6_PHRASES = [
@@ -173,7 +173,7 @@ def audit_phase6_closeout() -> Phase6CloseoutAuditResult:
                 {"term": term},
             )
 
-    terminal_panel = _read("ui/terminal/modules/59-telegram-gateway.ps1")
+    terminal_panel = _read("ui/terminal/modules/operators/59-telegram-gateway.ps1")
     if "mode=ro" not in terminal_panel:
         _violation(
             violations,
@@ -223,7 +223,7 @@ def audit_phase6_closeout() -> Phase6CloseoutAuditResult:
             {"section_count": section_count, "max_allowed": 5},
         )
 
-    help_text = _read("ui/terminal/modules/90-safety-help.ps1")
+    help_text = _read("ui/terminal/modules/safety/90-safety-help.ps1")
     phase6_terms = (
         "axiom-operator-commands",
         "axiom-operator-command-audit",

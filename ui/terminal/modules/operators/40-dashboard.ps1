@@ -17,6 +17,9 @@ if (-not $script:AxiomRoot) {
 
 $script:AxiomDbPath = Join-Path $script:AxiomRoot "axiom.db"
 
+# Load new panel modules for variant B
+. "C:\axiom\ui\terminal\modules\shared\39-operator-ui.ps1" -ErrorAction SilentlyContinue
+
 function Invoke-AxiomDashboardQuery {
     param(
         [Parameter(Mandatory = $true)]
@@ -365,10 +368,7 @@ function Get-AxiomDashboardPosture {
 }
 
 function axiom-dashboard {
-    Write-Host ""
-    Write-Host "AXIOM DASHBOARD" -ForegroundColor Green
-    Write-Host "===============" -ForegroundColor Green
-    Write-Host ""
+    Write-AxiomUiTitle "AXIOM DASHBOARD" "read-only · fail-closed"
 
     if (-not (Test-Path $script:AxiomRoot)) {
         Write-AxiomDashboardLine "root" "$script:AxiomRoot missing" "Red"
@@ -393,7 +393,22 @@ function axiom-dashboard {
     $events = @(Get-AxiomDashboardRecentEvents -Session $session)
     $blockingReasons = @(Get-AxiomDashboardPosture -Session $session -ModelProfile $model -RunningTasks $runningTasks)
 
-    Write-Host "System" -ForegroundColor DarkGreen
+    # Determine dashboard variant based on autonomous_operation_enabled
+    $useVariantB = $false
+    if ($session -and [string]$session.autonomous_operation_enabled -eq "1") {
+        $useVariantB = $true
+    }
+
+    # Allow override via command-line arguments
+    if ($args -contains "--force-variant") {
+        $variantIdx = [Array]::IndexOf($args, "--force-variant")
+        if ($variantIdx + 1 -lt $args.Count) {
+            $forceVariant = $args[$variantIdx + 1]
+            $useVariantB = ($forceVariant -eq "B")
+        }
+    }
+
+    Write-AxiomUiSection "System"
     Write-AxiomDashboardLine "root" $script:AxiomRoot "Green"
     Write-AxiomDashboardLine "database" "present / read-only dashboard" "Green"
     Write-AxiomDashboardLine "operational mode" "fail_closed_non_autonomous" "Yellow"
@@ -405,9 +420,9 @@ function axiom-dashboard {
         Write-AxiomDashboardLine "blocking reasons" ($blockingReasons -join ", ") "Yellow"
     }
 
-    Write-Host ""
+    Write-AxiomUiRule
 
-    Write-Host "Latest session" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Latest session"
     if ($session) {
         Write-AxiomDashboardLine "session_id" ([string]$session.session_id) "Green"
         Write-AxiomDashboardLine "scheduler_status" ([string]$session.scheduler_status) "Cyan"
@@ -424,9 +439,9 @@ function axiom-dashboard {
         Write-AxiomDashboardLine "session" "none found" "Yellow"
     }
 
-    Write-Host ""
+    Write-AxiomUiRule
 
-    Write-Host "Supervisor / heartbeat" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Supervisor / heartbeat"
     if ($heartbeat) {
         Write-AxiomDashboardLine "scheduler_state" ([string]$heartbeat.scheduler_state) "Cyan"
         Write-AxiomDashboardLine "last_action" ([string]$heartbeat.last_action) "Cyan"
@@ -438,9 +453,9 @@ function axiom-dashboard {
         Write-AxiomDashboardLine "heartbeat" "none found" "Yellow"
     }
 
-    Write-Host ""
+    Write-AxiomUiRule
 
-    Write-Host "Task queue" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Task queue"
     if ($taskCounts -and $taskCounts.Count -gt 0) {
         foreach ($row in $taskCounts) {
             $color = if ($row.status -eq "running") { "Yellow" } elseif ($row.status -eq "failed" -or $row.status -eq "quarantined") { "Red" } else { "Gray" }
@@ -458,9 +473,9 @@ function axiom-dashboard {
         Write-AxiomDashboardLine "pending manifest-bound" "0" "Gray"
     }
 
-    Write-Host ""
+    Write-AxiomUiRule
 
-    Write-Host "Model profile" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Model profile"
     if ($model) {
         Write-AxiomDashboardLine "profile_id" ([string]$model.profile_id) "Gray"
         Write-AxiomDashboardLine "model" ([string]$model.model_name) "Cyan"
@@ -475,9 +490,9 @@ function axiom-dashboard {
         Write-AxiomDashboardLine "model profile" "none found" "Yellow"
     }
 
-    Write-Host ""
+    Write-AxiomUiRule
 
-    Write-Host "Manifests" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Manifests"
     if ($manifestSummary.Count -gt 0) {
         foreach ($row in $manifestSummary) {
             Write-AxiomDashboardLine $row.manifest_type ([string]$row.count) "Cyan"
@@ -495,24 +510,47 @@ function axiom-dashboard {
         }
     }
 
-    Write-Host ""
+    Write-AxiomUiRule
 
-    Write-Host "Recent events" -ForegroundColor DarkGreen
-    if ($events.Count -gt 0) {
-        foreach ($event in $events) {
-            $label = "$($event.source):$($event.event_type)"
-            $value = $event.created_at
-            Write-Host ("  {0,-36}" -f $label) -NoNewline -ForegroundColor DarkGray
-            Write-Host ([string]$value) -ForegroundColor Gray
-        }
+    # Variant-specific panels
+    if ($useVariantB) {
+        # Variant B: Dynamic panels for autonomous mode
+        Write-Host ""
+        Write-Host "  [VARIANT B: Autonomous Mode Panels]" -ForegroundColor Cyan
+
+        # Execution trace
+        Write-AxiomUiSection "Execution Trace"
+        & "C:\axiom\ui\terminal\modules\62-execution-trace.ps1" | Out-Null
+
+        # Approval gate
+        Write-AxiomUiSection "Approval Gate"
+        & "C:\axiom\ui\terminal\modules\63-approval-gate.ps1" | Out-Null
+
+        # Autonomous posture
+        Write-AxiomUiSection "Autonomous Posture"
+        & "C:\axiom\ui\terminal\modules\64-autonomous-posture.ps1" | Out-Null
+
+        Write-AxiomUiRule
     }
     else {
-        Write-AxiomDashboardLine "events" "none found for latest session" "Gray"
+        # Variant A: Original recent events display
+        Write-AxiomUiSection "Recent events"
+        if ($events.Count -gt 0) {
+            foreach ($event in $events) {
+                $label = "$($event.source):$($event.event_type)"
+                $value = $event.created_at
+                Write-Host ("  {0,-36}" -f $label) -NoNewline -ForegroundColor DarkGray
+                Write-Host ([string]$value) -ForegroundColor Gray
+            }
+        }
+        else {
+            Write-AxiomDashboardLine "events" "none found for latest session" "Gray"
+        }
+
+        Write-AxiomUiRule
     }
 
-    Write-Host ""
-
-    Write-Host "Next safe commands" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Next safe commands"
     Write-Host "  axiom-preflight" -ForegroundColor Gray
     Write-Host "  axiom-regression" -ForegroundColor Gray
     Write-Host "  axiom-handoff" -ForegroundColor Gray

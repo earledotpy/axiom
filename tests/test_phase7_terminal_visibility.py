@@ -6,10 +6,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DOC = ROOT / "docs" / "phase7.md"
-MODULE = ROOT / "ui" / "terminal" / "modules" / "60-phase7.ps1"
-DOCTOR = ROOT / "ui" / "terminal" / "modules" / "49-doctor.ps1"
-DOCS = ROOT / "ui" / "terminal" / "modules" / "52-docs.ps1"
-HELP = ROOT / "ui" / "terminal" / "modules" / "90-safety-help.ps1"
+MODULE = ROOT / "ui" / "terminal" / "modules" / "operators" / "60-phase7.ps1"
+DOCTOR = ROOT / "ui" / "terminal" / "modules" / "diagnostics" / "49-doctor.ps1"
+DOCS = ROOT / "ui" / "terminal" / "modules" / "diagnostics" / "52-docs.ps1"
+HELP = ROOT / "ui" / "terminal" / "modules" / "safety" / "90-safety-help.ps1"
 REGISTRY = ROOT / "ui" / "terminal" / "registry" / "axiom-terminal-command-registry.json"
 
 

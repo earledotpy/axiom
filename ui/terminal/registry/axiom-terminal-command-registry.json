@@ -101,7 +101,8 @@
         "tools/audit_phase6_closeout.py",
         "tools/audit_phase7_acceptance_inventory.py",
         "tools/audit_phase7_e2e_gate.py",
-        "tools/audit_phase7_closeout.py"
+        "tools/audit_phase7_closeout.py",
+        "tools/audit_phase9_closeout.py"
       ],
       "description": "Run the standard safe verification chain."
     },
@@ -237,6 +238,18 @@
       "description": "Run the read-only Phase 7E closeout and hardening audit."
     },
     {
+      "name": "axiom-phase9-closeout",
+      "category": "verification",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "backing_tools": [
+        "tools/audit_phase9_closeout.py"
+      ],
+      "description": "Run the read-only Phase 9 bounded manual_noop scheduler-to-executor closeout audit."
+    },
+    {
       "name": "axiom-health",
       "category": "verification",
       "primary": true,
@@ -343,6 +356,33 @@
       "risk": "low",
       "status": "implemented",
       "description": "Read-only Phase 6H Telegram gateway boundary panel backed by local config and SQLite mode=ro queries."
+    },
+    {
+      "name": "axiom-execution-trace",
+      "category": "state_visibility",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Read-only Phase 10 execution trace panel showing active pipeline stages backed by local SQLite mode=ro queries."
+    },
+    {
+      "name": "axiom-approval-gate",
+      "category": "state_visibility",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Read-only Phase 10 approval gate panel listing tasks awaiting operator countersign backed by local SQLite mode=ro queries."
+    },
+    {
+      "name": "axiom-autonomous-posture",
+      "category": "state_visibility",
+      "primary": true,
+      "mutates_axiom_runtime": false,
+      "risk": "low",
+      "status": "implemented",
+      "description": "Read-only Phase 10 autonomous posture panel showing 7-step readiness gate."
     },
     {
       "name": "axiom-phase7",
@@ -787,7 +827,7 @@
     },
     {
       "name": "automatic_scheduler_executor_integration",
-      "reason": "Manual no-op cycle exists but must not be automatically connected yet."
+      "reason": "Only bounded manual_noop scheduler-to-executor integration is allowed; general scheduler automation remains blocked."
     },
     {
       "name": "automatic_scheduler_agent_integration",

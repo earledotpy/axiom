@@ -47,6 +47,10 @@ function axiom-phase7-closeout {
     Invoke-AxiomPython @('tools\audit_phase7_closeout.py')
 }
 
+function axiom-phase9-closeout {
+    Invoke-AxiomPython @('tools\audit_phase9_closeout.py')
+}
+
 function axiom-health {
     $sessionId = Get-AxiomLatestSessionId
     if (-not $sessionId) { Write-Host "[AXIOM] No latest session found." -ForegroundColor Yellow; return }
@@ -96,6 +100,9 @@ function axiom-preflight {
     Write-Host ""
     Write-Host "11. Phase 7E closeout audit" -ForegroundColor Gray
     axiom-phase7-closeout
+    Write-Host ""
+    Write-Host "12. Phase 9 closeout audit" -ForegroundColor Gray
+    axiom-phase9-closeout
 }
 
 function axiom-test {

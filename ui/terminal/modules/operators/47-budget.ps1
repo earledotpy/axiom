@@ -427,10 +427,7 @@ function axiom-budget {
         [int]$Limit = 10
     )
 
-    Write-Host ""
-    Write-Host "AXIOM BUDGET / RESOURCE USAGE" -ForegroundColor Green
-    Write-Host "=============================" -ForegroundColor Green
-    Write-Host ""
+    Write-AxiomUiTitle "BUDGET / RESOURCE USAGE" "provider usage · read-only"
 
     if (-not (Test-Path $script:AxiomRoot)) {
         Write-AxiomBudgetLine "root" "$script:AxiomRoot missing" "Red"
@@ -459,26 +456,22 @@ function axiom-budget {
     $resourceSummary = @(Get-AxiomResourceUsageSummary -Session $session)
     $resourceExceeded = @(Get-AxiomResourceUsageExceeded -Session $session -Limit $Limit)
 
-    Write-Host "Session" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Session"
     Write-AxiomBudgetLine "session_id" ([string]$session.session_id) "Green"
     Write-AxiomBudgetLine "scheduler_status" ([string]$session.scheduler_status) "Cyan"
     Write-AxiomBudgetLine "autonomous_enabled" ([string]$session.autonomous_operation_enabled) "Yellow"
     Write-AxiomBudgetLine "safe_pass_enabled" ([string]$session.safe_pass_enabled) "Yellow"
 
-    Write-Host ""
-    Write-Host "Provider usage by status" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Provider usage by status"
     Write-AxiomProviderUsageTable -Rows $providerSummary
 
-    Write-Host ""
-    Write-Host "Provider risk rows" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Provider risk rows"
     Write-AxiomBudgetRiskRows -Rows $providerRisks
 
-    Write-Host ""
-    Write-Host "Provider budget windows" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Provider budget windows"
     Write-AxiomBudgetWindowTable -Rows $budgetWindows
 
-    Write-Host ""
-    Write-Host "Recent reconciliations" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Recent reconciliations"
     if ($reconciliations.Count -eq 0) {
         Write-Host "  none" -ForegroundColor DarkGray
     }
@@ -489,23 +482,20 @@ function axiom-budget {
         }
     }
 
-    Write-Host ""
-    Write-Host "Resource usage by status" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Resource usage by status"
     Write-AxiomResourceUsageTable -Rows $resourceSummary
 
-    Write-Host ""
-    Write-Host "Exceeded resource rows" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Exceeded resource rows"
     Write-AxiomResourceExceededRows -Rows $resourceExceeded
 
-    Write-Host ""
-    Write-Host "Canonical limits / current phase" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Canonical limits / current phase"
     Write-Host "  - context bundle cap: 500 KB serialized size" -ForegroundColor Gray
     Write-Host "  - sandbox cap when implemented: 256 MB RAM / 60 seconds wall-clock" -ForegroundColor Gray
     Write-Host "  - sqlite-vec batch cap: 100 vectors" -ForegroundColor Gray
     Write-Host "  - real model/cloud/network calls are not current-phase terminal actions" -ForegroundColor Yellow
     Write-Host ""
 
-    Write-Host "Next safe commands" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Next safe commands"
     Write-Host "  axiom-dashboard" -ForegroundColor Gray
     Write-Host "  axiom-readiness" -ForegroundColor Gray
     Write-Host "  axiom-preflight" -ForegroundColor Gray

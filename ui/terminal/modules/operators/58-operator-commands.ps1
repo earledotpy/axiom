@@ -113,7 +113,7 @@ LIMIT ?
 function axiom-operator-commands {
     param([int]$Limit = 10)
 
-    Write-AxiomUiTitle "AXIOM OPERATOR COMMANDS"
+    Write-AxiomUiTitle "OPERATOR COMMAND LEDGER" "append-only · hash-chained"
 
     if (-not (Test-Path $script:AxiomRoot)) {
         Write-AxiomUiStatus "BLOCK" "root" "$script:AxiomRoot missing"

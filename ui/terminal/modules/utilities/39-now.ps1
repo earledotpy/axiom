@@ -249,7 +249,7 @@ LIMIT 1
 }
 
 function axiom-now {
-    Write-AxiomUiTitle "AXIOM NOW"
+    Write-AxiomUiTitle "AXIOM NOW" "operator-critical state"
 
     if (-not (Test-Path $script:AxiomRoot)) {
         Write-AxiomUiStatus "BLOCK" "root" "$script:AxiomRoot missing"

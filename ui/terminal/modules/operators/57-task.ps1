@@ -331,8 +331,7 @@ function Write-AxiomTaskMiniTable {
         [string]$EmptyMessage = "none"
     )
 
-    Write-Host ""
-    Write-Host $Title -ForegroundColor DarkGreen
+    Write-AxiomUiSection $Title
 
     if (-not $Rows -or $Rows.Count -eq 0) {
         Write-Host "  $EmptyMessage" -ForegroundColor DarkGray
@@ -360,8 +359,7 @@ function Write-AxiomTaskMiniTable {
 function Write-AxiomTaskSecurityEvents {
     param([object[]]$Rows)
 
-    Write-Host ""
-    Write-Host "Security events" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Security events"
 
     if (-not $Rows -or $Rows.Count -eq 0) {
         Write-Host "  none" -ForegroundColor DarkGray
@@ -386,8 +384,7 @@ function Write-AxiomTaskSecurityEvents {
 function Write-AxiomTaskProviderUsage {
     param([object[]]$Rows)
 
-    Write-Host ""
-    Write-Host "Provider usage" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Provider usage"
 
     if (-not $Rows -or $Rows.Count -eq 0) {
         Write-Host "  none" -ForegroundColor DarkGray
@@ -409,8 +406,7 @@ function Write-AxiomTaskProviderUsage {
 function Write-AxiomTaskResourceUsage {
     param([object[]]$Rows)
 
-    Write-Host ""
-    Write-Host "Resource usage" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Resource usage"
 
     if (-not $Rows -or $Rows.Count -eq 0) {
         Write-Host "  none" -ForegroundColor DarkGray
@@ -431,8 +427,7 @@ function Write-AxiomTaskResourceUsage {
 function Write-AxiomTaskExecutionRows {
     param([object[]]$Rows)
 
-    Write-Host ""
-    Write-Host "Execution records" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Execution records"
 
     if (-not $Rows -or $Rows.Count -eq 0) {
         Write-Host "  none found or execution-record table absent" -ForegroundColor DarkGray
@@ -455,10 +450,7 @@ function axiom-task {
         [int]$TaskId
     )
 
-    Write-Host ""
-    Write-Host "AXIOM TASK DETAIL" -ForegroundColor Green
-    Write-Host "=================" -ForegroundColor Green
-    Write-Host ""
+    Write-AxiomUiTitle "TASK DETAIL" "read-only · lifecycle + security"
 
     if (-not (Test-Path $script:AxiomRoot)) {
         Write-AxiomTaskLine "root" "$script:AxiomRoot missing" "Red"
@@ -482,7 +474,7 @@ function axiom-task {
 
     $statusColor = Get-AxiomTaskStatusColor -Status ([string]$task.status)
 
-    Write-Host "Task" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Task"
     Write-AxiomTaskLine "task_id" ([string]$task.task_id) "Green"
     Write-AxiomTaskLine "session_id" ([string]$task.session_id) "Gray"
     Write-AxiomTaskLine "parent_task_id" ([string]$task.parent_task_id) "Gray"
@@ -493,14 +485,12 @@ function axiom-task {
     Write-AxiomTaskLine "priority" ([string]$task.priority) "Gray"
     Write-AxiomTaskLine "manifest_id" $(if ($task.manifest_id) { [string]$task.manifest_id } else { "missing" }) $(if ($task.manifest_id) { "Green" } else { "Yellow" })
 
-    Write-Host ""
-    Write-Host "Timestamps" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Timestamps"
     Write-AxiomTaskLine "created_at" ([string]$task.created_at) "Gray"
     Write-AxiomTaskLine "started_at" ([string]$task.started_at) "Gray"
     Write-AxiomTaskLine "completed_at" ([string]$task.completed_at) "Gray"
 
-    Write-Host ""
-    Write-Host "Content previews" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Content previews"
 
     if ($task.goal_preview) {
         Write-AxiomTaskLine "goal" ([string]$task.goal_preview) "Gray"
@@ -539,15 +529,14 @@ function axiom-task {
     Write-AxiomTaskResourceUsage -Rows $resourceUsage
     Write-AxiomTaskExecutionRows -Rows $executionRows
 
-    Write-Host ""
-    Write-Host "Interpretation" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Interpretation"
     Write-Host "  - This viewer is read-only." -ForegroundColor Gray
     Write-Host "  - It does not start, dispatch, complete, fail, cancel, or repair tasks." -ForegroundColor Gray
     Write-Host "  - A task must have manifest_id before transition to running." -ForegroundColor Gray
     Write-Host "  - More than one running task would violate AXIOM sequential execution." -ForegroundColor Gray
     Write-Host ""
 
-    Write-Host "Next safe commands" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Next safe commands"
     Write-Host "  axiom-queue" -ForegroundColor Gray
     Write-Host "  axiom-readiness" -ForegroundColor Gray
     Write-Host "  axiom-dashboard" -ForegroundColor Gray

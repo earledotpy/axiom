@@ -200,6 +200,11 @@ $script:AxiomDocsIndex = [ordered]@{
         path = "docs\phase8.md"
         category = "agent"
     }
+    "phase9-closeout" = @{
+        label = "Phase 9 closeout"
+        path = "docs\phase9.md"
+        category = "agent"
+    }
     "operator-command-parser" = @{
         label = "Operator command parser"
         path = "axiom\core\operator_command_parser.py"
@@ -260,6 +265,11 @@ $script:AxiomDocsIndex = [ordered]@{
         path = "tools\audit_phase7_closeout.py"
         category = "tool"
     }
+    "phase9-closeout-audit-tool" = @{
+        label = "Phase 9 closeout audit"
+        path = "tools\audit_phase9_closeout.py"
+        category = "tool"
+    }
     "telegram-gateway-terminal" = @{
         label = "Telegram gateway terminal panel"
         path = "ui\terminal\modules\59-telegram-gateway.ps1"
@@ -268,6 +278,21 @@ $script:AxiomDocsIndex = [ordered]@{
     "phase7-terminal-module" = @{
         label = "Phase 7 terminal panel"
         path = "ui\terminal\modules\60-phase7.ps1"
+        category = "terminal"
+    }
+    "phase10-execution-trace" = @{
+        label = "Phase 10 execution trace panel"
+        path = "ui\terminal\modules\62-execution-trace.ps1"
+        category = "terminal"
+    }
+    "phase10-approval-gate" = @{
+        label = "Phase 10 approval gate panel"
+        path = "ui\terminal\modules\63-approval-gate.ps1"
+        category = "terminal"
+    }
+    "phase10-autonomous-posture" = @{
+        label = "Phase 10 autonomous posture panel"
+        path = "ui\terminal\modules\64-autonomous-posture.ps1"
         category = "terminal"
     }
     "operator-command-terminal" = @{

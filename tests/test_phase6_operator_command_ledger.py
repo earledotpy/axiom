@@ -16,8 +16,8 @@ from axiom.persistence.repositories import create_session
 ROOT = Path(__file__).resolve().parents[1]
 DOC = ROOT / "docs" / "phase6.md"
 ROADMAP = ROOT / "docs" / "phase6.md"
-DOCS_MODULE = ROOT / "ui" / "terminal" / "modules" / "52-docs.ps1"
-TERMINAL_MODULE = ROOT / "ui" / "terminal" / "modules" / "58-operator-commands.ps1"
+DOCS_MODULE = ROOT / "ui" / "terminal" / "modules" / "diagnostics" / "52-docs.ps1"
+TERMINAL_MODULE = ROOT / "ui" / "terminal" / "modules" / "operators" / "58-operator-commands.ps1"
 REGISTRY = ROOT / "ui" / "terminal" / "registry" / "axiom-terminal-command-registry.json"
 
 

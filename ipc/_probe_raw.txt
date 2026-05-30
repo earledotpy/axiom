@@ -1,0 +1,6 @@
+CMDLINE=["C:\Windows\System32\cmd.exe"]
+BYTES=205
+RAW=[[?9001h[?1004h[?25l[2J[m[HMicrosoft Windows [Version 10.0.26200.8457]]0;C:\Windows\System32\cmd.exe[?25h[?25l
+(c) Microsoft Corporation. All rights reserved.[4;1HC:\axiom>[?25h[?9001l[?1004l]
+STRIPPED=[Microsoft Windows [Version 10.0.26200.8457]0;C:\Windows\System32\cmd.exe
+(c) Microsoft Corporation. All rights reserved.C:\axiom>]

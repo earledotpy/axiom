@@ -360,10 +360,7 @@ function axiom-events {
         [switch]$GlobalRisks
     )
 
-    Write-Host ""
-    Write-Host "AXIOM EVENTS" -ForegroundColor Green
-    Write-Host "============" -ForegroundColor Green
-    Write-Host ""
+    Write-AxiomUiTitle "LIVE EVENT STREAM" "session events · security events"
 
     if (-not (Test-Path $script:AxiomRoot)) {
         Write-AxiomEventsLine "root" "$script:AxiomRoot missing" "Red"
@@ -391,7 +388,7 @@ function axiom-events {
     $securityEvents = @(Get-AxiomRecentSecurityEvents -Session $session -Limit $Limit)
     $securityRisks = @(Get-AxiomRecentSecurityRisks -Session $session -Limit $Limit)
 
-    Write-Host "Session" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Session"
     Write-AxiomEventsLine "session_id" ([string]$session.session_id) "Green"
     Write-AxiomEventsLine "scheduler_status" ([string]$session.scheduler_status) "Cyan"
     Write-AxiomEventsLine "autonomous_enabled" ([string]$session.autonomous_operation_enabled) "Yellow"
@@ -401,8 +398,8 @@ function axiom-events {
         Write-AxiomEventsLine "safe_pass_reason" ([string]$session.safe_pass_disabled_reason) "Yellow"
     }
 
-    Write-Host ""
-    Write-Host "Event counts" -ForegroundColor DarkGreen
+    Write-AxiomUiRule
+    Write-AxiomUiSection "Event counts"
 
     if ($sessionCounts.Count -eq 0) {
         Write-AxiomEventsLine "session events" "0" "Gray"
@@ -423,34 +420,35 @@ function axiom-events {
         }
     }
 
-    Write-Host ""
-    Write-Host "Recent security risks" -ForegroundColor DarkGreen
+    Write-AxiomUiRule
+    Write-AxiomUiSection "Recent security risks"
     Write-AxiomSecurityRiskTable -Rows $securityRisks
 
     if ($GlobalRisks) {
         $globalRiskRows = @(Get-AxiomGlobalRecentSecurityRisks -Limit $Limit)
 
-        Write-Host ""
-        Write-Host "Recent global security risks" -ForegroundColor DarkGreen
+        Write-AxiomUiRule
+        Write-AxiomUiSection "Recent global security risks"
         Write-AxiomSecurityRiskTable -Rows $globalRiskRows -Global
     }
 
-    Write-Host ""
-    Write-Host "Recent session events" -ForegroundColor DarkGreen
+    Write-AxiomUiRule
+    Write-AxiomUiSection "Recent session events"
     Write-AxiomSessionEventTable -Rows $sessionEvents
 
-    Write-Host ""
-    Write-Host "Recent security events" -ForegroundColor DarkGreen
+    Write-AxiomUiRule
+    Write-AxiomUiSection "Recent security events"
     Write-AxiomSecurityEventTable -Rows $securityEvents
 
-    Write-Host ""
-    Write-Host "Interpretation" -ForegroundColor DarkGreen
+    Write-AxiomUiRule
+    Write-AxiomUiSection "Interpretation"
     Write-Host "  - Critical security events should be treated as fail-closed signals." -ForegroundColor Gray
     Write-Host "  - Warning events may require investigation before continuing implementation." -ForegroundColor Gray
     Write-Host "  - This panel is read-only. It does not insert, repair, or acknowledge events." -ForegroundColor Gray
     Write-Host ""
 
-    Write-Host "Next safe commands" -ForegroundColor DarkGreen
+    Write-AxiomUiRule
+    Write-AxiomUiSection "Next safe commands"
     Write-Host "  axiom-dashboard" -ForegroundColor Gray
     Write-Host "  axiom-readiness" -ForegroundColor Gray
     Write-Host "  axiom-preflight" -ForegroundColor Gray

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import asdict, dataclass, field
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from axiom.persistence.db import get_connection
@@ -15,6 +16,8 @@ class AxiomStatusReport:
     current_trusted_model_profile_present: bool
     safe_pass_enabled: bool
     autonomous_operation_enabled: bool
+    scheduler_heartbeat_fresh: bool
+    no_blocking_tasks: bool
     autonomous_available: bool
     blocking_reasons: list[str] = field(default_factory=list)
     details: dict[str, Any] = field(default_factory=dict)
@@ -160,6 +163,53 @@ def _model_profile_state(conn, profile_label: str) -> dict[str, Any]:
     }
 
 
+def _scheduler_heartbeat_fresh(conn, threshold_seconds: int = 120) -> tuple[bool, str | None]:
+    """Check if scheduler heartbeat is fresh (within threshold). Returns (is_fresh, last_freshness_at)."""
+    if not _table_exists(conn, "scheduler_heartbeat"):
+        return False, None
+
+    row = conn.execute(
+        """
+        SELECT last_freshness_at
+        FROM scheduler_heartbeat
+        ORDER BY heartbeat_id DESC
+        LIMIT 1
+        """
+    ).fetchone()
+
+    if row is None:
+        return False, None
+
+    last_freshness_at = row["last_freshness_at"]
+    try:
+        last_tick = datetime.fromisoformat(last_freshness_at.replace('Z', '+00:00'))
+        now = datetime.now(timezone.utc)
+        elapsed = (now - last_tick).total_seconds()
+        is_fresh = elapsed <= threshold_seconds
+        return is_fresh, last_freshness_at
+    except (ValueError, AttributeError):
+        return False, last_freshness_at
+
+
+def _no_blocking_tasks(conn, session_id: int | None) -> tuple[bool, int]:
+    """Check if there are no blocking tasks (needs_human_input or quarantined). Returns (no_blocking, count)."""
+    if not session_id or not _table_exists(conn, "tasks"):
+        return True, 0
+
+    row = conn.execute(
+        """
+        SELECT COUNT(*) AS count
+        FROM tasks
+        WHERE session_id = ?
+          AND status IN ('needs_human_input', 'quarantined')
+        """,
+        (session_id,),
+    ).fetchone()
+
+    count = int(row["count"]) if row else 0
+    return count == 0, count
+
+
 def build_status_report(profile_label: str = "default") -> AxiomStatusReport:
     blocking_reasons: list[str] = []
 
@@ -178,6 +228,9 @@ def build_status_report(profile_label: str = "default") -> AxiomStatusReport:
             _latest_session_state(conn)
         )
 
+        scheduler_heartbeat_fresh, last_freshness_at = _scheduler_heartbeat_fresh(conn)
+        no_blocking_tasks, blocking_task_count = _no_blocking_tasks(conn, session_id)
+
     if not database_initialized:
         blocking_reasons.append("database_not_initialized")
 
@@ -193,12 +246,20 @@ def build_status_report(profile_label: str = "default") -> AxiomStatusReport:
     if not autonomous_operation_enabled:
         blocking_reasons.append("autonomous_operation_disabled")
 
+    if not scheduler_heartbeat_fresh:
+        blocking_reasons.append("scheduler_heartbeat_stale")
+
+    if not no_blocking_tasks:
+        blocking_reasons.append("blocking_tasks_present")
+
     autonomous_available = (
         database_initialized
         and manifest_fingerprints_valid
         and current_trusted_model_profile_present
         and safe_pass_enabled
         and autonomous_operation_enabled
+        and scheduler_heartbeat_fresh
+        and no_blocking_tasks
     )
 
     return AxiomStatusReport(
@@ -208,6 +269,8 @@ def build_status_report(profile_label: str = "default") -> AxiomStatusReport:
         current_trusted_model_profile_present=current_trusted_model_profile_present,
         safe_pass_enabled=safe_pass_enabled,
         autonomous_operation_enabled=autonomous_operation_enabled,
+        scheduler_heartbeat_fresh=scheduler_heartbeat_fresh,
+        no_blocking_tasks=no_blocking_tasks,
         autonomous_available=autonomous_available,
         blocking_reasons=blocking_reasons,
         details={
@@ -218,5 +281,7 @@ def build_status_report(profile_label: str = "default") -> AxiomStatusReport:
             "safe_pass_disabled_reason": safe_pass_reason,
             "latest_model_profile": model_state["latest_profile"],
             "current_model_profile": model_state["current_profile"],
+            "scheduler_heartbeat_last_freshness": last_freshness_at,
+            "blocking_task_count": blocking_task_count,
         },
     )

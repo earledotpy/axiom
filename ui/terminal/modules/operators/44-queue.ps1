@@ -241,8 +241,7 @@ function Write-AxiomQueueTaskTable {
         [string]$EmptyMessage = "none"
     )
 
-    Write-Host ""
-    Write-Host $Title -ForegroundColor DarkGreen
+    Write-AxiomUiSection $Title
 
     if (-not $Rows -or $Rows.Count -eq 0) {
         Write-Host "  $EmptyMessage" -ForegroundColor DarkGray
@@ -290,10 +289,7 @@ function axiom-queue {
         [int]$Limit = 10
     )
 
-    Write-Host ""
-    Write-Host "AXIOM TASK QUEUE" -ForegroundColor Green
-    Write-Host "================" -ForegroundColor Green
-    Write-Host ""
+    Write-AxiomUiTitle "TASK QUEUE" "manifest-bound · operator-dispatched"
 
     if (-not (Test-Path $script:AxiomRoot)) {
         Write-AxiomQueueLine "root" "$script:AxiomRoot missing" "Red"
@@ -315,7 +311,7 @@ function axiom-queue {
         return
     }
 
-    Write-Host "Session" -ForegroundColor DarkGreen
+    Write-AxiomUiSection "Session"
     Write-AxiomQueueLine "session_id" ([string]$session.session_id) "Green"
     Write-AxiomQueueLine "scheduler_status" ([string]$session.scheduler_status) "Cyan"
     Write-AxiomQueueLine "autonomous_enabled" ([string]$session.autonomous_operation_enabled) "Yellow"
@@ -327,8 +323,8 @@ function axiom-queue {
 
     $counts = @(Get-AxiomQueueCounts -Session $session)
 
-    Write-Host ""
-    Write-Host "Counts by status" -ForegroundColor DarkGreen
+    Write-AxiomUiRule
+    Write-AxiomUiSection "Counts by status"
 
     if ($counts.Count -eq 0) {
         Write-Host "  no tasks in latest session" -ForegroundColor DarkGray
@@ -353,22 +349,30 @@ function axiom-queue {
     $failed = @(Get-AxiomQueueTasksByStatus -Session $session -Status "failed" -Limit $Limit)
     $completed = @(Get-AxiomQueueTasksByStatus -Session $session -Status "completed" -Limit 5)
 
+    Write-AxiomUiRule
     Write-AxiomQueueTaskTable -Title "Running tasks" -Rows $running -EmptyMessage "none; expected in healthy idle state"
+    Write-AxiomUiRule
     Write-AxiomQueueTaskTable -Title "Pending manifest-bound tasks" -Rows $pendingManifestBound -EmptyMessage "none"
+    Write-AxiomUiRule
     Write-AxiomQueueTaskTable -Title "Pending tasks missing manifest_id" -Rows $pendingWithoutManifest -EmptyMessage "none; required before running transition"
+    Write-AxiomUiRule
     Write-AxiomQueueTaskTable -Title "Needs human input" -Rows $needsHumanInput -EmptyMessage "none"
+    Write-AxiomUiRule
     Write-AxiomQueueTaskTable -Title "Quarantined tasks" -Rows $quarantined -EmptyMessage "none"
+    Write-AxiomUiRule
     Write-AxiomQueueTaskTable -Title "Failed tasks" -Rows $failed -EmptyMessage "none"
+    Write-AxiomUiRule
     Write-AxiomQueueTaskTable -Title "Recent completed tasks" -Rows $completed -EmptyMessage "none"
 
-    Write-Host ""
-    Write-Host "Interpretation" -ForegroundColor DarkGreen
+    Write-AxiomUiRule
+    Write-AxiomUiSection "Interpretation"
     Write-Host "  - More than one running task violates AXIOM sequential execution." -ForegroundColor Gray
     Write-Host "  - A task must have manifest_id before transition to running." -ForegroundColor Gray
     Write-Host "  - This panel is read-only. It does not dispatch, start, complete, or repair tasks." -ForegroundColor Gray
     Write-Host ""
 
-    Write-Host "Next safe commands" -ForegroundColor DarkGreen
+    Write-AxiomUiRule
+    Write-AxiomUiSection "Next safe commands"
     Write-Host "  axiom-readiness" -ForegroundColor Gray
     Write-Host "  axiom-dashboard" -ForegroundColor Gray
     Write-Host "  axiom-preflight" -ForegroundColor Gray

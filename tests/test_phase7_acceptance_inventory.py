@@ -14,10 +14,10 @@ from tools.audit_phase7_acceptance_inventory import (
 ROOT = Path(__file__).resolve().parents[1]
 DOC = ROOT / "docs" / "phase7.md"
 TOOL = ROOT / "tools" / "audit_phase7_acceptance_inventory.py"
-TERMINAL_TOOLS = ROOT / "ui" / "terminal" / "modules" / "20-axiom-tools.ps1"
-TERMINAL_DOCTOR = ROOT / "ui" / "terminal" / "modules" / "49-doctor.ps1"
-TERMINAL_DOCS = ROOT / "ui" / "terminal" / "modules" / "52-docs.ps1"
-TERMINAL_HELP = ROOT / "ui" / "terminal" / "modules" / "90-safety-help.ps1"
+TERMINAL_TOOLS = ROOT / "ui" / "terminal" / "modules" / "utilities" / "20-axiom-tools.ps1"
+TERMINAL_DOCTOR = ROOT / "ui" / "terminal" / "modules" / "diagnostics" / "49-doctor.ps1"
+TERMINAL_DOCS = ROOT / "ui" / "terminal" / "modules" / "diagnostics" / "52-docs.ps1"
+TERMINAL_HELP = ROOT / "ui" / "terminal" / "modules" / "safety" / "90-safety-help.ps1"
 TERMINAL_REGISTRY = ROOT / "ui" / "terminal" / "registry" / "axiom-terminal-command-registry.json"
 
 

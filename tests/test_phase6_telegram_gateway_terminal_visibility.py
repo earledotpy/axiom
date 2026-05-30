@@ -7,12 +7,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DOC = ROOT / "docs" / "phase6.md"
 ROADMAP = ROOT / "docs" / "phase6.md"
-PANEL = ROOT / "ui" / "terminal" / "modules" / "59-telegram-gateway.ps1"
-DOCS_MODULE = ROOT / "ui" / "terminal" / "modules" / "52-docs.ps1"
-TOOLS_MODULE = ROOT / "ui" / "terminal" / "modules" / "20-axiom-tools.ps1"
-HELP_MODULE = ROOT / "ui" / "terminal" / "modules" / "90-safety-help.ps1"
-DOCTOR_MODULE = ROOT / "ui" / "terminal" / "modules" / "49-doctor.ps1"
-REPORT_MODULE = ROOT / "ui" / "terminal" / "modules" / "50-terminal-report.ps1"
+PANEL = ROOT / "ui" / "terminal" / "modules" / "operators" / "59-telegram-gateway.ps1"
+DOCS_MODULE = ROOT / "ui" / "terminal" / "modules" / "diagnostics" / "52-docs.ps1"
+TOOLS_MODULE = ROOT / "ui" / "terminal" / "modules" / "utilities" / "20-axiom-tools.ps1"
+HELP_MODULE = ROOT / "ui" / "terminal" / "modules" / "safety" / "90-safety-help.ps1"
+DOCTOR_MODULE = ROOT / "ui" / "terminal" / "modules" / "diagnostics" / "49-doctor.ps1"
+REPORT_MODULE = ROOT / "ui" / "terminal" / "modules" / "diagnostics" / "50-terminal-report.ps1"
 REGISTRY = ROOT / "ui" / "terminal" / "registry" / "axiom-terminal-command-registry.json"
 
 

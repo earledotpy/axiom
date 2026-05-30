@@ -11,10 +11,10 @@ from tools.audit_phase6_closeout import audit_phase6_closeout
 ROOT = Path(__file__).resolve().parents[1]
 DOC = ROOT / "docs" / "phase6.md"
 ROADMAP = ROOT / "docs" / "phase6.md"
-DOCS_MODULE = ROOT / "ui" / "terminal" / "modules" / "52-docs.ps1"
-TOOLS_MODULE = ROOT / "ui" / "terminal" / "modules" / "20-axiom-tools.ps1"
-HELP_MODULE = ROOT / "ui" / "terminal" / "modules" / "90-safety-help.ps1"
-DOCTOR_MODULE = ROOT / "ui" / "terminal" / "modules" / "49-doctor.ps1"
+DOCS_MODULE = ROOT / "ui" / "terminal" / "modules" / "diagnostics" / "52-docs.ps1"
+TOOLS_MODULE = ROOT / "ui" / "terminal" / "modules" / "utilities" / "20-axiom-tools.ps1"
+HELP_MODULE = ROOT / "ui" / "terminal" / "modules" / "safety" / "90-safety-help.ps1"
+DOCTOR_MODULE = ROOT / "ui" / "terminal" / "modules" / "diagnostics" / "49-doctor.ps1"
 REGISTRY = ROOT / "ui" / "terminal" / "registry" / "axiom-terminal-command-registry.json"
 
 

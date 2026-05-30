@@ -198,7 +198,16 @@ function Test-AxiomDoctorModuleOrder {
         return $checks
     }
 
-    $modules = @(Get-ChildItem $moduleDir -Filter "*.ps1" | Sort-Object Name)
+    $modules = @()
+    $moduleGroups = @('core', 'foundation', 'utilities', 'shared', 'operators', 'diagnostics', 'phase10', 'safety')
+
+    foreach ($group in $moduleGroups) {
+        $groupPath = Join-Path $moduleDir $group
+        if (Test-Path $groupPath) {
+            $modules += @(Get-ChildItem $groupPath -Filter "*.ps1" -ErrorAction SilentlyContinue | Sort-Object Name)
+        }
+    }
+
     $moduleNames = @($modules | ForEach-Object { $_.Name })
 
     $checks.Add((New-AxiomDoctorCheck "module count" ($modules.Count -gt 0) "count=$($modules.Count)"))
@@ -216,12 +225,15 @@ function Test-AxiomDoctorModuleOrder {
         "48-events.ps1",
         "49-doctor.ps1",
         "60-phase7.ps1",
+        "62-execution-trace.ps1",
+        "63-approval-gate.ps1",
+        "64-autonomous-posture.ps1",
         "90-safety-help.ps1"
     )
 
     foreach ($name in $requiredModules) {
         $exists = $moduleNames -contains $name
-        $severity = if ($name -in @("45-model.ps1", "46-manifests.ps1", "47-budget.ps1", "48-events.ps1")) { "warning" } else { "required" }
+        $severity = if ($name -in @("45-model.ps1", "46-manifests.ps1", "47-budget.ps1", "48-events.ps1", "62-execution-trace.ps1", "63-approval-gate.ps1", "64-autonomous-posture.ps1")) { "warning" } else { "required" }
         $checks.Add((New-AxiomDoctorCheck "module: $name" $exists $(if ($exists) { "loaded path present" } else { "missing" }) $severity))
     }
 
@@ -234,7 +246,8 @@ function Test-AxiomDoctorModuleOrder {
     $checks.Add((New-AxiomDoctorCheck "visual module order" $orderOk "04 before 05 before 06"))
 
     $oldVisualMode = Join-Path $moduleDir "43-visual-mode.ps1"
-    $checks.Add((New-AxiomDoctorCheck "old visual module absent" (-not (Test-Path $oldVisualMode)) "43-visual-mode.ps1 should not remain" "warning"))
+    $oldVisualModeInFoundation = Join-Path $moduleDir "foundation" "43-visual-mode.ps1"
+    $checks.Add((New-AxiomDoctorCheck "old visual module absent" (-not ((Test-Path $oldVisualMode) -or (Test-Path $oldVisualModeInFoundation))) "43-visual-mode.ps1 should not remain" "warning"))
 
     return $checks
 }
@@ -315,6 +328,7 @@ function Test-AxiomDoctorAxiomTools {
         "tools\run_phase7_acceptance.py",
         "tools\audit_phase7_e2e_gate.py",
         "tools\audit_phase7_closeout.py",
+        "tools\audit_phase9_closeout.py",
         "tools\record_operator_command_intent.py",
         "tools\supervisor_health_check.py",
         "tools\snapshot_project_state.py",
@@ -419,6 +433,7 @@ function axiom-doctor {
         "axiom-phase7-acceptance",
         "axiom-phase7-e2e-gate",
         "axiom-phase7-closeout",
+        "axiom-phase9-closeout",
         "axiom-health",
         "axiom-regression",
         "axiom-test",

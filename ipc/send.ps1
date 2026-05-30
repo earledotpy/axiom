@@ -1,8 +1,10 @@
 param(
     [Parameter(Mandatory)][ValidateSet("codex","antigravity","claude")][string]$To,
-    [string]$From = "claude",
+    [string]$From           = "claude",
     [Parameter(Mandatory)][string]$Subject,
-    [string]$Body = ""
+    [string]$Body           = "",
+    [string]$Type           = "ai-prompt",
+    [string]$ConversationId = ""
 )
 
 $inbox     = "C:\axiom\ipc\to_$To.md"
@@ -26,12 +28,17 @@ try {
     $null = $mutex.WaitOne(5000)
     Add-Content -Path $inbox -Value $entry -Encoding UTF8
     # Index in SQLite — both writes inside the mutex so they're atomic together
-    & python "C:\axiom\ipc\ipc_db.py" write `
-        --from    $From `
-        --to      $To `
-        --subject $Subject `
-        --time    $timestamp `
-        --body    $Body 2>$null | Out-Null
+    $dbArgs = @(
+        "C:\axiom\ipc\ipc_db.py", "write",
+        "--from",    $From,
+        "--to",      $To,
+        "--subject", $Subject,
+        "--time",    $timestamp,
+        "--body",    $Body,
+        "--type",    $Type
+    )
+    if ($ConversationId) { $dbArgs += @("--conversation-id", $ConversationId) }
+    & python @dbArgs 2>$null | Out-Null
 } finally {
     try { $mutex.ReleaseMutex() } catch {}
     $mutex.Dispose()

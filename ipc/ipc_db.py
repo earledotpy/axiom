@@ -24,6 +24,8 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 DB_PATH = Path(__file__).parent / "ipc_messages.db"
+IPC_PHASE0_FREEZE_ACTIVE = True
+IPC_PHASE0_NEUTRALIZED_COMMAND_TYPE = "phase0-frozen-command"
 
 DDL = """
 CREATE TABLE IF NOT EXISTS messages (
@@ -78,10 +80,17 @@ def get_conn() -> sqlite3.Connection:
     return conn
 
 
+def neutralize_message_type(msg_type: str | None) -> str:
+    effective_type = msg_type or "ai-prompt"
+    if IPC_PHASE0_FREEZE_ACTIVE and effective_type.lower() == "command":
+        return IPC_PHASE0_NEUTRALIZED_COMMAND_TYPE
+    return effective_type
+
+
 # ── write ─────────────────────────────────────────────────────────────────────
 
 def cmd_write(args: argparse.Namespace) -> None:
-    msg_type = getattr(args, "type", "ai-prompt") or "ai-prompt"
+    msg_type = neutralize_message_type(getattr(args, "type", "ai-prompt"))
     conv_id  = getattr(args, "conversation_id", None)
     with get_conn() as conn:
         try:
@@ -106,8 +115,9 @@ def cmd_pending(args: argparse.Namespace) -> None:
             "SELECT id, from_agent, to_agent, time, subject, body, type, "
             "retry_count, dead_letter, conversation_id, response_pending "
             "FROM messages "
-            "WHERE to_agent=? AND processed=0 AND dead_letter=0 ORDER BY id",
-            (args.agent,),
+            "WHERE to_agent=? AND processed=0 AND dead_letter=0 "
+            "AND lower(type) NOT IN ('command', ?) ORDER BY id",
+            (args.agent, IPC_PHASE0_NEUTRALIZED_COMMAND_TYPE),
         ).fetchall()
     print(json.dumps([dict(r) for r in rows]))
 

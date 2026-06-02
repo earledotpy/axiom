@@ -1,3 +1,9 @@
+$script:IPC_PHASE0_FREEZE_ACTIVE = $true
+if ($script:IPC_PHASE0_FREEZE_ACTIVE) {
+    Write-Output "[ipc-freeze] Phase 0 IPC freeze active; unsafe IPC execution path is structurally unreachable."
+    return
+}
+
 . C:\axiom\ipc\conpty_capture.ps1
 $bytes = $null
 $raw = $null

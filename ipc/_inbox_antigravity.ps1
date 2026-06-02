@@ -7,6 +7,12 @@
 #   - Retry counter with dead-letter threshold (3 attempts)
 #   - Agent availability gate
 
+$script:IPC_PHASE0_FREEZE_ACTIVE = $true
+if ($script:IPC_PHASE0_FREEZE_ACTIVE) {
+    Write-Output "[ipc-freeze] Phase 0 IPC freeze active; unsafe IPC execution path is structurally unreachable."
+    return
+}
+
 $ipcDir    = "C:\axiom\ipc"
 $sendScript = "$ipcDir\send.ps1"
 $dbScript   = "$ipcDir\ipc_db.py"

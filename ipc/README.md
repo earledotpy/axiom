@@ -2,6 +2,10 @@
 
 Shared message directory for cross-agent communication between Claude Code, Codex, and Antigravity.
 
+## Phase 0 Freeze
+
+Active IPC execution is structurally frozen pending future Orchestrator mediation. Watchers, executor dispatch, CLI agent invocation, ConPTY/tmux/terminal paths, posture daemons, markdown inbox control reads, and peer-to-peer auto-relay paths must remain fail-closed under `IPC_PHASE0_FREEZE_ACTIVE`.
+
 ## Protocol
 
 Each agent has an inbox file. To send a message, write to the recipient's inbox.

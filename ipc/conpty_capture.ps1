@@ -1,6 +1,12 @@
 # ConPTY Capture — dot-source this file to get Invoke-ConPtyCapture
 # and the persistent session functions (New/Write/Read/Remove-ConPtySession).
 
+$script:IPC_PHASE0_FREEZE_ACTIVE = $true
+if ($script:IPC_PHASE0_FREEZE_ACTIVE) {
+    Write-Output "[ipc-freeze] Phase 0 IPC freeze active; unsafe IPC execution path is structurally unreachable."
+    return
+}
+
 if (-not ([System.Management.Automation.PSTypeName]'ConPty.ConPtySession').Type) {
     Add-Type -Language CSharp -TypeDefinition @'
 using System;

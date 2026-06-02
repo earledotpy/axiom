@@ -1,3 +1,9 @@
+$script:IPC_PHASE0_FREEZE_ACTIVE = $true
+if ($script:IPC_PHASE0_FREEZE_ACTIVE) {
+    Write-Output "[ipc-freeze] Phase 0 IPC freeze active; unsafe IPC execution path is structurally unreachable."
+    return
+}
+
 . C:\axiom\ipc\conpty_capture.ps1
 $session = [ConPty.ConPtySession]::new()
 $cmdLine = Format-CommandLine -Exe "C:\Windows\System32\cmd.exe" -Args @("/c","echo hello_from_conpty")

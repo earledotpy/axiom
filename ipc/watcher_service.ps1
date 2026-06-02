@@ -1,5 +1,11 @@
 param([Parameter(Mandatory)][string]$Agent)
 
+$script:IPC_PHASE0_FREEZE_ACTIVE = $true
+if ($script:IPC_PHASE0_FREEZE_ACTIVE) {
+    Write-Output "[ipc-freeze] Phase 0 IPC freeze active; unsafe IPC execution path is structurally unreachable."
+    return
+}
+
 $inbox        = "C:\axiom\ipc\to_$($Agent.ToLower()).md"
 $notifyScript = "C:\axiom\ipc\notify.ps1"
 $jobName      = "ipc-watcher-$Agent"

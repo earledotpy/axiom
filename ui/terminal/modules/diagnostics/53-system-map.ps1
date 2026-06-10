@@ -52,7 +52,7 @@ function axiom-system-map {
     Write-AxiomMapLine "Terminal role" "operator UI / implementation shell" "Cyan"
     Write-AxiomMapLine "Runtime role" "state, policy, lifecycle, execution gates" "Cyan"
 
-    Write-AxiomMapSection "Layer 1 — AXIOM Terminal / Operator UI"
+    Write-AxiomMapSection "Layer 1 - AXIOM Terminal / Operator UI"
     Write-Host "  C:\axiom\ui\terminal" -ForegroundColor Gray
     Write-Host "    profile\profile-axiom.ps1         deterministic module loader" -ForegroundColor Gray
     Write-Host "    modules\*.ps1                     terminal commands and panels" -ForegroundColor Gray
@@ -70,7 +70,7 @@ function axiom-system-map {
     Write-Host "    direct runtime mutation, scheduler execution shortcuts, model promotion," -ForegroundColor Gray
     Write-Host "    safe-pass enablement, manifest repair, gateway calls, automatic agent control." -ForegroundColor Gray
 
-    Write-AxiomMapSection "Layer 2 — Approved AXIOM Tools"
+    Write-AxiomMapSection "Layer 2 - Approved AXIOM Tools"
     Write-Host "  C:\axiom\tools" -ForegroundColor Gray
     Write-Host "    verify_foundation.py              foundation/safety verification" -ForegroundColor Gray
     Write-Host "    audit_task_lifecycle.py           task lifecycle audit" -ForegroundColor Gray
@@ -101,7 +101,7 @@ function axiom-system-map {
     Write-Host "    manual/test-only wrappers exist; no model, network, sandbox, memory," -ForegroundColor Gray
     Write-Host "    operator-control, automatic scheduling, or autonomous agent control." -ForegroundColor Gray
 
-    Write-AxiomMapSection "Layer 3 — AXIOM Runtime Core"
+    Write-AxiomMapSection "Layer 3 - AXIOM Runtime Core"
     Write-Host "  C:\axiom\axiom\core" -ForegroundColor Gray
     Write-Host "    state_machine.py                  allowed task transitions" -ForegroundColor Gray
     Write-Host "    scheduler.py                      scheduler facade / run_once" -ForegroundColor Gray
@@ -117,7 +117,7 @@ function axiom-system-map {
     Write-Host "    manifest_id required before running transition" -ForegroundColor Gray
     Write-Host "    heartbeat ordering around blocking operations" -ForegroundColor Gray
 
-    Write-AxiomMapSection "Layer 4 — Persistence / Database"
+    Write-AxiomMapSection "Layer 4 - Persistence / Database"
     Write-Host "  C:\axiom\axiom.db" -ForegroundColor Gray
     Write-Host "  C:\axiom\axiom\persistence\schema.sql" -ForegroundColor Gray
     Write-Host ""
@@ -128,7 +128,7 @@ function axiom-system-map {
     Write-Host "  Terminal read-only panels may query with SQLite mode=ro." -ForegroundColor Green
     Write-Host "  Terminal modules must not directly repair or rewrite database state." -ForegroundColor Yellow
 
-    Write-AxiomMapSection "Layer 5 — Policy / Manifests / Tool Capability"
+    Write-AxiomMapSection "Layer 5 - Policy / Manifests / Tool Capability"
     Write-Host "  C:\axiom\axiom\policy" -ForegroundColor Gray
     Write-Host "    schemas\manifest_schema.json" -ForegroundColor Gray
     Write-Host "    schemas\tool_capability_map_schema.json" -ForegroundColor Gray
@@ -142,7 +142,7 @@ function axiom-system-map {
     Write-Host "    Tool-capability lookups use boot-time cached validators/maps." -ForegroundColor Gray
     Write-Host "    SHA256 mismatch / manifest mismatch fails closed." -ForegroundColor Gray
 
-    Write-AxiomMapSection "Layer 6 — Model Trust Boundary"
+    Write-AxiomMapSection "Layer 6 - Model Trust Boundary"
     Write-Host "  model_profile_fingerprints" -ForegroundColor Gray
     Write-Host "  classifier_calibration_runs" -ForegroundColor Gray
     Write-Host ""
@@ -152,7 +152,7 @@ function axiom-system-map {
     Write-Host "    thinking_mode=unknown cannot become current." -ForegroundColor Gray
     Write-Host "    safe-pass remains disabled until calibration/trust prerequisites pass." -ForegroundColor Gray
 
-    Write-AxiomMapSection "Layer 7 — Gateways / Future Execution"
+    Write-AxiomMapSection "Layer 7 - Gateways / Future Execution"
     Write-Host "  C:\axiom\axiom\gateways" -ForegroundColor Gray
     Write-Host "    model_gateway.py                  local/cloud model boundary" -ForegroundColor Gray
     Write-Host "    network_gateway.py                future allowlisted fetch boundary" -ForegroundColor Gray
@@ -168,13 +168,13 @@ function axiom-system-map {
 
     Write-AxiomMapSection "Operator flow"
     Write-Host "  Human operator" -ForegroundColor Gray
-    Write-Host "      ↓" -ForegroundColor DarkGray
+    Write-Host "      v" -ForegroundColor DarkGray
     Write-Host "  AXIOM Terminal" -ForegroundColor Gray
-    Write-Host "      ↓ read-only panels / safe wrappers" -ForegroundColor DarkGray
+    Write-Host "      v read-only panels / safe wrappers" -ForegroundColor DarkGray
     Write-Host "  Approved tools under C:\axiom\tools" -ForegroundColor Gray
-    Write-Host "      ↓" -ForegroundColor DarkGray
+    Write-Host "      v" -ForegroundColor DarkGray
     Write-Host "  AXIOM runtime core / policy / persistence" -ForegroundColor Gray
-    Write-Host "      ↓ only when future gates are satisfied" -ForegroundColor DarkGray
+    Write-Host "      v only when future gates are satisfied" -ForegroundColor DarkGray
     Write-Host "  Model / network / sandbox / memory gateways" -ForegroundColor Gray
 
     Write-Host ""
@@ -288,3 +288,4 @@ function axiom-terminal-map {
     Write-Host "  axiom-terminal-changelog" -ForegroundColor Gray
     Write-Host ""
 }
+

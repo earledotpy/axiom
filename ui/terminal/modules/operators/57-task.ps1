@@ -450,7 +450,7 @@ function axiom-task {
         [int]$TaskId
     )
 
-    Write-AxiomUiTitle "TASK DETAIL" "read-only · lifecycle + security"
+    Write-AxiomUiTitle "TASK DETAIL" "read-only - lifecycle + security"
 
     if (-not (Test-Path $script:AxiomRoot)) {
         Write-AxiomTaskLine "root" "$script:AxiomRoot missing" "Red"
@@ -553,3 +553,4 @@ function axiom-task-latest {
 
     axiom-task $latest
 }
+

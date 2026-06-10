@@ -26,13 +26,25 @@ function Test-AxiomOhMyPosh {
 }
 
 function Enable-AxiomDashboardPrompt {
+    param([switch]$Quiet)
+
     $env:AXIOM_PROMPT_ENGINE = "oh-my-posh"
 
     if (-not (Test-AxiomOhMyPosh)) {
         return
     }
 
-    oh-my-posh init pwsh --config $script:AxiomOmpThemePath | Invoke-Expression
+    $initScript = @(oh-my-posh init pwsh --config $script:AxiomOmpThemePath 2>$null)
+
+    if ($LASTEXITCODE -ne 0 -or -not $initScript -or $initScript.Count -eq 0) {
+        $env:AXIOM_PROMPT_ENGINE = "native"
+        if (-not $Quiet) {
+            Write-Host "[AXIOM] Oh My Posh could not initialize. Native prompt remains active." -ForegroundColor Yellow
+        }
+        return
+    }
+
+    $initScript | Invoke-Expression
 }
 
 function Disable-AxiomDashboardPrompt {
@@ -73,8 +85,8 @@ function axiom-posh-test {
     Write-Host ""
 }
 
-# Default dashboard behavior.
-# Set this to "native" if you want the simple prompt.
+# Dashboard prompt is opt-in. Profile load must stay quiet and deterministic;
+# use axiom-posh-on when an interactive dashboard prompt is desired.
 if ($env:AXIOM_PROMPT_ENGINE -eq "oh-my-posh") {
-    Enable-AxiomDashboardPrompt
+    $env:AXIOM_PROMPT_ENGINE = "native"
 }

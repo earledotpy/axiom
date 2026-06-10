@@ -3,6 +3,7 @@ aiohttp>=3.9,<4.0
 requests>=2.31,<3.0
 PyYAML>=6.0,<7.0
 jsonschema>=4.22,<5.0
+cryptography>=46.0.5,<47.0.0
 pywin32>=306; platform_system == "Windows"
 ollama>=0.3,<1.0
 sqlite-vec>=0.1,<1.0

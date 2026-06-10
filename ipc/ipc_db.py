@@ -18,14 +18,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sqlite3
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
-DB_PATH = Path(__file__).parent / "ipc_messages.db"
-IPC_PHASE0_FREEZE_ACTIVE = True
-IPC_PHASE0_NEUTRALIZED_COMMAND_TYPE = "phase0-frozen-command"
+DB_PATH = Path(
+    os.environ.get("AXIOM_IPC_DB_PATH", Path(__file__).parent / "ipc_messages.db")
+)
+IPC_PHASE2_NEUTRALIZE_ACTIVE = True
+IPC_PHASE2_REJECTED_COMMAND_TYPE = "phase2-rejected-command"
+IPC_LEGACY_NEUTRALIZED_COMMAND_TYPE = "phase0-frozen-command"
 
 DDL = """
 CREATE TABLE IF NOT EXISTS messages (
@@ -80,31 +84,52 @@ def get_conn() -> sqlite3.Connection:
     return conn
 
 
+def normalize_message_type(msg_type: str | None) -> str:
+    effective_type = msg_type if msg_type is not None else "ai-prompt"
+    normalized = effective_type.strip().lower()
+    return normalized or "ai-prompt"
+
+
+def is_rejected_command_type(msg_type: str | None) -> bool:
+    return normalize_message_type(msg_type) == "command"
+
+
 def neutralize_message_type(msg_type: str | None) -> str:
-    effective_type = msg_type or "ai-prompt"
-    if IPC_PHASE0_FREEZE_ACTIVE and effective_type.lower() == "command":
-        return IPC_PHASE0_NEUTRALIZED_COMMAND_TYPE
-    return effective_type
+    if IPC_PHASE2_NEUTRALIZE_ACTIVE and is_rejected_command_type(msg_type):
+        return IPC_PHASE2_REJECTED_COMMAND_TYPE
+    return normalize_message_type(msg_type)
 
 
 # ── write ─────────────────────────────────────────────────────────────────────
 
 def cmd_write(args: argparse.Namespace) -> None:
-    msg_type = neutralize_message_type(getattr(args, "type", "ai-prompt"))
+    requested_type = getattr(args, "type", "ai-prompt")
+    rejected_command = is_rejected_command_type(requested_type)
+    msg_type = neutralize_message_type(requested_type)
     conv_id  = getattr(args, "conversation_id", None)
     with get_conn() as conn:
         try:
             cur = conn.execute(
                 "INSERT OR IGNORE INTO messages "
-                "(from_agent, to_agent, time, subject, body, type, conversation_id) "
-                "VALUES (?,?,?,?,?,?,?)",
-                (args.from_, args.to, args.time, args.subject, args.body, msg_type, conv_id),
+                "(from_agent, to_agent, time, subject, body, type, conversation_id, processed, dead_letter) "
+                "VALUES (?,?,?,?,?,?,?,?,?)",
+                (
+                    args.from_,
+                    args.to,
+                    args.time,
+                    args.subject,
+                    args.body,
+                    msg_type,
+                    conv_id,
+                    1 if rejected_command else 0,
+                    1 if rejected_command else 0,
+                ),
             )
             conn.commit()
             row_id = cur.lastrowid if cur.lastrowid else -1
         except sqlite3.IntegrityError:
             row_id = -1
-    print(json.dumps({"id": row_id}))
+    print(json.dumps({"id": row_id, "rejected": rejected_command, "type": msg_type}))
 
 
 # ── pending ───────────────────────────────────────────────────────────────────
@@ -116,8 +141,12 @@ def cmd_pending(args: argparse.Namespace) -> None:
             "retry_count, dead_letter, conversation_id, response_pending "
             "FROM messages "
             "WHERE to_agent=? AND processed=0 AND dead_letter=0 "
-            "AND lower(type) NOT IN ('command', ?) ORDER BY id",
-            (args.agent, IPC_PHASE0_NEUTRALIZED_COMMAND_TYPE),
+            "AND lower(trim(type)) NOT IN ('command', ?, ?) ORDER BY id",
+            (
+                args.agent,
+                IPC_LEGACY_NEUTRALIZED_COMMAND_TYPE,
+                IPC_PHASE2_REJECTED_COMMAND_TYPE,
+            ),
         ).fetchall()
     print(json.dumps([dict(r) for r in rows]))
 

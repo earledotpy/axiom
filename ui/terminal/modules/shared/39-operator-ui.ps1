@@ -17,7 +17,7 @@ function Write-AxiomUiTitle {
     )
 
     Write-Host ""
-    Write-Host "▌ " -NoNewline -ForegroundColor Green
+    Write-Host "| " -NoNewline -ForegroundColor Green
     Write-Host $Title -NoNewline -ForegroundColor Green
     if ($Meta) {
         Write-Host "    $Meta" -ForegroundColor DarkGray
@@ -25,18 +25,18 @@ function Write-AxiomUiTitle {
     else {
         Write-Host ""
     }
-    Write-Host ("  " + ("─" * 70)) -ForegroundColor DarkGray
+    Write-Host ("  " + ("-" * 70)) -ForegroundColor DarkGray
 }
 
 function Write-AxiomUiSection {
     param([Parameter(Mandatory = $true)][string]$Title)
 
     Write-Host ""
-    Write-Host "  ▸ $Title" -ForegroundColor DarkGreen
+    Write-Host "  > $Title" -ForegroundColor DarkGreen
 }
 
 function Write-AxiomUiRule {
-    Write-Host ("  " + ("─" * 68)) -ForegroundColor DarkGray
+    Write-Host ("  " + ("-" * 68)) -ForegroundColor DarkGray
 }
 
 function Write-AxiomUiLine {
@@ -64,13 +64,13 @@ function Get-AxiomUiStatusColor {
         "GATE"  { return "Blue" }         # future: awaiting operator approval
         "INIT"  { return "DarkGray" }     # initialized, not yet warm
         "WARN"  { return "Yellow" }
-        "CAND"  { return "DarkYellow" }   # candidate — not yet promoted (expected)
+        "CAND"  { return "DarkYellow" }   # candidate - not yet promoted (expected)
         "IDLE"  { return "DarkGray" }     # registered, not running (healthy containment)
-        "SKIP"  { return "DarkGray" }     # skipped by design — expected condition
+        "SKIP"  { return "DarkGray" }     # skipped by design - expected condition
         "BLOCK" { return "Red" }
         "FAIL"  { return "Red" }
         "LOCK"  { return "Red" }          # hard policy lock, fail-closed
-        "QRNT"  { return "Magenta" }      # quarantined — security hold
+        "QRNT"  { return "Magenta" }      # quarantined - security hold
         default { return "Gray" }
     }
 }
@@ -88,4 +88,5 @@ function Write-AxiomUiStatus {
     Write-Host ("{0,-$Width}" -f $Label) -NoNewline -ForegroundColor Gray
     Write-Host $Detail -ForegroundColor DarkGray
 }
+
 

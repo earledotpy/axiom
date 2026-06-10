@@ -82,11 +82,15 @@ class BootstrapValidator:
             operational_mode=operational_mode,
         )
 
-        if raise_on_failure and not result.passed:
-            reasons = "; ".join(
-                f"{failure.name}: {failure.reason}" for failure in result.failures
-            )
-            raise BootstrapValidationError(reasons)
+        if raise_on_failure:
+            if not result.passed:
+                reasons = "; ".join(
+                    f"{failure.name}: {failure.reason}" for failure in result.failures
+                )
+                raise BootstrapValidationError(reasons)
+            if not readiness.allowed:
+                reasons = ", ".join(readiness.blocking_reasons) or "unknown"
+                raise BootstrapValidationError(f"autonomous_readiness_not_allowed: {reasons}")
 
         return result
 

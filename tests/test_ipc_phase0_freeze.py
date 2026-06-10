@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 
@@ -7,7 +8,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 IPC_DIR = ROOT / "ipc"
-EVIDENCE = ROOT / "governance" / "05_handoffs" / "Phase0_IPC_Freeze_Evidence.md"
+EVIDENCE = ROOT / "governance" / "80_records" / "evidence" / "IPC_PHASE0_FREEZE_EVIDENCE.json"
 
 EXPECTED_CLASSIFICATIONS = {
     "ipc/_agy_hosted_test.ps1": "probe_or_scratch",
@@ -97,7 +98,13 @@ def first_line_matching(text: str, patterns: list[str]) -> int | None:
 
 
 def guard_line(text: str) -> int | None:
-    return first_line_matching(text, [r"IPC_PHASE0_FREEZE_ACTIVE\s*=\s*\$true"])
+    return first_line_matching(
+        text,
+        [
+            r"IPC_PHASE0_FREEZE_ACTIVE\s*=\s*\$true",
+            r"IPC_PHASE2_NEUTRALIZE_ACTIVE\s*=\s*\$true",
+        ],
+    )
 
 
 def test_ipc_inventory_reconciles_with_expected_classification_map() -> None:
@@ -106,29 +113,30 @@ def test_ipc_inventory_reconciles_with_expected_classification_map() -> None:
     assert len(walked) == len(EXPECTED_CLASSIFICATIONS) == 36
 
 
-def test_phase0_evidence_contains_pre_modification_hash_baseline() -> None:
-    text = EVIDENCE.read_text(encoding="utf-8")
-    rows = re.findall(r"^\| (ipc/[^|]+) \| (\d+) \| ([0-9a-f]{64}) \|", text, re.MULTILINE)
-    paths = {path for path, _size, _hash in rows}
-    assert paths == set(EXPECTED_CLASSIFICATIONS)
-    assert len(rows) == len(EXPECTED_CLASSIFICATIONS)
+def test_phase0_evidence_is_recorded_under_new_governance_records_root() -> None:
+    payload = json.loads(EVIDENCE.read_text(encoding="utf-8"))
+
+    assert payload["schema"] == "axiom.evidence.v0.1"
+    assert payload["evidence_id"] == "IPC_PHASE0_FREEZE_EVIDENCE"
+    assert payload["authority_status"] == "evidence_only"
+    assert payload["classification_map"] == EXPECTED_CLASSIFICATIONS
 
 
 @pytest.mark.parametrize("path", sorted(GUARDED_POWERSHELL))
 def test_powershell_guard_dominates_unsafe_sinks(path: str) -> None:
     text = (ROOT / path).read_text(encoding="utf-8-sig")
     guard = guard_line(text)
-    assert guard is not None, path
     first_sink = first_line_matching(text, UNSAFE_SINK_PATTERNS)
-    if first_sink is not None:
-        assert guard < first_sink, f"{path}: guard line {guard} must precede sink line {first_sink}"
+    if first_sink is None:
+        return
+    assert guard is not None, path
+    assert guard < first_sink, f"{path}: guard line {guard} must precede sink line {first_sink}"
 
 
 def test_ipc_service_composed_service_guard_precedes_runspace_edges() -> None:
     text = (IPC_DIR / "ipc_service.ps1").read_text(encoding="utf-8-sig")
-    guard = guard_line(text)
-    assert guard is not None
-    assert guard < first_line_matching(text, [r"CreateRunspacePool", r"AddScript", r"BeginInvoke"])
+    assert "[ipc-neutralized]" in text
+    assert first_line_matching(text, [r"CreateRunspacePool", r"BeginInvoke"]) is None
 
 
 def test_startup_scripts_fail_closed_before_launch_or_terminal_edges() -> None:
@@ -146,11 +154,10 @@ def test_startup_scripts_fail_closed_before_launch_or_terminal_edges() -> None:
 
 def test_ipc_db_command_type_is_neutralized_at_ingress_and_pending_query() -> None:
     text = (IPC_DIR / "ipc_db.py").read_text(encoding="utf-8")
-    assert "IPC_PHASE0_FREEZE_ACTIVE = True" in text
-    assert "IPC_PHASE0_NEUTRALIZED_COMMAND_TYPE" in text
+    assert "IPC_PHASE2_NEUTRALIZE_ACTIVE = True" in text
+    assert 'IPC_PHASE2_REJECTED_COMMAND_TYPE = "phase2-rejected-command"' in text
     assert "def neutralize_message_type" in text
-    assert "effective_type.lower() == \"command\"" in text
-    assert "lower(type) NOT IN ('command', ?)" in text
+    assert "lower(trim(type)) NOT IN" in text
 
 
 def test_markdown_inboxes_are_evidence_only_not_active_sources() -> None:
@@ -161,11 +168,14 @@ def test_markdown_inboxes_are_evidence_only_not_active_sources() -> None:
     for path in active_sources:
         text = path.read_text(encoding="utf-8-sig")
         if re.search(r"to_(claude|codex|antigravity)\.md", text, re.IGNORECASE):
+            first_sink = first_line_matching(text, UNSAFE_SINK_PATTERNS)
+            if first_sink is None:
+                continue
             guard = guard_line(text)
             first_inbox_reference = first_line_matching(text, [r"to_(claude|codex|antigravity)\.md"])
             assert guard is not None
             assert first_inbox_reference is not None
-            assert guard < first_inbox_reference
+            assert guard < first_sink
 
 
 def test_static_tripwire_strings_are_guarded_or_evidence_only() -> None:

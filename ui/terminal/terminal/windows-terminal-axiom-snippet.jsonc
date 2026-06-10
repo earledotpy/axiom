@@ -1,11 +1,20 @@
-// Copy the profile object into profiles.list and the scheme object into schemes.
+// AXIOM Terminal Windows Terminal snippet.
+// Copy the profile objects into profiles.list and the scheme object into schemes.
+//
+// SPLIT-PANE STARTUP (persistent watch panel):
+// Add this to settings.json > "startupActions" to open both panes automatically:
+//
+//   "startupActions": "new-tab -p \"AXIOM Terminal\" ; split-pane --vertical -p \"AXIOM Watch\" --size 0.35"
+//
+// The AXIOM Watch pane runs axiom-watch -Mode compact on a 30-second refresh loop.
+// It is marked hidden:true so it does not appear in the new-tab dropdown.
 {
   "profiles": {
     "list": [
       {
         "guid": "{a110ba55-f411-4d61-bb8e-a510f0f0a110}",
         "name": "AXIOM Terminal",
-        "commandline": "pwsh.exe -NoLogo",
+        "commandline": "pwsh.exe -NoLogo -NoExit -Command \". 'C:\\axiom\\ui\\terminal\\profile\\profile-axiom.ps1'\"",
         "startingDirectory": "C:\\axiom",
         "icon": "C:\\axiom\\ui\\terminal\\assets\\axiom-terminal-icon.png",
         "colorScheme": "AXIOM SYSTEM PALETTE",
@@ -25,6 +34,31 @@
         "padding": "12, 10, 12, 10",
         "tabTitle": "AXIOM",
         "suppressApplicationTitle": true
+      },
+      {
+        "guid": "{a110ba55-f411-4d61-bb8e-a510f0f0a111}",
+        "name": "AXIOM Watch",
+        "commandline": "pwsh.exe -NoLogo -NoExit -Command \". 'C:\\axiom\\ui\\terminal\\profile\\profile-axiom.ps1'; axiom-watch -Mode compact -IntervalSeconds 30\"",
+        "startingDirectory": "C:\\axiom",
+        "icon": "C:\\axiom\\ui\\terminal\\assets\\axiom-terminal-icon.png",
+        "colorScheme": "AXIOM SYSTEM PALETTE",
+        "font": {
+          "face": "0xProto Nerd Font Mono",
+          "size": 10,
+          "weight": "semi-light"
+        },
+        "cursorShape": "filledBox",
+        "cursorHeight": 25,
+        "cursorColor": "#A8FF60",
+        "backgroundImage": "C:\\axiom\\ui\\terminal\\assets\\axiom-crt-background.png",
+        "backgroundImageOpacity": 0.18,
+        "backgroundImageStretchMode": "uniformToFill",
+        "opacity": 92,
+        "useAcrylic": true,
+        "padding": "8, 6, 8, 6",
+        "tabTitle": "AXIOM WATCH",
+        "suppressApplicationTitle": true,
+        "hidden": true
       }
     ]
   },

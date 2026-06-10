@@ -107,7 +107,7 @@ function axiom-terminal-note {
 
     $entry = @"
 
-## $stamp — $Category
+## $stamp - $Category
 
 $Note
 
@@ -127,3 +127,4 @@ function axiom-terminal-changelog-path {
     Initialize-AxiomTerminalChangelog
     Write-Host $script:AxiomTerminalChangelogPath -ForegroundColor Green
 }
+

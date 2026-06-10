@@ -334,7 +334,7 @@ function Convert-AxiomTerminalSnapshotToMarkdown {
 
     foreach ($module in $Snapshot.modules.items) {
         $state = if ($module.parse_ok) { "ok" } else { "parse-failed" }
-        $lines.Add("- $($module.name) — $state")
+        $lines.Add("- $($module.name) - $state")
         if (-not $module.parse_ok) {
             $lines.Add("  - Error: $($module.parse_error)")
         }
@@ -352,7 +352,7 @@ function Convert-AxiomTerminalSnapshotToMarkdown {
 
         foreach ($cmd in @($group.Group | Sort-Object name)) {
             $loaded = if ($cmd.loaded) { "loaded" } else { "missing" }
-            $lines.Add("- $($cmd.name) — $($cmd.status), $loaded, risk=$($cmd.risk), mutates_runtime=$($cmd.mutates_axiom_runtime)")
+            $lines.Add("- $($cmd.name) - $($cmd.status), $loaded, risk=$($cmd.risk), mutates_runtime=$($cmd.mutates_axiom_runtime)")
         }
 
         $lines.Add("")
@@ -424,4 +424,5 @@ function axiom-terminal-snapshot {
     Write-Host "  Terminal snapshot only. AXIOM runtime state was not mutated." -ForegroundColor Gray
     Write-Host ""
 }
+
 

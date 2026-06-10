@@ -23,7 +23,18 @@ class AutonomousReadinessDecision:
 def evaluate_autonomous_readiness(
     profile_label: str = "default",
 ) -> AutonomousReadinessDecision:
-    report = build_status_report(profile_label=profile_label)
+    try:
+        report = build_status_report(profile_label=profile_label)
+    except Exception as exc:
+        return AutonomousReadinessDecision(
+            allowed=False,
+            blocking_reasons=["autonomous_readiness_evaluation_error"],
+            status={
+                "profile_label": profile_label,
+                "error_type": type(exc).__name__,
+                "error": str(exc),
+            },
+        )
 
     return AutonomousReadinessDecision(
         allowed=report.autonomous_available,

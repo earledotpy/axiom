@@ -199,7 +199,7 @@ function Test-AxiomDoctorModuleOrder {
     }
 
     $modules = @()
-    $moduleGroups = @('core', 'foundation', 'utilities', 'shared', 'operators', 'diagnostics', 'phase10', 'safety')
+    $moduleGroups = @('core', 'foundation', 'utilities', 'shared', 'operators', 'diagnostics', 'supervision', 'safety')
 
     foreach ($group in $moduleGroups) {
         $groupPath = Join-Path $moduleDir $group
@@ -219,6 +219,7 @@ function Test-AxiomDoctorModuleOrder {
         "40-dashboard.ps1",
         "41-readiness.ps1",
         "42-registry-discipline.ps1",
+        "43-governance-cycle.ps1",
         "45-model.ps1",
         "46-manifests.ps1",
         "47-budget.ps1",
@@ -334,7 +335,14 @@ function Test-AxiomDoctorAxiomTools {
         "tools\snapshot_project_state.py",
         "tools\generate_handoff.py",
         "tools\generate_handoff_bundle.py",
-        "tools\operator_command_index.py"
+        "tools\operator_command_index.py",
+        "tools\governance_cycle.py",
+        "tools\review_ingest.py",
+        "tools\task_card.py",
+        "tools\delegation.py",
+        "tools\evidence.py",
+        "tools\operator_console.py",
+        "tools\validate_governance.py"
     )
 
     foreach ($tool in $requiredTools) {
@@ -410,17 +418,48 @@ function axiom-doctor {
     }
 
     Write-Host ""
-    Write-Host "Primary commands" -ForegroundColor DarkGreen
+    Write-Host "Primary governance commands" -ForegroundColor DarkGreen
     $primaryCommands = @(
+        "state",
+        "cycle",
+        "next",
+        "review",
+        "accept",
+        "decide",
+        "task",
+        "delegate",
+        "evidence",
+        "roadmap",
+        "validate",
+        "guard",
+        "doctor",
+        "registry",
         "axiom",
         "axiom-help",
         "axiom-help-all",
         "axiom-now",
+        "axiom-edit",
+        "ae",
+        "axiom-dashboard",
+        "axiom-readiness",
+        "axiom-terminal-report"
+    )
+
+    foreach ($cmd in $primaryCommands) {
+        $check = Test-AxiomDoctorCommand -Name $cmd -Severity "required"
+        $allChecks.Add($check)
+        Write-AxiomDoctorCheck $check
+    }
+
+    Write-Host ""
+    Write-Host "Legacy/compatibility commands" -ForegroundColor DarkGreen
+    $compatibilityCommands = @(
         "axiom-doctor",
         "axiom-registry",
         "axiom-guard",
-        "axiom-edit",
-        "ae",
+        "axiom-governance",
+        "axiom-review",
+        "axiom-accept",
         "axiom-preflight",
         "axiom-status",
         "axiom-audit",
@@ -437,8 +476,6 @@ function axiom-doctor {
         "axiom-health",
         "axiom-regression",
         "axiom-test",
-        "axiom-dashboard",
-        "axiom-readiness",
         "axiom-model",
         "axiom-manifests",
         "axiom-budget",
@@ -448,14 +485,14 @@ function axiom-doctor {
         "axiom-phase7",
         "axiom-handoff",
         "axiom-logs",
+        "axiom-terminal-test",
         "axiom-visual-mode",
         "axiom-visual-native",
         "axiom-visual-dashboard"
     )
 
-    foreach ($cmd in $primaryCommands) {
-        $severity = if ($cmd -in @("axiom-model", "axiom-manifests", "axiom-budget", "axiom-events")) { "warning" } else { "required" }
-        $check = Test-AxiomDoctorCommand -Name $cmd -Severity $severity
+    foreach ($cmd in $compatibilityCommands) {
+        $check = Test-AxiomDoctorCommand -Name $cmd -Severity "warning"
         $allChecks.Add($check)
         Write-AxiomDoctorCheck $check
     }
@@ -524,9 +561,10 @@ function axiom-doctor {
 
     Write-Host ""
     Write-Host "Next safe commands" -ForegroundColor DarkGreen
-    Write-Host "  axiom-registry" -ForegroundColor Gray
-    Write-Host "  axiom-dashboard" -ForegroundColor Gray
-    Write-Host "  axiom-readiness" -ForegroundColor Gray
-    Write-Host "  axiom-preflight" -ForegroundColor Gray
+    Write-Host "  registry" -ForegroundColor Gray
+    Write-Host "  state" -ForegroundColor Gray
+    Write-Host "  cycle" -ForegroundColor Gray
+    Write-Host "  next" -ForegroundColor Gray
+    Write-Host "  validate" -ForegroundColor Gray
     Write-Host ""
 }

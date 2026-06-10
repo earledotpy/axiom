@@ -130,6 +130,8 @@ function Test-AxiomTerminalRegistry {
         "core",
         "editing",
         "verification",
+        "governance",
+        "operator_decision",
         "state_visibility",
         "reports",
         "terminal_ui"

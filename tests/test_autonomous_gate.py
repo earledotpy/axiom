@@ -1,6 +1,7 @@
 import pytest
 from datetime import datetime, timezone
 
+import axiom.core.autonomous_gate as autonomous_gate
 from axiom.core.autonomous_gate import (
     AutonomousReadinessError,
     evaluate_autonomous_readiness,
@@ -101,6 +102,46 @@ def test_require_autonomous_ready_raises_when_blocked():
 
     assert "Autonomous operation is not available" in str(exc.value)
     assert "no_current_trusted_model_profile" in str(exc.value)
+
+
+def test_autonomous_gate_fails_closed_when_status_report_raises(monkeypatch):
+    def raise_database_error(profile_label):
+        raise RuntimeError("database is locked")
+
+    monkeypatch.setattr(
+        autonomous_gate,
+        "build_status_report",
+        raise_database_error,
+    )
+
+    decision = evaluate_autonomous_readiness(
+        profile_label="autonomous_gate_error_test"
+    )
+
+    assert decision.allowed is False
+    assert decision.blocking_reasons == ["autonomous_readiness_evaluation_error"]
+    assert decision.status["profile_label"] == "autonomous_gate_error_test"
+    assert decision.status["error_type"] == "RuntimeError"
+    assert decision.status["error"] == "database is locked"
+
+
+def test_require_autonomous_ready_raises_when_status_report_raises(monkeypatch):
+    def raise_status_error(profile_label):
+        raise RuntimeError("missing status dependency")
+
+    monkeypatch.setattr(
+        autonomous_gate,
+        "build_status_report",
+        raise_status_error,
+    )
+
+    with pytest.raises(AutonomousReadinessError) as exc:
+        require_autonomous_ready(
+            profile_label="autonomous_gate_error_raise_test"
+        )
+
+    assert "Autonomous operation is not available" in str(exc.value)
+    assert "autonomous_readiness_evaluation_error" in str(exc.value)
 
 
 def test_autonomous_gate_allows_when_all_status_conditions_are_true():

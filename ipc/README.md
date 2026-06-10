@@ -2,9 +2,16 @@
 
 Shared message directory for cross-agent communication between Claude Code, Codex, and Antigravity.
 
-## Phase 0 Freeze
+## Phase 2 Neutralized Execution
 
-Active IPC execution is structurally frozen pending future Orchestrator mediation. Watchers, executor dispatch, CLI agent invocation, ConPTY/tmux/terminal paths, posture daemons, markdown inbox control reads, and peer-to-peer auto-relay paths must remain fail-closed under `IPC_PHASE0_FREEZE_ACTIVE`.
+IPC is preserved as inert historical evidence and a manual review surface only.
+Raw command execution, message-body shell execution, and inbound auto-invocation
+of Codex, Claude Code, or Antigravity are not permitted.
+
+`command` frames are rejected by `ipc_db.py` and are not returned as pending
+work. Markdown inbox files and SQLite history must not be treated as execution
+triggers. Use terminal panes manually when an Operator directs a participant to
+review a handoff or message.
 
 ## Protocol
 

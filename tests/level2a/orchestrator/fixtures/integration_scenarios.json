@@ -1,0 +1,190 @@
+{
+  "valid_relays": [
+    {
+      "name": "valid_static_relay_artifact",
+      "envelope": {
+        "relay_envelope_version": "2A.1",
+        "envelope_id": "ENV-123e4567-e89b-42d3-a456-426614174000",
+        "docket_id": "DK-2026-0004",
+        "mandate_id": "MND-ACCEPTED-2026-0004-PHASE1-INTEGRATION-HARNESS",
+        "source_role": "operator_console",
+        "target_role": "orchestrator",
+        "artifact_type": "accepted_mandate",
+        "artifact_ref": "governance/05_handoffs/MND-ACCEPTED-2026-0004-PHASE1-INTEGRATION-HARNESS.md",
+        "artifact_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "allowed_action_type": "present_for_review",
+        "blocked_action_indicators": [],
+        "created_at": "2026-06-06T00:00:00Z",
+        "nonce": "nonce_v1_1111111111111111111111111111111111111111111111111111111111111111",
+        "canonicalization": "RFC8785",
+        "schema_hash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    }
+  ],
+  "valid_docket_transitions": [
+    {
+      "from_state": "verification_pending",
+      "event": "record_evidence"
+    }
+  ],
+  "valid_audit_events": [
+    {
+      "audit_event_version": "2A.1",
+      "event_id": "AUD-123e4567-e89b-42d3-a456-426614174001",
+      "event_type": "relay_envelope_validated",
+      "actor": "orchestrator_core",
+      "event_time": "2026-06-06T00:00:01Z",
+      "canonicalization": "RFC8785",
+      "docket_id": "DK-2026-0004",
+      "mandate_id": "MND-ACCEPTED-2026-0004-PHASE1-INTEGRATION-HARNESS"
+    },
+    {
+      "audit_event_version": "2A.1",
+      "event_id": "AUD-123e4567-e89b-42d3-a456-426614174002",
+      "event_type": "verifier_evidence_recorded",
+      "actor": "audit_subsystem",
+      "event_time": "2026-06-06T00:00:02Z",
+      "canonicalization": "RFC8785",
+      "docket_id": "DK-2026-0004",
+      "mandate_id": "MND-ACCEPTED-2026-0004-PHASE1-INTEGRATION-HARNESS"
+    }
+  ],
+  "valid_paths": [
+    {
+      "name": "handoff_report_path",
+      "raw_path": "$WORKSPACE_ROOT/governance/05_handoffs/implementation_report.json",
+      "anchors": {
+        "$WORKSPACE_ROOT": "/axiom"
+      },
+      "allowed_paths": [
+        "/axiom/governance/05_handoffs"
+      ],
+      "blocked_paths": [
+        "/axiom/governance/01_live_spine",
+        "/axiom/governance/02_cli_surfaces",
+        "/axiom/ipc",
+        "/axiom/console",
+        "/axiom/agents",
+        "/axiom/gateways",
+        "/axiom/network",
+        "/axiom/cloud",
+        "/axiom/ci",
+        "/axiom/.github"
+      ]
+    }
+  ],
+  "invalid_relays": [
+    {
+      "name": "command_envelope_rejected",
+      "envelope": {
+        "relay_envelope_version": "2A.1",
+        "envelope_id": "ENV-123e4567-e89b-42d3-a456-426614174010",
+        "docket_id": "DK-2026-0004",
+        "mandate_id": "MND-ACCEPTED-2026-0004-PHASE1-INTEGRATION-HARNESS",
+        "source_role": "operator_console",
+        "target_role": "orchestrator",
+        "artifact_type": "patch_artifact",
+        "artifact_ref": "fixture://command",
+        "artifact_sha256": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "allowed_action_type": "record_artifact",
+        "blocked_action_indicators": [
+          "shell_command_frame"
+        ],
+        "created_at": "2026-06-06T00:01:00Z",
+        "nonce": "nonce_v1_2222222222222222222222222222222222222222222222222222222222222222",
+        "canonicalization": "RFC8785",
+        "schema_hash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    {
+      "name": "peer_to_peer_route_rejected",
+      "envelope": {
+        "relay_envelope_version": "2A.1",
+        "envelope_id": "ENV-123e4567-e89b-42d3-a456-426614174011",
+        "docket_id": "DK-2026-0004",
+        "mandate_id": "MND-ACCEPTED-2026-0004-PHASE1-INTEGRATION-HARNESS",
+        "source_role": "builder_agent",
+        "target_role": "reviewer_agent",
+        "artifact_type": "patch_artifact",
+        "artifact_ref": "fixture://peer-route",
+        "artifact_sha256": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "allowed_action_type": "route_for_review",
+        "blocked_action_indicators": [],
+        "created_at": "2026-06-06T00:01:01Z",
+        "nonce": "nonce_v1_3333333333333333333333333333333333333333333333333333333333333333",
+        "canonicalization": "RFC8785",
+        "schema_hash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    {
+      "name": "console_execution_rejected",
+      "envelope": {
+        "relay_envelope_version": "2A.1",
+        "envelope_id": "ENV-123e4567-e89b-42d3-a456-426614174012",
+        "docket_id": "DK-2026-0004",
+        "mandate_id": "MND-ACCEPTED-2026-0004-PHASE1-INTEGRATION-HARNESS",
+        "source_role": "operator_console",
+        "target_role": "orchestrator",
+        "artifact_type": "operator_summary_event",
+        "artifact_ref": "fixture://console-execution",
+        "artifact_sha256": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "allowed_action_type": "record_operator_summary",
+        "blocked_action_indicators": [
+          "console_execution_frame"
+        ],
+        "created_at": "2026-06-06T00:01:02Z",
+        "nonce": "nonce_v1_4444444444444444444444444444444444444444444444444444444444444444",
+        "canonicalization": "RFC8785",
+        "schema_hash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    }
+  ],
+  "invalid_docket_transitions": [
+    {
+      "name": "verified_commit_rejected",
+      "from_state": "verified_evidence_recorded",
+      "event": "commit"
+    }
+  ],
+  "invalid_paths": [
+    {
+      "name": "axiom_state_root_write_rejected",
+      "raw_path": "$AXIOM_STATE_ROOT/live/docket.json",
+      "anchors": {
+        "$WORKSPACE_ROOT": "/axiom"
+      },
+      "allowed_paths": [
+        "/axiom/governance/05_handoffs"
+      ],
+      "blocked_paths": [
+        "/axiom_state_root",
+        "/axiom/governance/01_live_spine",
+        "/axiom/ipc"
+      ]
+    }
+  ],
+  "t_cases": [
+    {"id": "T01", "name": "valid_mandate_identifier", "expected_status": "passed"},
+    {"id": "T02", "name": "expired_mandate_transition", "expected_status": "passed"},
+    {"id": "T03", "name": "valid_relay_envelope", "expected_status": "passed"},
+    {"id": "T04", "name": "cryptographic_tamper_pending_signature_verification", "expected_status": "pending"},
+    {"id": "T05", "name": "blocked_path_precedence", "expected_status": "passed"},
+    {"id": "T06", "name": "valid_audit_chain_hash", "expected_status": "passed"},
+    {"id": "T07", "name": "dead_letter_structural_failure", "expected_status": "passed"},
+    {"id": "T08", "name": "rejected_rule_failure_quarantine_copy", "expected_status": "passed"},
+    {"id": "T09", "name": "nonce_shape_validation", "expected_status": "passed"},
+    {"id": "T10", "name": "utc_timestamp_validation", "expected_status": "passed"},
+    {"id": "T11", "name": "sha256_prefix_validation", "expected_status": "passed"},
+    {"id": "T12", "name": "relay_blocked_action_rejection", "expected_status": "passed"},
+    {"id": "T13", "name": "direct_docket_write_rejected", "expected_status": "passed"},
+    {"id": "T14", "name": "verifier_handoff_violation_rejected", "expected_status": "passed"},
+    {"id": "T15", "name": "broad_collection_rejected", "expected_status": "passed"},
+    {"id": "T16", "name": "posture_cache_not_authority", "expected_status": "passed"},
+    {"id": "T17", "name": "mandate_scope_rejected", "expected_status": "passed"},
+    {"id": "T18", "name": "expiry_boundary_distinct_from_rejected", "expected_status": "passed"},
+    {"id": "T19", "name": "audit_chain_mutation_detected", "expected_status": "passed"},
+    {"id": "T20", "name": "revoked_distinct_from_rejected", "expected_status": "passed"},
+    {"id": "T21", "name": "terminal_state_closed", "expected_status": "passed"},
+    {"id": "T22", "name": "docket_synchronization_rule", "expected_status": "passed"}
+  ]
+}

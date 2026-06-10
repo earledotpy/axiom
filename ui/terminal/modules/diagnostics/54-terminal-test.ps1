@@ -154,6 +154,26 @@ function Get-AxiomTerminalTestRegistry {
     }
 }
 
+function Get-AxiomTerminalModuleFiles {
+    $moduleDir = $script:AxiomTerminalTestPaths.Modules
+
+    if (-not (Test-Path $moduleDir)) {
+        return @()
+    }
+
+    $moduleGroups = @('core', 'foundation', 'utilities', 'shared', 'operators', 'diagnostics', 'supervision', 'safety')
+    $modules = @()
+
+    foreach ($group in $moduleGroups) {
+        $groupPath = Join-Path $moduleDir $group
+        if (Test-Path $groupPath) {
+            $modules += @(Get-ChildItem $groupPath -Filter "*.ps1" -ErrorAction SilentlyContinue | Sort-Object Name)
+        }
+    }
+
+    return $modules
+}
+
 function Test-AxiomTerminalRegistryShape {
     $results = New-Object System.Collections.Generic.List[object]
     $registryPath = $script:AxiomTerminalTestPaths.Registry
@@ -192,6 +212,8 @@ function Test-AxiomTerminalRegistryShape {
         "core",
         "editing",
         "verification",
+        "governance",
+        "operator_decision",
         "state_visibility",
         "reports",
         "terminal_ui"
@@ -276,11 +298,7 @@ function Test-AxiomTerminalModuleOrder {
         return $results
     }
 
-    $moduleNames = @(
-        Get-ChildItem $moduleDir -Filter "*.ps1" |
-            Sort-Object Name |
-            ForEach-Object { $_.Name }
-    )
+    $moduleNames = @(Get-AxiomTerminalModuleFiles | ForEach-Object { $_.Name })
 
     $requiredOrder = @(
         "04-visual-mode.ps1",
@@ -307,7 +325,8 @@ function Test-AxiomTerminalModuleOrder {
     $results.Add((New-AxiomTerminalTestResult "visual load order" $orderOk "04 before 05 before 06"))
 
     $oldVisual = Join-Path $moduleDir "43-visual-mode.ps1"
-    $results.Add((New-AxiomTerminalTestResult "old visual module absent" (-not (Test-Path $oldVisual)) "43-visual-mode.ps1 should not remain" "warning"))
+    $oldVisualInFoundation = Join-Path $moduleDir "foundation\43-visual-mode.ps1"
+    $results.Add((New-AxiomTerminalTestResult "old visual module absent" (-not ((Test-Path $oldVisual) -or (Test-Path $oldVisualInFoundation))) "43-visual-mode.ps1 should not remain" "warning"))
 
     return $results
 }
@@ -371,6 +390,20 @@ function Test-AxiomTerminalRequiredCommands {
     $results = New-Object System.Collections.Generic.List[object]
 
     $required = @(
+        "state",
+        "cycle",
+        "next",
+        "review",
+        "accept",
+        "decide",
+        "task",
+        "delegate",
+        "evidence",
+        "roadmap",
+        "validate",
+        "guard",
+        "doctor",
+        "registry",
         "axiom",
         "axiom-help",
         "axiom-help-all",
@@ -407,7 +440,7 @@ function Invoke-AxiomTerminalTestSuite {
 
     $moduleDir = $script:AxiomTerminalTestPaths.Modules
     if (Test-Path $moduleDir) {
-        $modules = @(Get-ChildItem $moduleDir -Filter "*.ps1" | Sort-Object Name)
+        $modules = @(Get-AxiomTerminalModuleFiles)
 
         foreach ($module in $modules) {
             $results.Add((Test-AxiomTerminalModuleParse -Path $module.FullName))

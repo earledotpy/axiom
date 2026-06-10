@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "axiom.autonomy_grant.v0.1",
+  "title": "AXIOM Autonomy Grant",
+  "type": "object",
+  "required": [
+    "schema",
+    "grant_id",
+    "created_utc",
+    "authority_status"
+  ],
+  "properties": {
+    "schema": {
+      "const": "axiom.autonomy_grant.v0.1"
+    },
+    "grant_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_utc": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+    },
+    "operator_decision_id": {
+      "type": "string"
+    },
+    "technical_gate_result": {
+      "type": "string",
+      "enum": [
+        "passed",
+        "failed",
+        "missing",
+        "conflicting",
+        "not_evaluated"
+      ]
+    },
+    "grant_state": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "pending_review",
+        "operator_accepted",
+        "revoked",
+        "expired"
+      ]
+    },
+    "autonomy_level": {
+      "type": "string"
+    },
+    "scope": {
+      "type": "string"
+    },
+    "authority_status": {
+      "enum": [
+        "advisory_only",
+        "operator_accepted"
+      ]
+    },
+    "allowed_roles": {
+      "type": "array"
+    },
+    "allowed_actions": {
+      "type": "array"
+    },
+    "forbidden_actions": {
+      "type": "array"
+    },
+    "protected_surfaces": {
+      "type": "array"
+    },
+    "required_evidence": {
+      "type": "array"
+    },
+    "stop_conditions": {
+      "type": "array"
+    }
+  },
+  "additionalProperties": true
+}

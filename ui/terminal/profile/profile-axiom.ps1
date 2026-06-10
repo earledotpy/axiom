@@ -64,14 +64,14 @@ if (-not (Test-Path $script:AxiomTerminalModules)) {
 # ------------------------------------------------------------
 # Load numbered AXIOM Terminal modules from organized subdirectories.
 #
-# Load order: core → foundation → utilities → shared → operators → diagnostics → phase10 → safety
+# Load order: core → foundation → utilities → shared → operators → diagnostics → supervision → safety
 #
 # Important intra-order dependencies:
 #   04-visual-mode.ps1 must load before 05-visual.ps1
 #   05-visual.ps1 must load before 06-oh-my-posh.ps1
 # ------------------------------------------------------------
 
-$moduleGroups = @('core', 'foundation', 'utilities', 'shared', 'operators', 'diagnostics', 'phase10', 'safety')
+$moduleGroups = @('core', 'foundation', 'utilities', 'shared', 'operators', 'diagnostics', 'supervision', 'safety')
 $moduleFiles = @()
 
 foreach ($group in $moduleGroups) {
@@ -97,14 +97,14 @@ foreach ($module in $moduleFiles) {
 # ------------------------------------------------------------
 
 $visualModeOldPath = Join-Path $script:AxiomTerminalModules '43-visual-mode.ps1'
-$visualModeFoundationPath = Join-Path $script:AxiomTerminalModules 'foundation' '04-visual-mode.ps1'
+$visualModeFoundationPath = Join-Path (Join-Path $script:AxiomTerminalModules 'foundation') '04-visual-mode.ps1'
 
 if ((Test-Path $visualModeOldPath) -and -not (Test-Path $visualModeFoundationPath)) {
     Write-AxiomProfileWarning "visual-mode module is named 43-visual-mode.ps1. Rename to 04-visual-mode.ps1 under foundation/ subdirectory."
 }
 
 if (-not (Get-Command axiom-help -ErrorAction SilentlyContinue)) {
-    Write-AxiomProfileWarning "axiom-help is not loaded. Check modules under $script:AxiomTerminalModules subdirectories (core, foundation, utilities, shared, operators, diagnostics, phase10, safety)."
+    Write-AxiomProfileWarning "axiom-help is not loaded. Check modules under $script:AxiomTerminalModules subdirectories (core, foundation, utilities, shared, operators, diagnostics, supervision, safety)."
 }
 
 if (-not (Get-Command axiom-edit -ErrorAction SilentlyContinue)) {

@@ -317,7 +317,7 @@ function Get-AxiomToolCapabilityMapSummary {
 }
 
 function axiom-manifests {
-    Write-AxiomUiTitle "MANIFEST INTEGRITY" "SHA256 · active manifests"
+    Write-AxiomUiTitle "MANIFEST INTEGRITY" "SHA256 - active manifests"
 
     if (-not (Test-Path $script:AxiomRoot)) {
         Write-AxiomManifestLine "root" "$script:AxiomRoot missing" "Red"
@@ -406,3 +406,4 @@ function axiom-manifests {
     Write-Host "  axiom-preflight" -ForegroundColor Gray
     Write-Host ""
 }
+

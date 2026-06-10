@@ -1,0 +1,62 @@
+{
+  "actor_role": "CURSOR",
+  "artifact_id": "HND-20260609T170626547002Z-MANDATES-8-12-GOVERNANCE-ROADMAP",
+  "artifact_type": "roadmap",
+  "authority_status": "advisory_only",
+  "blocking_objections": [],
+  "created_utc": "2026-06-09T17:06:26Z",
+  "findings": [
+    "Mandate 8: Governance cycle coordinator",
+    "Mandate 9: Typed relay intake and dead-letter records",
+    "Mandate 10: Signed mandate substrate",
+    "Mandate 11: Execution hub beachhead",
+    "Mandate 12: VERIFIED_COMMIT eligibility through restricted verifier path"
+  ],
+  "function": "summarize",
+  "ledger_written": false,
+  "lifecycle_state": "roadmap",
+  "non_blocking_concerns": [],
+  "process": "synthesize",
+  "recommended_next_action": "activate the next roadmap item with a task card or delegation packet",
+  "recommended_operator_decision": "defer",
+  "roadmap_items": [
+    {
+      "authority_status": "advisory_only",
+      "sequence": 1,
+      "status": "planned",
+      "title": "Mandate 8: Governance cycle coordinator"
+    },
+    {
+      "authority_status": "advisory_only",
+      "sequence": 2,
+      "status": "planned",
+      "title": "Mandate 9: Typed relay intake and dead-letter records"
+    },
+    {
+      "authority_status": "advisory_only",
+      "sequence": 3,
+      "status": "planned",
+      "title": "Mandate 10: Signed mandate substrate"
+    },
+    {
+      "authority_status": "advisory_only",
+      "sequence": 4,
+      "status": "planned",
+      "title": "Mandate 11: Execution hub beachhead"
+    },
+    {
+      "authority_status": "advisory_only",
+      "sequence": 5,
+      "status": "planned",
+      "title": "Mandate 12: VERIFIED_COMMIT eligibility through restricted verifier path"
+    }
+  ],
+  "roadmap_status": "planned",
+  "runtime_action_executed": false,
+  "schema": "axiom.handoff.v0.1",
+  "scope": "Mandates 8-12 governance roadmap",
+  "source_refs": [],
+  "status": "active",
+  "summary": "Advisory roadmap for adopting v4.1a deterministic orchestrator ideas in staged governance-first order.",
+  "title": "Level 2A governance coordinator to execution hub roadmap"
+}

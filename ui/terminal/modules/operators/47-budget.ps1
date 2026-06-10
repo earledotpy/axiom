@@ -343,7 +343,7 @@ function Write-AxiomBudgetWindowTable {
     foreach ($row in $Rows) {
         $color = if ($row.status -eq "exhausted") { "Red" } elseif ($row.status -eq "open") { "Green" } else { "Gray" }
 
-        Write-Host ("  {0,-12} {1,-10} {2,-12} {3,-12} {4,-10} {5,-10} {6} → {7}" -f `
+        Write-Host ("  {0,-12} {1,-10} {2,-12} {3,-12} {4,-10} {5,-10} {6} -> {7}" -f `
             $row.provider,
             $row.status,
             (Format-AxiomBudgetNumber $row.budget_tokens),
@@ -427,7 +427,7 @@ function axiom-budget {
         [int]$Limit = 10
     )
 
-    Write-AxiomUiTitle "BUDGET / RESOURCE USAGE" "provider usage · read-only"
+    Write-AxiomUiTitle "BUDGET / RESOURCE USAGE" "provider usage - read-only"
 
     if (-not (Test-Path $script:AxiomRoot)) {
         Write-AxiomBudgetLine "root" "$script:AxiomRoot missing" "Red"
@@ -478,7 +478,7 @@ function axiom-budget {
     else {
         foreach ($row in $reconciliations) {
             $color = if ($row.confirmed_large_adjustment -eq 1) { "Yellow" } else { "Gray" }
-            Write-Host "  $($row.provider) $($row.date_range_start) → $($row.date_range_end) discrepancy=$($row.discrepancy_percent)% adjustment=$($row.adjustment_tokens)" -ForegroundColor $color
+            Write-Host "  $($row.provider) $($row.date_range_start) -> $($row.date_range_end) discrepancy=$($row.discrepancy_percent)% adjustment=$($row.adjustment_tokens)" -ForegroundColor $color
         }
     }
 
@@ -501,3 +501,4 @@ function axiom-budget {
     Write-Host "  axiom-preflight" -ForegroundColor Gray
     Write-Host ""
 }
+

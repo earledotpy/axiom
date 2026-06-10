@@ -1,0 +1,22 @@
+{
+  "accepted_utc": "2026-06-10T04:52:40Z",
+  "authority_status": "operator_accepted",
+  "confirmation_token": "I_ACCEPT_AXIOM_DECISION:DEC-20260610T044259019268Z-ANALYZE-AND-IDENTIFY-REDUNDANT-T",
+  "created_utc": "2026-06-10T04:42:59Z",
+  "decision": "approve",
+  "decision_id": "DEC-20260610T044259019268Z-ANALYZE-AND-IDENTIFY-REDUNDANT-T",
+  "decision_status": "recorded",
+  "ledger_written": false,
+  "lifecycle_state": "operator_decision",
+  "operator": "Jeremy",
+  "rationale": "reduce test runtime",
+  "recommended_next_action": "perform scoped implementation work",
+  "runtime_action_executed": false,
+  "schema": "axiom.operator_decision.v0.1",
+  "scope": "Analyze and identify redundant tests (docs test, obsolete v1.13 acceptance checklists, disabled Telegram tests, frozen IPC tests) and archive/cleanup them",
+  "source_refs": [
+    "TC-20260609T063333939383Z-ANALYZE-AND-IDENTIFY-REDUNDANT-T"
+  ],
+  "status": "closed",
+  "target_id": "TC-20260609T063333939383Z-ANALYZE-AND-IDENTIFY-REDUNDANT-T"
+}

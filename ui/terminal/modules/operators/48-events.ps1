@@ -360,7 +360,7 @@ function axiom-events {
         [switch]$GlobalRisks
     )
 
-    Write-AxiomUiTitle "LIVE EVENT STREAM" "session events · security events"
+    Write-AxiomUiTitle "LIVE EVENT STREAM" "session events - security events"
 
     if (-not (Test-Path $script:AxiomRoot)) {
         Write-AxiomEventsLine "root" "$script:AxiomRoot missing" "Red"
@@ -454,3 +454,4 @@ function axiom-events {
     Write-Host "  axiom-preflight" -ForegroundColor Gray
     Write-Host ""
 }
+

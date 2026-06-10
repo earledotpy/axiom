@@ -113,7 +113,7 @@ LIMIT ?
 function axiom-operator-commands {
     param([int]$Limit = 10)
 
-    Write-AxiomUiTitle "OPERATOR COMMAND LEDGER" "append-only · hash-chained"
+    Write-AxiomUiTitle "OPERATOR COMMAND LEDGER" "append-only - hash-chained"
 
     if (-not (Test-Path $script:AxiomRoot)) {
         Write-AxiomUiStatus "BLOCK" "root" "$script:AxiomRoot missing"
@@ -163,3 +163,4 @@ function axiom-operator-commands {
     Write-Host "  python tools\record_operator_command_intent.py status --json" -ForegroundColor DarkGray
     Write-Host ""
 }
+

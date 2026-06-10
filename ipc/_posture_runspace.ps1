@@ -2,6 +2,12 @@
 # Posture cache refresher — dot-sourced inside ipc_service.ps1 runspace.
 # Extracted from posture_daemon.ps1; no PID file (lifecycle managed by ipc_service).
 
+$script:IPC_PHASE0_FREEZE_ACTIVE = $true
+if ($script:IPC_PHASE0_FREEZE_ACTIVE) {
+    Write-Output "[ipc-freeze] Phase 0 IPC freeze active; unsafe IPC execution path is structurally unreachable."
+    return
+}
+
 $cacheFile = "C:\axiom\ipc\posture_cache.json"
 $logFile   = "C:\axiom\ipc\posture_daemon.log"
 

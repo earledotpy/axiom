@@ -368,7 +368,7 @@ function Get-AxiomDashboardPosture {
 }
 
 function axiom-dashboard {
-    Write-AxiomUiTitle "AXIOM DASHBOARD" "read-only · fail-closed"
+    Write-AxiomUiTitle "AXIOM DASHBOARD" "read-only - fail-closed"
 
     if (-not (Test-Path $script:AxiomRoot)) {
         Write-AxiomDashboardLine "root" "$script:AxiomRoot missing" "Red"
@@ -514,22 +514,11 @@ function axiom-dashboard {
 
     # Variant-specific panels
     if ($useVariantB) {
-        # Variant B: Dynamic panels for autonomous mode
         Write-Host ""
-        Write-Host "  [VARIANT B: Autonomous Mode Panels]" -ForegroundColor Cyan
-
-        # Execution trace
-        Write-AxiomUiSection "Execution Trace"
-        & "C:\axiom\ui\terminal\modules\62-execution-trace.ps1" | Out-Null
-
-        # Approval gate
-        Write-AxiomUiSection "Approval Gate"
-        & "C:\axiom\ui\terminal\modules\63-approval-gate.ps1" | Out-Null
-
-        # Autonomous posture
-        Write-AxiomUiSection "Autonomous Posture"
-        & "C:\axiom\ui\terminal\modules\64-autonomous-posture.ps1" | Out-Null
-
+        Write-Host "  [Autonomous execution panels unavailable]" -ForegroundColor Yellow
+        Write-Host "  Runtime autonomy is disabled by design (Doctrine §5 — autonomy gate not satisfied)." -ForegroundColor DarkGray
+        Write-Host "  Use: guard   to view the autonomy gate readiness status." -ForegroundColor DarkGray
+        Write-Host ""
         Write-AxiomUiRule
     }
     else {
@@ -551,8 +540,10 @@ function axiom-dashboard {
     }
 
     Write-AxiomUiSection "Next safe commands"
-    Write-Host "  axiom-preflight" -ForegroundColor Gray
-    Write-Host "  axiom-regression" -ForegroundColor Gray
-    Write-Host "  axiom-handoff" -ForegroundColor Gray
+    Write-Host "  state             show governance records" -ForegroundColor Gray
+    Write-Host "  cycle             show active task/delegation/review cycles" -ForegroundColor Gray
+    Write-Host "  axiom-preflight   foundation + lifecycle + policy checks" -ForegroundColor Gray
+    Write-Host "  axiom-regression  run test suite" -ForegroundColor Gray
     Write-Host ""
 }
+

@@ -22,20 +22,20 @@ function axiom-help {
     Write-Host "==============" -ForegroundColor Green
     Write-Host ""
     Write-Host "First stop" -ForegroundColor DarkGreen
-    Write-Host "  axiom-now                Compact operator-critical state"
-    Write-Host "  axiom-preflight          Verify runtime state"
-    Write-Host "  axiom-agent-audit        Verify Phase 5 agent boundary"
-    Write-Host "  axiom-dashboard          More state detail"
+    Write-Host "  state                    Current governance state"
+    Write-Host "  cycle                    Active governance cycles"
+    Write-Host "  next                     Next valid governance actions"
+    Write-Host "  guard                    Active safety boundaries"
     Write-Host ""
-    Write-Host "Inspect" -ForegroundColor DarkGreen
-    Write-Host "  axiom-readiness          Readiness checks"
-    Write-Host "  axiom-queue              Task queue"
-    Write-Host "  axiom-manifests          Manifest and role integrity"
-    Write-Host "  axiom-events             Recent events"
-    Write-Host "  axiom-operator-commands  Operator command intent ledger"
-    Write-Host "  axiom-telegram-gateway   Telegram gateway boundary state"
-    Write-Host "  axiom-phase7             Phase 7 acceptance/E2E gate panel"
-    Write-Host "  axiom-task-latest        Latest task detail"
+    Write-Host "Govern" -ForegroundColor DarkGreen
+    Write-Host "  task                     Create/list task cards"
+    Write-Host "  delegate                 Create/list delegation packets"
+    Write-Host "  review                   File agent review as evaluation"
+    Write-Host "  evidence                 Create/list evidence records"
+    Write-Host "  accept                   Preview/record Operator acceptance"
+    Write-Host "  decide                   Preview/record other Operator decisions"
+    Write-Host "  roadmap                  File future mandate roadmap"
+    Write-Host "  validate                 Validate governance records"
     Write-Host ""
     Write-Host "Navigate" -ForegroundColor DarkGreen
     Write-Host "  axiom-docs               Indexed docs/files"
@@ -46,13 +46,14 @@ function axiom-help {
     Write-Host "  axiom-find <pattern>     Search project text"
     Write-Host ""
     Write-Host "Boundaries" -ForegroundColor DarkGreen
-    Write-Host "  axiom-guard              Active safety boundaries"
+    Write-Host "  guard                    Active safety boundaries"
     Write-Host "  axiom-system-map         Runtime/tool/UI map"
     Write-Host ""
     Write-Host "More" -ForegroundColor DarkGreen
     Write-Host "  axiom-help-all           Full command catalog"
     Write-Host "  axiom-terminal-test      Terminal UI regression"
-    Write-Host "  axiom-registry           Command registry audit"
+    Write-Host "  doctor                   Terminal diagnostics"
+    Write-Host "  registry                 Command registry audit"
     Write-Host ""
 }
 
@@ -62,14 +63,28 @@ function axiom-help-all {
     Write-Host "=======================" -ForegroundColor Green
     Write-Host ""
 
-    Write-Host "Core" -ForegroundColor DarkGreen
+    Write-Host "Primary governance" -ForegroundColor DarkGreen
+    Write-Host "  state                    Show governance state from records"
+    Write-Host "  cycle                    Summarize active governance cycles"
+    Write-Host "  next                     Show next valid governance actions"
+    Write-Host "  review <args>            File terminal review as evaluation record"
+    Write-Host "  accept <args>            Preview approve decision; use 'accept record' to record token"
+    Write-Host "  decide <args>            Preview non-approve decision; use 'decide record' to record token"
+    Write-Host "  task <args>              Run task-card tool"
+    Write-Host "  delegate <args>          Run delegation packet tool"
+    Write-Host "  evidence <args>          Run evidence record tool"
+    Write-Host "  roadmap <args>           File advisory mandate roadmap"
+    Write-Host "  validate                 Validate governance scaffold and records"
+    Write-Host ""
+
+    Write-Host "Core / compatibility" -ForegroundColor DarkGreen
     Write-Host "  axiom                    Enter C:\axiom and activate venv"
     Write-Host "  axiom-help               Show this command surface"
     Write-Host "  axiom-help-all           Show full command catalog"
-    Write-Host "  axiom-now                Compact operator-critical state"
-    Write-Host "  axiom-doctor             Full AXIOM Terminal environment/self-audit"
-    Write-Host "  axiom-registry           Audit terminal command registry coherence"
-    Write-Host "  axiom-guard              Show active safety boundaries"
+    Write-Host "  doctor                   Full AXIOM Terminal environment/self-audit"
+    Write-Host "  registry                 Audit terminal command registry coherence"
+    Write-Host "  guard                    Show active safety boundaries"
+    Write-Host "  axiom-now                Legacy compact runtime state"
     Write-Host ""
 
     Write-Host "Editing" -ForegroundColor DarkGreen
@@ -85,7 +100,7 @@ function axiom-help-all {
     Write-Host "  axiom-doc phase8a-release-freeze  Open Phase 8A docs-only reconciliation file"
     Write-Host ""
 
-    Write-Host "Verification" -ForegroundColor DarkGreen
+    Write-Host "Verification / legacy runtime" -ForegroundColor DarkGreen
     Write-Host "  axiom-preflight          Foundation + lifecycle audit + execution audit + supervisor health"
     Write-Host "  axiom-status             Foundation verification only"
     Write-Host "  axiom-audit              Lifecycle and execution audits"
@@ -110,7 +125,7 @@ function axiom-help-all {
     Write-Host "  axiom-terminal-map       Show terminal suite component map"
     Write-Host ""
 
-    Write-Host "State visibility" -ForegroundColor DarkGreen
+    Write-Host "Legacy runtime visibility" -ForegroundColor DarkGreen
     Write-Host "  axiom-session            Latest session id / summary"
     Write-Host "  axiom-dashboard          Read-only AXIOM status panel"
     Write-Host "  axiom-readiness          Read-only execution readiness report"
@@ -129,7 +144,8 @@ function axiom-help-all {
     Write-Host ""
 
     Write-Host "Reports" -ForegroundColor DarkGreen
-    Write-Host "  axiom-handoff            Generate snapshot, handoff, and bundle"
+    Write-Host "  roadmap                  Persist mandate roadmap as advisory handoff"
+    Write-Host "  axiom-handoff            Deprecated snapshot, handoff, and bundle"
     Write-Host "  axiom-logs               Show recent AXIOM logs"
     Write-Host "  axiom-terminal-report    Summarize AXIOM Terminal suite state"
     Write-Host "  axiom-terminal-changelog Show AXIOM Terminal changelog"
@@ -163,6 +179,9 @@ function axiom-help-all {
     Write-Host ""
 
     Write-Host "Compatibility aliases still accepted but de-emphasized" -ForegroundColor Yellow
+    Write-Host "  axiom-governance         Compatibility alias for cycle"
+    Write-Host "  axiom-review             Compatibility alias for review"
+    Write-Host "  axiom-accept             Compatibility alias for accept"
     Write-Host "  axiom-home               Alias-compatible with axiom"
     Write-Host "  axiom-open <path>        Compatibility alias for axiom-edit"
     Write-Host "  np <path>                Legacy editor shortcut; prefer ae"

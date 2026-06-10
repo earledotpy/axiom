@@ -280,19 +280,19 @@ $script:AxiomDocsIndex = [ordered]@{
         path = "ui\terminal\modules\60-phase7.ps1"
         category = "terminal"
     }
-    "phase10-execution-trace" = @{
-        label = "Phase 10 execution trace panel"
-        path = "ui\terminal\modules\62-execution-trace.ps1"
+    "supervision-execution-trace" = @{
+        label = "Supervision execution trace panel"
+        path = "ui\terminal\modules\supervision\62-execution-trace.ps1"
         category = "terminal"
     }
-    "phase10-approval-gate" = @{
-        label = "Phase 10 approval gate panel"
-        path = "ui\terminal\modules\63-approval-gate.ps1"
+    "supervision-approval-gate" = @{
+        label = "Supervision approval gate panel"
+        path = "ui\terminal\modules\supervision\63-approval-gate.ps1"
         category = "terminal"
     }
-    "phase10-autonomous-posture" = @{
-        label = "Phase 10 autonomous posture panel"
-        path = "ui\terminal\modules\64-autonomous-posture.ps1"
+    "supervision-autonomous-posture" = @{
+        label = "Supervision autonomous posture panel"
+        path = "ui\terminal\modules\supervision\64-autonomous-posture.ps1"
         category = "terminal"
     }
     "operator-command-terminal" = @{

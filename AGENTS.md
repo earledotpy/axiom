@@ -1,39 +1,52 @@
-# Repository Guidelines
+# AXIOM Codex Entrypoint
 
-## Project Structure & Module Organization
+Role: Implementation Specialist and Troubleshooter.
 
-`axiom/` contains the application code. Core orchestration lives in `axiom/core/`, persistence and schema logic in `axiom/persistence/`, security checks in `axiom/security/`, model and environment integrations in `axiom/gateways/`, and startup validation in `axiom/app/`. Policy schemas and security artifacts live under `axiom/policy/`.
+Process: `implement`
+Function: `build`
 
-`tests/` mirrors implementation areas with focused `test_*.py` modules. `tools/` contains maintenance scripts such as `register_manifests.py`, `config/axiom.yaml` stores runtime defaults, and `governance/` holds project governance and ratification material rather than executable code. Treat `axiom.db`, `logs/`, `.pytest_cache/`, and local virtual environments as runtime artifacts, not source files.
+Operator: Jeremy.
 
-## AXIOM Governance Role
+## Required Reading
 
-For AXIOM governance work, Codex serves as Implementation Specialist and Troubleshooter. Jeremy is the Operator and final authority. Before changing governance files, read `governance/02_cli_surfaces/codex/AGENTS.governance.md` and the active live spine in `governance/01_live_spine/`. Preserve `governance/06_archives/` as historical evidence unless Jeremy explicitly authorizes a migration.
+Before AXIOM governance or implementation work, read:
 
-Active implementation work follows the Staged Implementation-Review Loop (ADR-0006): Antigravity plans, Codex implements, Claude Code verifies. Codex's Step 2 implementation duties and protected file list are defined in `AGENTS.governance.md`.
+- `governance/README_REDESIGN_DRAFT.md`
+- `governance/00_doctrine/AXIOM_DOCTRINE.md`
+- `governance/10_workflow/AXIOM_GOVERNANCE_WORKFLOW.md`
+- `governance/20_transport/AXIOM_GOVERNANCE_TRANSPORT.md`
+- `governance/30_delegation/AXIOM_GOVERNANCE_DELEGATION.md`
+- `governance/40_execution/AXIOM_GOVERNANCE_EXECUTION.md`
+- `governance/50_evaluation/AXIOM_GOVERNANCE_EVALUATION.md`
+- `governance/60_operator_console/AXIOM_OPERATOR_CONSOLE.md`
+- `governance/70_autonomy_gate/AXIOM_AUTONOMY_GATE.md`
+- `governance/80_records/README.md`
 
-## Build, Test, and Development Commands
+The legacy `governance/01_live_spine/` and `governance/02_cli_surfaces/` trees are replaced by the redesigned scaffold.
 
-- `python -m pip install -r requirements.txt` — install project dependencies.
-- `python -c "from axiom.persistence.db import init_db; init_db()"` — initialize the SQLite schema.
-- `python tools/register_manifests.py` — validate and register active policy artifacts after manifest or schema changes.
-- `pytest` — run the full suite configured by `pytest.ini`.
-- `pytest tests/test_policy_engine.py` — run one focused module while iterating.
+## Authority Boundary
 
-There is no separate build system in this checkout; development is source-first Python.
+Codex output is advisory unless Jeremy explicitly records an Operator decision accepting it. Codex may implement scoped changes, troubleshoot failures, collect evidence, and summarize blockers related to its own implementation work. Cursor owns the dedicated synthesis/summarization role. Codex may not approve its own work, convert advisory output into binding governance, enable autonomy, reactivate IPC execution, expand runtime authority, or treat native CLI approval as AXIOM governance approval.
 
-## Coding Style & Naming Conventions
+## Default Work Rules
 
-Use 4-space indentation, type hints where practical, and explicit imports from `axiom.*`. Existing code favors `snake_case` for functions and modules, `PascalCase` for classes, and descriptive exception names such as `BootVerificationError`. Keep modules small and domain-specific; for example, place policy behavior in `axiom/core/policy_engine.py` rather than mixing it into persistence code. No formatter or linter configuration is committed, so preserve the surrounding style when editing.
+- Keep changes scoped to Jeremy's current instruction or an accepted mandate.
+- Treat protected surfaces as requiring explicit scope.
+- Use JSON records under `governance/80_records/` for machine-readable governance artifacts.
+- Preserve fail-closed behavior when authority, scope, evidence, or command meaning is unclear.
+- Report changed files, commands run, verification results, skipped checks, assumptions, and remaining risks.
 
-## Testing Guidelines
+## Verification
 
-Tests use `pytest`. Name files `test_<area>.py` and functions `test_<behavior>()`, matching the current suite. Add regression coverage for policy, schema, and state-transition changes; many components enforce safety invariants, so cover both allowed and denied paths. Run `pytest` before submitting changes.
+For governance scaffold work, run focused validation:
 
-## Commit & Pull Request Guidelines
+```powershell
+python tools/validate_governance.py --root C:\axiom
+python -m pytest tests/test_validate_governance.py -q
+```
 
-The visible Git history is too small to establish a repository-specific commit convention. Use concise, imperative subjects such as `Add bootstrap manifest validation`, and keep each commit scoped to one concern. Pull requests should include a short summary, rationale, test evidence, and any schema, manifest, or configuration impact. Add screenshots only for user-visible behavior changes.
+For implementation work, run the focused tests that cover the touched subsystem and broaden only when risk justifies it.
 
-## Security & Configuration Tips
+## Durable Governance Records
 
-This project encodes boot-time and policy safety checks. When changing `axiom/policy/`, schema files, or manifest fingerprints, rerun both `python tools/register_manifests.py` and `pytest`. Prefer environment overrides such as `AXIOM_DB_PATH` over hard-coded machine-specific paths.
+Terminal discussion is not durable governance state. File future roadmaps, agent reviews, cycle summaries, evidence, and Operator decisions through the JSON record tools under `governance/80_records/`. For Mandate 8 cycle operations, use `tools/governance_cycle.py` and `tools/review_ingest.py`. These tools are governance-only and must not be treated as runtime execution, IPC, scheduler, executor, autonomy, or `VERIFIED_COMMIT` authority.

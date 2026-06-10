@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "axiom.archive_index.v0.1",
+  "title": "AXIOM Archive Index",
+  "type": "object",
+  "required": [
+    "schema",
+    "archive_id",
+    "created_utc",
+    "authority_status"
+  ],
+  "properties": {
+    "schema": {
+      "const": "axiom.archive_index.v0.1"
+    },
+    "archive_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_utc": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+    },
+    "authority_status": {
+      "const": "historical_evidence"
+    },
+    "source_refs": {
+      "type": "array"
+    },
+    "notes": {
+      "type": "array"
+    }
+  },
+  "additionalProperties": true
+}

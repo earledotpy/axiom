@@ -1,0 +1,41 @@
+{
+  "allowed_actions": [
+    "read_file",
+    "write_file",
+    "execute_command"
+  ],
+  "authority_status": "advisory_only",
+  "closed_reason": "Redundant/obsolete test files successfully removed, remaining 746 tests verified 100% passing.",
+  "closed_utc": "2026-06-10T05:05:22Z",
+  "created_utc": "2026-06-09T06:33:33Z",
+  "evidence_required": [],
+  "forbidden_actions": [
+    "convert advisory output into binding governance",
+    "approve mandate candidates",
+    "write operator_accepted decision records",
+    "update binding records without accepted decision",
+    "enable runtime autonomy",
+    "reactivate IPC execution",
+    "mutate parser, command manifest, or ledger behavior without accepted mandate",
+    "modify_runtime_core_logic",
+    "bypass_safety_checks"
+  ],
+  "function": "plan",
+  "lifecycle_state": "closed",
+  "operator_goal": "Streamline the AXIOM testing suite for post-implementation efficiency",
+  "path": "lightweight_task_card",
+  "process": "architect",
+  "recommended_next_action": "perform scoped advisory work",
+  "required_outputs": [
+    "Redundant tests inventory list",
+    "Proposed test suite cleanup list"
+  ],
+  "risk_class": "low",
+  "schema": "axiom.task_card.v0.1",
+  "scope": "Analyze and identify redundant tests (docs checks, obsolete v1.13 acceptance checklists, disabled Telegram tests, frozen IPC tests) and archive/cleanup them",
+  "status": "closed",
+  "stop_conditions": [
+    "when task card and delegation packet are created and accepted by the operator"
+  ],
+  "task_card_id": "TC-20260609T063333939383Z-ANALYZE-AND-IDENTIFY-REDUNDANT-T"
+}

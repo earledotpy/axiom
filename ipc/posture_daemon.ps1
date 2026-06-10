@@ -14,6 +14,12 @@
 #   - Cache file: C:\axiom\ipc\posture_cache.json
 # ============================================================
 
+$script:IPC_PHASE0_FREEZE_ACTIVE = $true
+if ($script:IPC_PHASE0_FREEZE_ACTIVE) {
+    Write-Output "[ipc-freeze] Phase 0 IPC freeze active; unsafe IPC execution path is structurally unreachable."
+    return
+}
+
 $cacheFile = "C:\axiom\ipc\posture_cache.json"
 $pidFile = "C:\axiom\ipc\posture_daemon.pid"
 $logFile = "C:\axiom\ipc\posture_daemon.log"

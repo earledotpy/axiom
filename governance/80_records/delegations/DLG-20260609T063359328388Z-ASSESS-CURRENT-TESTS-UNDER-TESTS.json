@@ -1,0 +1,64 @@
+{
+  "allowed_actions": [
+    "read_file",
+    "execute_command"
+  ],
+  "allowed_roles": [
+    "Chief Architect",
+    "Governance Auditor",
+    "Implementation Specialist",
+    "ARCH"
+  ],
+  "authority_status": "advisory_only",
+  "created_utc": "2026-06-09T06:33:59Z",
+  "decision_points": [],
+  "delegation_context": "operator_directed",
+  "delegation_id": "DLG-20260609T063359328388Z-ASSESS-CURRENT-TESTS-UNDER-TESTS",
+  "delegation_type": "multi_agent_cycle",
+  "evidence_required": [
+    "pytest run reports showing clean execution after proposed exclusions"
+  ],
+  "forbidden_actions": [
+    "convert advisory output into binding governance",
+    "approve mandate candidates",
+    "update binding records without accepted decision",
+    "change Doctrine without accepted decision",
+    "enable runtime autonomy",
+    "reactivate IPC execution",
+    "alter security gates without accepted mandate",
+    "promote models",
+    "expand network or tool permissions",
+    "bypass parser or manifest validation for /axiom:*",
+    "treat native CLI approval as Axiom approval",
+    "reactivate_ipc",
+    "modify_core_runtime"
+  ],
+  "function": "plan",
+  "lifecycle_state": "delegated",
+  "operator_goal": "Analyze and streamline the AXIOM testing suite for post-implementation operations",
+  "out_of_scope": [
+    "mutating core runtime code, enabling autonomy, or modifying database triggers"
+  ],
+  "process": "architect",
+  "recommended_first_agent": "ARCH",
+  "required_reviews": [],
+  "schema": "axiom.delegation_packet.v0.1",
+  "scope": "Assess current tests under tests/ directory, identify redundant and legacy test cases (doc checks, v1.13 checklists, inert Telegram, frozen IPC), and propose cleanup action",
+  "status": "active",
+  "stop_conditions": [
+    "scope ambiguity appears",
+    "authority boundary is unclear",
+    "required evidence is unavailable",
+    "required review is missing",
+    "protected surface would be touched without accepted mandate",
+    "command or artifact schema is invalid",
+    "Doctrine conflict is detected",
+    "Workflow transition is not permitted",
+    "Transport meaning is ambiguous",
+    "runtime, autonomy, IPC, scheduler, executor, model, network, or security posture would change",
+    "completion of suite assessment and task handoff"
+  ],
+  "success_criteria": [
+    "a complete, clean-running testing suite with redundant files cataloged and prepared for pruning"
+  ]
+}

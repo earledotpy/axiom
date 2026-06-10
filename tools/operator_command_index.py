@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import tempfile
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -323,6 +324,95 @@ COMMANDS: tuple[OperatorCommand, ...] = (
         notes="Use --json, --markdown, or --write for alternate output formats.",
     ),
     OperatorCommand(
+        name="Read-only Operator Console",
+        command="python tools\\operator_console.py /axiom:show-active-state --json",
+        purpose="Render read-only AXIOM governance console views from governance/80_records JSON.",
+        when_to_run="When Jeremy or an agent needs active state, blockers, decision queue, evidence, or autonomy status without changing state.",
+        expected_exit_code="0 on successful read-only view generation.",
+        notes="Supports /axiom:show-active-state, /axiom:show-blockers, /axiom:show-decisions, /axiom:show-evidence, and /axiom:show-autonomy-status. Does not write ledger rows, mutate parser manifests, execute runtime actions, or enable autonomy.",
+    ),
+    OperatorCommand(
+        name="Delegation Packet Tool",
+        command="python tools\\delegation.py create --goal \"...\" --scope \"...\" --json",
+        purpose="Create, list, and show advisory delegation packet JSON records under governance/80_records/delegations.",
+        when_to_run="When Jeremy approves a scoped delegation or multi-agent cycle record without authority-bearing command execution.",
+        expected_exit_code="0 when delegation record creation or inspection succeeds.",
+        notes="Writes advisory_only governance JSON records only. Does not write ledger rows, mutate parser manifests, execute runtime actions, reactivate IPC, or enable autonomy.",
+        read_only=False,
+    ),
+    OperatorCommand(
+        name="Evaluation Report Tool",
+        command="python tools\\evaluation.py create --target-artifact \"...\" --scope \"...\" --json",
+        purpose="Create, list, show, and summarize advisory evaluation report JSON records under governance/80_records/evaluations.",
+        when_to_run="When an agent needs to record verification, audit findings, blocker objections, or decision-ready evaluation evidence.",
+        expected_exit_code="0 when evaluation record creation, inspection, or blocker summary generation succeeds.",
+        notes="Writes advisory_only evaluation JSON records only. Does not write ledger rows, mutate parser manifests, execute runtime actions, reactivate IPC, enable autonomy, or accept work.",
+        read_only=False,
+    ),
+    OperatorCommand(
+        name="Task Card Tool",
+        command="python tools\\task_card.py create --goal \"...\" --scope \"...\" --json",
+        purpose="Create, list, show, and close advisory lightweight task cards under governance/80_records/tasks.",
+        when_to_run="When routine low-risk governance work needs a concise JSON task record.",
+        expected_exit_code="0 when task card creation or inspection succeeds.",
+        notes="Writes advisory_only task-card JSON only. Does not create authority, run scheduler work, write legacy ledger rows, or enable autonomy.",
+        read_only=False,
+    ),
+    OperatorCommand(
+        name="Handoff Tool",
+        command="python tools\\handoff.py create --title \"...\" --scope \"...\" --json",
+        purpose="Create, list, and show advisory JSON handoffs under governance/80_records/handoffs.",
+        when_to_run="When an agent needs to preserve synthesis, review, planning, audit, or mandate-candidate output.",
+        expected_exit_code="0 when handoff record creation or inspection succeeds.",
+        notes="Writes advisory_only handoff JSON only. Does not accept work, write bindings, execute runtime actions, or enable autonomy.",
+        read_only=False,
+    ),
+    OperatorCommand(
+        name="Evidence Tool",
+        command="python tools\\evidence.py create --scope \"...\" --json",
+        purpose="Create, list, and show evidence JSON records under governance/80_records/evidence.",
+        when_to_run="When implementation, verification, command, skipped-check, assumption, or risk evidence needs to be preserved.",
+        expected_exit_code="0 when evidence record creation or inspection succeeds.",
+        notes="Writes evidence_only JSON. It records evidence supplied to it; it does not run tests, accept work, or execute runtime actions.",
+        read_only=False,
+    ),
+    OperatorCommand(
+        name="Decision Tool",
+        command="python tools\\decision.py preview --decision approve --target-id \"...\" --scope \"...\" --json",
+        purpose="Preview and explicitly record Operator decision JSON records under governance/80_records/decisions.",
+        when_to_run="When Jeremy is ready to record approve, reject, defer, narrow_scope, request_review, request_remediation, or archive decisions.",
+        expected_exit_code="0 when preview or confirmation-gated recording succeeds.",
+        notes="Authority-bearing only on record with exact confirmation token. Does not execute runtime actions, write legacy ledger rows, or apply bindings.",
+        read_only=False,
+    ),
+    OperatorCommand(
+        name="Binding Tool",
+        command="python tools\\binding.py apply --decision-id \"...\" --binding-type \"...\" --target \"...\" --scope \"...\" --json",
+        purpose="Create active binding JSON records under governance/80_records/bindings from accepted approve decisions.",
+        when_to_run="After an operator_accepted approve decision needs a current active binding effect.",
+        expected_exit_code="0 when binding creation or inspection succeeds.",
+        notes="Requires an accepted approve decision. Does not mutate runtime state, parser state, scheduler state, or legacy ledger rows.",
+        read_only=False,
+    ),
+    OperatorCommand(
+        name="Governance Command Tool",
+        command="python tools\\governance_command.py record /axiom:show-active-state --json",
+        purpose="Create JSON-first /axiom:* command manifests and validated command intent records.",
+        when_to_run="When command transport intent should be validated against governance/80_records command manifests.",
+        expected_exit_code="0 when command manifest creation, parsing, or accepted intent recording succeeds.",
+        notes="Records command intent only. Does not execute /axiom:* actions, write legacy ledger rows, or interpret native CLI commands as Axiom authority.",
+        read_only=False,
+    ),
+    OperatorCommand(
+        name="Autonomy Grant Tool",
+        command="python tools\\autonomy_grant.py draft --scope \"...\" --json",
+        purpose="Draft, accept, inspect, and revoke autonomy grant JSON records under governance/80_records/autonomy.",
+        when_to_run="When autonomy scope needs governance-visible records without enabling runtime autonomy.",
+        expected_exit_code="0 when autonomy grant record creation or inspection succeeds.",
+        notes="Accepted grants require accepted Operator decision and passed technical gate; runtime autonomy remains disabled in this implementation.",
+        read_only=False,
+    ),
+    OperatorCommand(
         name="Full Pytest Suite",
         command="pytest tests -v",
         purpose="Run the full AXIOM regression suite.",
@@ -334,7 +424,7 @@ COMMANDS: tuple[OperatorCommand, ...] = (
 
 
 def _utc_timestamp() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%S-%fZ")
 
 
 def command_index_payload() -> dict[str, Any]:
@@ -415,7 +505,10 @@ def main() -> int:
     args = parser.parse_args()
 
     if args.write:
-        paths = write_command_index()
+        try:
+            paths = write_command_index()
+        except PermissionError:
+            paths = write_command_index(Path(tempfile.gettempdir()) / "axiom_logs")
         print(f"wrote operator command index JSON: {paths['json']}")
         print(f"wrote operator command index Markdown: {paths['markdown']}")
         return 0

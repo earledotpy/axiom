@@ -7,6 +7,12 @@ param(
     [string]$ConversationId = ""
 )
 
+$script:IPC_PHASE0_FREEZE_ACTIVE = $true
+if ($script:IPC_PHASE0_FREEZE_ACTIVE) {
+    Write-Output "[ipc-freeze] Phase 0 IPC freeze active; unsafe IPC execution path is structurally unreachable."
+    return
+}
+
 $inbox     = "C:\axiom\ipc\to_$To.md"
 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 

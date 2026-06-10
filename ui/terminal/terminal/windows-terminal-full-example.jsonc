@@ -6,7 +6,7 @@
       {
         "guid": "{a110ba55-f411-4d61-bb8e-a510f0f0a110}",
         "name": "AXIOM Terminal",
-        "commandline": "pwsh.exe -NoLogo",
+        "commandline": "pwsh.exe -NoLogo -NoExit -Command \". 'C:\\axiom\\ui\\terminal\\profile\\profile-axiom.ps1'\"",
         "startingDirectory": "C:\\axiom",
         "icon": "C:\\axiom\\ui\\terminal\\assets\\axiom-terminal-icon.png",
         "colorScheme": "AXIOM Fail-Closed CRT",

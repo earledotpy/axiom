@@ -324,7 +324,7 @@ function Write-AxiomReadinessCheck {
 }
 
 function axiom-readiness {
-    Write-AxiomUiTitle "EXECUTION READINESS" "30+ checks · read-only"
+    Write-AxiomUiTitle "EXECUTION READINESS" "30+ checks - read-only"
 
     $checks = New-Object System.Collections.Generic.List[object]
 
@@ -468,3 +468,4 @@ function axiom-readiness {
     Write-Host "  axiom-dashboard" -ForegroundColor Gray
     Write-Host ""
 }
+

@@ -1,28 +1,5 @@
 param([Parameter(Mandatory)][string]$Agent)
 
-$inbox        = "C:\axiom\ipc\to_$($Agent.ToLower()).md"
-$notifyScript = "C:\axiom\ipc\notify.ps1"
-$jobName      = "ipc-watcher-$Agent"
-
-if (Get-Job -Name $jobName -ErrorAction SilentlyContinue) {
-    Remove-Job -Name $jobName -Force
-}
-
-Start-Job -Name $jobName -ScriptBlock {
-    param($inbox, $agent, $notifyScript)
-
-    # FileSystemWatcher: fires on write, 2s fallback — no LastWriteTime polling needed
-    $fsw = [System.IO.FileSystemWatcher]::new([System.IO.Path]::GetDirectoryName($inbox))
-    $fsw.Filter = [System.IO.Path]::GetFileName($inbox)
-    $fsw.NotifyFilter = [System.IO.NotifyFilters]::LastWrite
-    $fsw.EnableRaisingEvents = $true
-
-    while ($true) {
-        $result = $fsw.WaitForChanged([System.IO.WatcherChangeTypes]::Changed, 2000)
-        if (-not $result.TimedOut) {
-            Start-Process pwsh -ArgumentList "-File `"$notifyScript`" -Message `"Check ipc/to_$($agent.ToLower()).md`" -Title `"IPC: message for $agent`""
-        }
-    }
-} -ArgumentList $inbox, $Agent, $notifyScript | Out-Null
-
-Write-Host "[ipc] watcher started for $Agent (job: $jobName)"
+Write-Output "[ipc-neutralized] watcher_service.ps1 notification automation is disabled for $Agent."
+Write-Output "[ipc-neutralized] Check ipc/to_$($Agent.ToLower()).md manually when directed."
+return

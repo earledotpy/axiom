@@ -23,34 +23,6 @@ function axiom-operator-command-audit {
     Invoke-AxiomPython @('tools\audit_operator_command_ledger.py')
 }
 
-function axiom-telegram-gateway-audit {
-    Invoke-AxiomPython @('tools\audit_telegram_gateway.py')
-}
-
-function axiom-phase6-audit {
-    Invoke-AxiomPython @('tools\audit_phase6_closeout.py')
-}
-
-function axiom-phase7-inventory {
-    Invoke-AxiomPython @('tools\audit_phase7_acceptance_inventory.py')
-}
-
-function axiom-phase7-acceptance {
-    Invoke-AxiomPython @('tools\run_phase7_acceptance.py')
-}
-
-function axiom-phase7-e2e-gate {
-    Invoke-AxiomPython @('tools\audit_phase7_e2e_gate.py')
-}
-
-function axiom-phase7-closeout {
-    Invoke-AxiomPython @('tools\audit_phase7_closeout.py')
-}
-
-function axiom-phase9-closeout {
-    Invoke-AxiomPython @('tools\audit_phase9_closeout.py')
-}
-
 function axiom-health {
     $sessionId = Get-AxiomLatestSessionId
     if (-not $sessionId) { Write-Host "[AXIOM] No latest session found." -ForegroundColor Yellow; return }
@@ -80,29 +52,9 @@ function axiom-preflight {
     Write-Host "4. Supervisor health" -ForegroundColor Gray
     axiom-health
     Write-Host ""
-    Write-Host "5. Phase 5 agent boundary audit" -ForegroundColor Gray
+    Write-Host "5. Agent boundary audit" -ForegroundColor Gray
     axiom-agent-audit
     Write-Host ""
-    Write-Host "6. Phase 6 operator command ledger audit" -ForegroundColor Gray
-    axiom-operator-command-audit
-    Write-Host ""
-    Write-Host "7. Phase 6G Telegram gateway audit" -ForegroundColor Gray
-    axiom-telegram-gateway-audit
-    Write-Host ""
-    Write-Host "8. Phase 6I closeout audit" -ForegroundColor Gray
-    axiom-phase6-audit
-    Write-Host ""
-    Write-Host "9. Phase 7A acceptance inventory audit" -ForegroundColor Gray
-    axiom-phase7-inventory
-    Write-Host ""
-    Write-Host "10. Phase 7C full-goal E2E gate audit" -ForegroundColor Gray
-    axiom-phase7-e2e-gate
-    Write-Host ""
-    Write-Host "11. Phase 7E closeout audit" -ForegroundColor Gray
-    axiom-phase7-closeout
-    Write-Host ""
-    Write-Host "12. Phase 9 closeout audit" -ForegroundColor Gray
-    axiom-phase9-closeout
 }
 
 function axiom-test {

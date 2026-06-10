@@ -289,7 +289,7 @@ function axiom-queue {
         [int]$Limit = 10
     )
 
-    Write-AxiomUiTitle "TASK QUEUE" "manifest-bound · operator-dispatched"
+    Write-AxiomUiTitle "TASK QUEUE" "manifest-bound - operator-dispatched"
 
     if (-not (Test-Path $script:AxiomRoot)) {
         Write-AxiomQueueLine "root" "$script:AxiomRoot missing" "Red"
@@ -378,3 +378,4 @@ function axiom-queue {
     Write-Host "  axiom-preflight" -ForegroundColor Gray
     Write-Host ""
 }
+

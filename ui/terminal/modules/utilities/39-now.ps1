@@ -292,7 +292,7 @@ function axiom-now {
     $modeStatus = if ($blockers.Count -eq 0) {
         "READY"
     } elseif ($unexpectedBlockers.Count -eq 0) {
-        "IDLE"   # all blockers are expected — fail_closed by design
+        "IDLE"   # all blockers are expected - fail_closed by design
     } else {
         "WARN"   # at least one unexpected blocker
     }
@@ -304,7 +304,7 @@ function axiom-now {
     }
     elseif ($unexpectedBlockers.Count -eq 0) {
         Write-AxiomUiLine "blockers" ($blockers -join ", ") "DarkGray"
-        Write-AxiomUiLine "" "(expected — fail-closed by design)" "DarkGray"
+        Write-AxiomUiLine "" "(expected - fail-closed by design)" "DarkGray"
     }
     else {
         Write-AxiomUiLine "blockers" ($blockers -join ", ") "Yellow"
@@ -368,3 +368,4 @@ function axiom-now {
     Write-Host "  axiom-docs agent       Phase 5 agent docs/files" -ForegroundColor Gray
     Write-Host ""
 }
+

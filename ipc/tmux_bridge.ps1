@@ -7,6 +7,12 @@
 #   - Windows-native processes using Win32 console APIs (not VT sequences)
 #   - Backup when tmux session is not running
 
+$script:IPC_PHASE0_FREEZE_ACTIVE = $true
+if ($script:IPC_PHASE0_FREEZE_ACTIVE) {
+    Write-Output "[ipc-freeze] Phase 0 IPC freeze active; unsafe IPC execution path is structurally unreachable."
+    return
+}
+
 function Get-TmuxBinary {
     # Test for psmux (native Windows) first, then fall back to MSYS2 tmux
 

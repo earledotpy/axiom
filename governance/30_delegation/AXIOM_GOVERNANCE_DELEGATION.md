@@ -93,12 +93,12 @@ Recommended delegation types:
 | Type | Purpose | Typical first agent |
 | --- | --- | --- |
 | research_delegation | investigate options, docs, risks, or context | ARCH |
-| planning_delegation | produce an implementation or governance plan | Cursor or ARCH |
+| planning_delegation | produce an implementation or governance plan | SYNTH or ARCH |
 | implementation_delegation | implement approved scoped work | IMPL |
 | audit_delegation | review policy, ambiguity, authority, and safety | AUD |
 | verification_delegation | verify evidence, tests, and closeout readiness | AUD |
-| synthesis_delegation | consolidate reviews, blockers, and decision options | Cursor |
-| multi_agent_cycle | run a governed planning/review/implementation/evaluation cycle | Cursor or ARCH |
+| synthesis_delegation | consolidate reviews, blockers, and decision options | SYNTH |
+| multi_agent_cycle | run a governed planning/review/implementation/evaluation cycle | SYNTH or ARCH |
 
 The most important delegation type for bounded autonomy is `multi_agent_cycle`.
 
@@ -128,13 +128,13 @@ Default routing for a multi-agent cycle:
 
 ```text
 1. OP defines goal and boundaries.
-2. Cursor converts goal into a delegation packet.
+2. SYNTH converts goal into a delegation packet.
 3. ARCH evaluates architecture and research direction.
 4. AUD evaluates governance risk, ambiguity, and authority boundaries.
-5. Cursor consolidates findings and drafts next action.
+5. SYNTH consolidates findings and drafts next action.
 6. IMPL evaluates feasibility or implements only if mandate allows.
 7. AUD verifies evidence after implementation.
-8. Cursor summarizes blockers, evidence, and decision options.
+8. SYNTH summarizes blockers, evidence, and decision options.
 9. OP decides approve, reject, defer, narrow, or continue.
 ```
 
@@ -144,10 +144,10 @@ Approved machine-oriented process/function mapping:
 
 | Agent | Process | Function |
 | --- | --- | --- |
-| Antigravity | `architect` | `plan` |
-| Codex | `implement` | `build` |
-| Claude Code | `audit` | `verify` |
-| Cursor | `synthesize` | `summarize` |
+| ARCH | `architect` | `plan` |
+| IMPL | `implement` | `build` |
+| AUD | `audit` | `verify` |
+| SYNTH | `synthesize` | `summarize` |
 
 These labels are suitable for JSON records, console summaries, routing metadata, and future read-only status views. They do not create authority and must not be interpreted as Operator acceptance.
 

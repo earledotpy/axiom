@@ -67,7 +67,7 @@ Not every governance item needs every state. Skipped states must be intentional,
 
 ## 5. Role Responsibilities by Stage
 
-| Stage | OP | Cursor | ARCH/Antigravity | AUD/Claude Code | IMPL/Codex |
+| Stage | OP | SYNTH | ARCH | AUD | IMPL |
 | --- | --- | --- | --- | --- | --- |
 | proposal | create or assign | structure | advise | critique | feasibility notes |
 | architecture_review | review | consolidate | primary | identify risks | feasibility notes |

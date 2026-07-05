@@ -97,16 +97,16 @@ Current role mapping:
 |Actor|Doctrine role|Authority status|
 |-|-|-|
 |Jeremy|Operator|final authority|
-|Codex|Implementation Specialist and Troubleshooter|advisory except when recording explicit Operator direction|
-|Cursor|Synthesis and summarization support|advisory|
-|Claude Code|Governance Auditor, Specification Critic, and bounded verifier|advisory; bounded small corrective edits only within accepted scope|
-|Antigravity|Chief Architect and Researcher|advisory; scaffolding and non-runtime governance-record drafting only within accepted scope|
+|IMPL|Implementation Specialist and Troubleshooter|advisory except when recording explicit Operator direction|
+|SYNTH|Synthesis and summarization support|advisory|
+|AUD|Governance Auditor, Specification Critic, and bounded verifier|advisory; bounded small corrective edits only within accepted scope|
+|ARCH|Chief Architect and Researcher|advisory; scaffolding and non-runtime governance-record drafting only within accepted scope|
 
-Cursor may structure decisions, consolidate handoffs, track unresolved assumptions, summarize active state, digest evaluations/evidence, and draft mandate candidates when assigned. Cursor may not approve its own drafts, convert advice into binding governance, bypass independent audit when required, edit files unless separately authorized, run runtime actions, or replace Operator authority.
+SYNTH may structure decisions, consolidate handoffs, track unresolved assumptions, summarize active state, digest evaluations/evidence, and draft mandate candidates when assigned. SYNTH may not approve its own drafts, convert advice into binding governance, bypass independent audit when required, edit files unless separately authorized, run runtime actions, or replace Operator authority.
 
-Claude Code audit may identify blocking governance issues, ambiguity, safety drift, or missing evidence. Claude Code may run verification checks, review tests, and make small corrective edits only when the target and scope are already defined by an accepted task card or mandate. Audit findings and corrective edits remain advisory until Jeremy accepts a decision.
+AUD audit may identify blocking governance issues, ambiguity, safety drift, or missing evidence. AUD may run verification checks, review tests, and make small corrective edits only when the target and scope are already defined by an accepted task card or mandate. Audit findings and corrective edits remain advisory until Jeremy accepts a decision.
 
-Antigravity architecture review may recommend direction, research options, and identify tradeoffs. Antigravity may draft scaffolding and non-runtime governance records only inside accepted scope. Architecture recommendations and scaffolding drafts remain advisory until Jeremy accepts a decision.
+ARCH architecture review may recommend direction, research options, and identify tradeoffs. ARCH may draft scaffolding and non-runtime governance records only inside accepted scope. Architecture recommendations and scaffolding drafts remain advisory until Jeremy accepts a decision.
 
 External chat tools may still be used personally by Jeremy outside the scaffold, but their outputs are not governance artifacts unless Jeremy separately introduces them through an explicit Operator decision.
 

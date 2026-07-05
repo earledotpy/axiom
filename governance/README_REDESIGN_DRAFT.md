@@ -60,10 +60,10 @@ Approved single-word machine-oriented agent mapping:
 
 | Agent | Human role | Process | Function |
 | --- | --- | --- | --- |
-| Antigravity | Chief Architect and Researcher | `architect` | `plan` |
-| Codex | Implementation Specialist and Troubleshooter | `implement` | `build` |
-| Claude Code | Governance Auditor and Specification Critic | `audit` | `verify` |
-| Cursor | Synthesis and summarization support | `synthesize` | `summarize` |
+| ARCH | Chief Architect and Researcher | `architect` | `plan` |
+| IMPL | Implementation Specialist and Troubleshooter | `implement` | `build` |
+| AUD | Governance Auditor and Specification Critic | `audit` | `verify` |
+| SYNTH | Synthesis and summarization support | `synthesize` | `summarize` |
 
 These names describe machine-readable governance process/function labels. They do not grant authority.
 

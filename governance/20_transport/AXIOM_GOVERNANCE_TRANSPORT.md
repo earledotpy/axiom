@@ -51,7 +51,7 @@ The redesigned scaffold does not include an external advisory council transport 
 
 ## 4. Agent Handoff Transport
 
-Agent Handoff Transport carries structured advisory work between Cursor, Codex, Claude Code, Antigravity, and Jeremy.
+Agent Handoff Transport carries structured advisory work between SYNTH, IMPL, AUD, ARCH, and Jeremy.
 
 Primary format:
 
@@ -137,12 +137,12 @@ Native CLI slash commands are local workflow controls for their own tool.
 
 Examples:
 
-- Codex `/approve`
-- Codex `/review`
-- Codex `/status`
-- Cursor CLI slash commands
-- Claude Code slash commands
-- Antigravity CLI commands
+- IMPL `/approve`
+- IMPL `/review`
+- IMPL `/status`
+- SYNTH CLI slash commands
+- AUD slash commands
+- ARCH CLI commands
 
 Native CLI commands must not be treated as Axiom governance decisions.
 

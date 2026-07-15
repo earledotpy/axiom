@@ -2,7 +2,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(r"C:\axiom")
+ROOT = Path(__file__).resolve().parents[1]
 BOOTSTRAP_CHECK = ROOT / "tools" / "bootstrap_check.py"
 
 
